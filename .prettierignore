@@ -1,0 +1,13 @@
+node_modules
+.next
+frontend/public
+frontend/AGENTS.md
+frontend/CLAUDE.md
+frontend/next-env.d.ts
+docs/portfolio.md
+docs/deployment.md
+test-results
+playwright-report
+package-lock.json
+.artifacts
+backend/.venv
