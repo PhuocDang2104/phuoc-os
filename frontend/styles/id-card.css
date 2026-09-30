@@ -1,0 +1,47 @@
+.about-content {
+  padding: 0 0 19px;
+  background: linear-gradient(145deg, #23212b, #17151c 68%);
+}
+.about-id-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid #ffffff21;
+  padding: 12px 18px;
+  color: #c8bfd3;
+  font-size: 8px;
+  letter-spacing: .6px;
+}
+.about-id-head > span:first-child { display: flex; align-items: center; gap: 9px; }
+.about-id-symbol { color: #15131a; background: #c7b6ff; padding: 4px 5px; font-weight: 700; letter-spacing: -1px; }
+.about-id-main { display: grid; grid-template-columns: 156px minmax(0, 1fr); gap: 20px; padding: 20px 19px 0; }
+.about-portrait-wrap { position: relative; width: 100%; aspect-ratio: 1; border: 1px solid #b9a7d188; padding: 4px; background: #302a37; }
+.about-portrait-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; image-rendering: auto; }
+.about-photo-corner { position: absolute; right: -5px; bottom: -5px; width: 25px; height: 25px; border-right: 2px solid #c7b6ff; border-bottom: 2px solid #c7b6ff; }
+.about-identity { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
+.about-field { color: #a69aaf; font-size: 8px; letter-spacing: .9px; margin: 4px 0 12px; }
+.about-identity h2 { font-size: 30px; letter-spacing: -1.35px; line-height: 1.08; margin: 0; }
+.about-identity .about-role { color: #d0c2ea; font-size: 11px; margin: 9px 0 0; }
+.about-status { font-size: 7px; letter-spacing: .35px; color: #b4a9c6; margin-top: 18px; display: flex; align-items: center; gap: 7px; }
+.about-id-code { display: flex; align-items: end; gap: 3px; height: 28px; margin-top: auto; padding-top: 12px; }
+.about-id-code span { width: 2px; height: 15px; background: #b7a9c6; opacity: .65; }
+.about-id-code span:nth-child(3n) { height: 11px; width: 4px; }
+.about-id-code span:nth-child(4n) { height: 18px; width: 1px; }
+.about-bio { max-width: none; margin: 22px 20px 0; font-size: 11px; line-height: 1.7; color: #c5bbc8; }
+.about-id-meta { display: grid; gap: 5px; border-top: 1px solid #ffffff1b; margin: 18px 20px 0; padding-top: 12px; color: #aea3b9; font-size: 7px; line-height: 1.5; letter-spacing: .3px; }
+.about-actions { margin: 17px 20px 0; }
+.certification-content { min-height: 265px; }
+.certification-content .body-copy { margin-top: 12px; }
+.certification-empty { display: flex; align-items: center; gap: 15px; border-block: 1px solid var(--border); padding: 23px 3px; margin: 20px 0; color: var(--muted); font: 9px var(--mono); letter-spacing: .6px; }
+.certification-empty svg { color: var(--accent); }
+:root[data-theme="light"] .about-content { background: linear-gradient(145deg, #f7f2fb, #eae2f1); }
+:root[data-theme="light"] .about-id-head { color: #655974; border-color: #a993b355; }
+:root[data-theme="light"] .about-field, :root[data-theme="light"] .about-id-meta { color: #685b74; }
+:root[data-theme="light"] .about-identity .about-role { color: #705584; }
+:root[data-theme="light"] .about-status, :root[data-theme="light"] .about-bio { color: #62576c; }
+:root[data-theme="light"] .about-id-meta { border-color: #a993b355; }
+:root[data-theme="light"] .about-id-code span { background: #685478; }
+@media (max-width: 1100px) and (min-width: 901px) { .about-id-main { grid-template-columns: 135px minmax(0, 1fr); gap: 13px; } .about-identity h2 { font-size: 27px; } }
+@media (max-width: 900px) { .about-content { padding: 0 0 19px; } .about-identity h2 { font-size: 32px; } .about-bio { max-width: none; font-size: 12px; } }
+@media (max-width: 480px) { .about-id-main { grid-template-columns: 120px minmax(0, 1fr); gap: 13px; padding: 16px 14px 0; } .about-id-head { padding: 10px 13px; font-size: 6px; } .about-identity h2 { font-size: 23px; } .about-field { font-size: 6px; margin-bottom: 8px; } .about-identity .about-role { font-size: 9px; } .about-status { margin-top: 10px; font-size: 6px; } .about-bio { margin: 17px 14px 0; font-size: 11px; } .about-id-meta { margin: 15px 14px 0; font-size: 6px; } .about-actions { margin: 14px 14px 0; } }

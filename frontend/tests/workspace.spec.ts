@@ -3,9 +3,15 @@ import { test, expect } from "@playwright/test";
 test("first paint tells the story and all main routes are reachable", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error" && /hydrated but some attributes/i.test(message.text()))
+      errors.push("Hydration mismatch");
+  });
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Dang Nhu Phuoc." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "A foot in both worlds." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The path is part of the work." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Currently exploring." })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Work gallery", exact: true })).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();
@@ -62,7 +68,7 @@ test("neural core, Milo, and the PDF have working navigation", async ({ page, re
   await page.getByRole("button", { name: "Talk to Milo, the workspace companion" }).click();
   await page
     .getByRole("dialog", { name: "Milo workspace assistant" })
-    .getByRole("button", { name: "Résumé", exact: true })
+    .getByRole("button", { name: /^Résumé/ })
     .click();
   await expect(page.getByRole("region", { name: "Resume.pdf" })).toBeVisible();
   const pdf = await request.get("/resume.pdf");
@@ -72,7 +78,11 @@ test("neural core, Milo, and the PDF have working navigation", async ({ page, re
 
 test("real local CNN recognizes a drawn one and reports inference", async ({ page, isMobile }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Open AI Lab workspace" }).click();
+  await page.getByRole("button", { name: "Draw to navigate", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Open Profile desk workspace" })).toHaveAttribute(
+    "aria-current",
+    "step",
+  );
   const canvas = page.getByLabel(
     "Draw a number from 1 to 6; alternatively use the destination buttons",
   );
@@ -104,22 +114,26 @@ test("real local CNN recognizes a drawn one and reports inference", async ({ pag
   await expect(page.locator(".prediction-row")).toBeVisible({ timeout: 45000 });
   await expect(page.locator(".prediction-row")).toContainText("prediction 1");
   await expect(page.locator(".prediction-row")).toContainText("ms");
-  await page.getByRole("button", { name: "Open Work experience", exact: true }).click();
   await expect(page).toHaveURL(/\/work$/);
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Home" })
+    .click();
+  await expect(page.getByRole("region", { name: "Draw to navigate", exact: true })).toBeVisible();
 });
 
 test("AI failure offers direct navigation and canvas clears", async ({ page }) => {
   await page.route("**/models/mnist.onnx", (route) => route.abort());
   await page.goto("/");
-  await page.getByRole("button", { name: "Open AI Lab workspace" }).click();
+  await page.getByRole("button", { name: "Draw to navigate", exact: true }).click();
   const canvas = page.getByLabel(
     "Draw a number from 1 to 6; alternatively use the destination buttons",
   );
   await canvas.scrollIntoViewIfNeeded();
   const box = (await canvas.boundingBox())!;
-  await page.mouse.move(box.x + 50, box.y + 40);
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.2);
   await page.mouse.down();
-  await page.mouse.move(box.x + 70, box.y + 150, { steps: 10 });
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.8, { steps: 10 });
   await page.mouse.up();
   await page.getByRole("button", { name: "Recognize", exact: true }).click();
   await expect(page.locator(".inference-output")).toContainText("Model unavailable", {

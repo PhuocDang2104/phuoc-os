@@ -16,7 +16,7 @@ export function AppWindow({
   focused: boolean;
   children: React.ReactNode;
 }) {
-  const { closeApp, minimizeApp, focusApp } = useWorkstation();
+  const { closeApp, minimizeApp, focusApp, hydrated } = useWorkstation();
   const ref = useRef<HTMLElement>(null);
   const drag = useRef<{
     x: number;
@@ -32,10 +32,7 @@ export function AppWindow({
   const [maximized, setMaximized] = useState(false);
 
   useEffect(() => {
-    if (
-      matchMedia("(max-width: 900px)").matches &&
-      !["about", "snapshot", "draw", "stack"].includes(id)
-    ) {
+    if (matchMedia("(max-width: 900px)").matches && !["about", "snapshot", "stack"].includes(id)) {
       ref.current?.scrollIntoView({ block: "start", behavior: "instant" });
     }
   }, [id]);
@@ -69,8 +66,8 @@ export function AppWindow({
       Math.min(innerWidth - start.width - 12 - start.left, event.clientX - start.x),
     );
     const dy = Math.max(
-      84 - start.top,
-      Math.min(innerHeight - 135 - start.top, event.clientY - start.y),
+      (document.querySelector(".topbar")?.getBoundingClientRect().bottom ?? 40) - start.top,
+      Math.min(innerHeight - 90 - start.top, event.clientY - start.y),
     );
     setOffset({ x: start.dx + dx, y: start.dy + dy });
   }
@@ -109,17 +106,18 @@ export function AppWindow({
           {apps[id].file}
         </span>
         <div className="window-controls">
-          <button onClick={() => minimizeApp(id)} aria-label={`Minimize ${apps[id].label}`}>
+          <button onClick={() => minimizeApp(id)} disabled={!hydrated} aria-label={`Minimize ${apps[id].label}`}>
             <Icon name="minus" size={13} />
           </button>
           <button
             className="maximize-control"
             onClick={() => setMaximized((value) => !value)}
+            disabled={!hydrated}
             aria-label={`${maximized ? "Restore" : "Maximize"} ${apps[id].label}`}
           >
             <Icon name={maximized ? "minimize" : "maximize"} size={12} />
           </button>
-          <button onClick={() => closeApp(id)} aria-label={`Close ${apps[id].label}`}>
+          <button onClick={() => closeApp(id)} disabled={!hydrated} aria-label={`Close ${apps[id].label}`}>
             <Icon name="close" size={14} />
           </button>
         </div>

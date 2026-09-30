@@ -285,75 +285,6 @@
 .contact-content .button-row {
   margin-top: 28px;
 }
-.file-path {
-  display: flex;
-  justify-content: space-between;
-  font: 10px var(--mono);
-  padding: 16px 20px;
-  background: #19171d;
-  border-bottom: 1px solid var(--border-soft);
-  color: #b1a7c1;
-}
-.file-path > span {
-  color: var(--muted);
-  font-size: 8px;
-}
-.file-browser-columns {
-  display: grid;
-  grid-template-columns: 210px 1fr;
-  min-height: 350px;
-}
-.file-list {
-  padding: 15px 8px;
-  border-right: 1px solid var(--border);
-}
-.file-list > button {
-  width: 100%;
-  padding: 12px 9px;
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  font: 9px var(--mono);
-  color: var(--secondary);
-  border-radius: 4px;
-}
-.file-list > button[aria-pressed="true"] {
-  background: #b8a7ff10;
-  color: #c9b7e9;
-}
-.file-preview {
-  padding: 24px;
-}
-.folder-art {
-  height: 124px;
-  background:
-    repeating-linear-gradient(0deg, transparent, transparent 15px, #b8a7ff07 16px),
-    repeating-linear-gradient(90deg, transparent, transparent 15px, #b8a7ff07 16px);
-  border: 1px solid #39323f;
-  color: #a38bc2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 22px;
-}
-.folder-art > span {
-  font-size: 7px;
-  letter-spacing: 1px;
-}
-.file-preview > h3 {
-  font-size: 18px;
-  letter-spacing: -0.4px;
-  margin-bottom: 10px;
-}
-.file-preview .body-copy {
-  font-size: 11px;
-  margin-bottom: 17px;
-}
-.file-preview .text-link {
-  font-size: 11px;
-}
 .resume-toolbar {
   padding: 14px 18px;
   display: flex;
@@ -452,204 +383,6 @@
   color: var(--secondary);
   margin-top: 10px;
 }
-.draw-content {
-  padding: 0;
-}
-.draw-heading {
-  padding: 24px 25px 18px;
-}
-.draw-heading .eyebrow {
-  font-size: 7px;
-  color: #b0a1c5;
-  margin-bottom: 13px;
-}
-.draw-heading h2 {
-  font-size: 24px;
-  letter-spacing: -0.8px;
-}
-.draw-heading p {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 8px;
-}
-.draw-layout {
-  display: grid;
-  grid-template-columns: 1.06fr 1fr;
-  gap: 20px;
-  padding: 0 25px 20px;
-}
-.draw-destinations {
-  padding-top: 3px;
-}
-.draw-destinations > button {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: 100%;
-  padding: 8px 0;
-  font-size: 9px;
-  color: #b8b2c3;
-}
-.draw-destinations > button:hover {
-  color: var(--accent);
-}
-.draw-destinations > button > span {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #3c3449;
-  background: #b8a7ff05;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #bba4d8;
-  font: 9px var(--mono);
-}
-.draw-destinations > button > svg {
-  margin-left: auto;
-  color: #6f677b;
-}
-.draw-fallback {
-  font: 7px/1.7 var(--mono);
-  color: var(--muted);
-  margin-top: 14px;
-}
-.drawing-canvas {
-  position: relative;
-  aspect-ratio: 1;
-  background: #0d0c10;
-  border: 1px solid #3a3244;
-  border-radius: 5px;
-  overflow: hidden;
-  max-width: 230px;
-  margin: auto;
-}
-.drawing-canvas canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: none;
-  cursor: crosshair;
-}
-.canvas-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  pointer-events: none;
-  color: #7d6b93;
-}
-.canvas-placeholder > span:first-child {
-  font-size: 35px;
-  line-height: 1;
-}
-.canvas-placeholder > span:nth-child(2) {
-  font: 8px var(--mono);
-  letter-spacing: 1.6px;
-}
-.canvas-placeholder small {
-  font: 7px var(--mono);
-  color: #61586b;
-}
-.canvas-corner {
-  position: absolute;
-  width: 9px;
-  height: 9px;
-  pointer-events: none;
-}
-.corner-tl {
-  top: 9px;
-  left: 9px;
-  border-top: 1px solid #796389;
-  border-left: 1px solid #796389;
-}
-.corner-br {
-  bottom: 9px;
-  right: 9px;
-  border-bottom: 1px solid #796389;
-  border-right: 1px solid #796389;
-}
-.drawing-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 10px;
-}
-.drawing-actions .button {
-  font-size: 9px;
-  min-height: 30px;
-  padding: 7px 10px;
-}
-.inference-output {
-  padding: 14px 25px;
-  background: #111014;
-  border-top: 1px solid var(--border);
-  font: 8px/1.8 var(--mono);
-  color: #9c8eae;
-  min-height: 45px;
-  overflow-wrap: anywhere;
-}
-.prediction-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-  margin-top: 10px;
-  font-size: 8px;
-  color: var(--muted);
-}
-.prediction-row strong {
-  color: #d2c2e7;
-  font-weight: 400;
-  margin-left: 5px;
-}
-.prediction-row > button {
-  width: 100%;
-  color: var(--accent);
-  padding: 5px 0;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  font-size: 9px;
-}
-.model-footer {
-  padding: 12px 25px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid var(--border-soft);
-  color: var(--muted);
-  font: 7px/1.7 var(--mono);
-}
-.model-footer .status-dot {
-  width: 4px;
-  height: 4px;
-  margin-right: 5px;
-}
-@media (min-width: 901px) {
-  .drawing-canvas {
-    max-width: 180px;
-  }
-  .draw-destinations > button {
-    padding: 6px 0;
-  }
-  .draw-heading {
-    padding-top: 20px;
-    padding-bottom: 14px;
-  }
-  .draw-heading .eyebrow {
-    margin-bottom: 9px;
-  }
-  .draw-layout {
-    padding-bottom: 16px;
-  }
-  .draw-fallback {
-    margin-top: 10px;
-  }
-}
 @media (min-width: 1600px) {
   .about-content {
     padding: 32px;
@@ -685,16 +418,6 @@
   .snapshot-links > button {
     font-size: 10px;
   }
-  .draw-heading h2 {
-    font-size: 28px;
-  }
-  .draw-destinations > button {
-    font-size: 11px;
-    padding: 10px 0;
-  }
-  .draw-heading p {
-    font-size: 12px;
-  }
 }
 @media (max-width: 1200px) and (min-width: 901px) {
   .about-content {
@@ -724,10 +447,6 @@
   .snapshot-links > a,
   .snapshot-links > button {
     font-size: 8px;
-  }
-  .model-footer {
-    font-size: 6px;
-    padding: 10px 18px;
   }
   .stack-content {
     padding: 20px;
@@ -786,22 +505,6 @@
   }
   .stack-group > .eyebrow {
     font-size: 9px;
-  }
-  .draw-destinations > button {
-    font-size: 12px;
-    padding: 10px 0;
-  }
-  .draw-heading h2 {
-    font-size: 28px;
-  }
-  .draw-heading p {
-    font-size: 12px;
-  }
-  .model-footer {
-    font-size: 8px;
-  }
-  .inference-output {
-    font-size: 10px;
   }
 }
 @media (max-width: 700px) {
@@ -894,24 +597,6 @@
   .contact-content .button {
     font-size: 9px;
   }
-  .file-browser-columns {
-    grid-template-columns: 1fr;
-  }
-  .file-list {
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 9px;
-  }
-  .file-list > button {
-    font-size: 10px;
-    padding: 11px;
-  }
-  .file-preview {
-    padding: 20px;
-  }
-  .folder-art {
-    height: 130px;
-  }
   .resume-toolbar {
     flex-wrap: wrap;
     padding: 12px;
@@ -954,66 +639,6 @@
     font-size: 9px;
   }
   .stack-group > .eyebrow {
-    font-size: 7px;
-  }
-  .draw-heading {
-    padding: 22px 19px 20px;
-  }
-  .draw-heading h2 {
-    font-size: 24px;
-  }
-  .draw-heading p {
-    font-size: 11px;
-  }
-  .draw-heading .eyebrow {
-    font-size: 6px;
-  }
-  .draw-layout {
-    grid-template-columns: 1fr;
-    padding: 0 19px 21px;
-    gap: 19px;
-  }
-  .draw-destinations {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3px 13px;
-  }
-  .draw-destinations > button {
-    font-size: 8px;
-    gap: 6px;
-    padding: 7px 0;
-  }
-  .draw-destinations > button > span {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-  }
-  .draw-destinations > button > svg {
-    display: none;
-  }
-  .draw-fallback {
-    grid-column: 1/-1;
-    margin-top: 7px;
-  }
-  .drawing-canvas {
-    max-width: 245px;
-    width: 100%;
-  }
-  .drawing-actions {
-    max-width: 245px;
-    margin: 12px auto 0;
-  }
-  .inference-output {
-    padding: 14px 19px;
-    font-size: 8px;
-  }
-  .model-footer {
-    padding: 12px 19px;
-    font-size: 6px;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-  .prediction-row {
     font-size: 7px;
   }
   .current-list > a {

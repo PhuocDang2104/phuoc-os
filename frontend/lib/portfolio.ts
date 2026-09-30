@@ -9,6 +9,7 @@ export const profile = {
   github: "https://github.com/PhuocDang2104",
   linkedin: "https://www.linkedin.com/in/dangnhuphuoc/",
   resume: "/resume.pdf",
+  portrait: "/portrait-github.png",
   bio: "I build intelligent systems across hardware, firmware, machine learning, and real-world deployment.",
   focus: ["Edge AI", "Computer Vision", "Embedded Systems"],
   research: ["Edge AI", "Computer Vision", "Explainable AI", "Intelligent sensing"],
@@ -62,7 +63,7 @@ export type AppId =
   | "gallery"
   | "resume"
   | "contact"
-  | "quick"
+  | "certifications"
   | "draw"
   | "research"
   | "stack"
@@ -81,8 +82,8 @@ export const apps: Record<
   gallery: { label: "Work gallery", file: "work/", icon: "folder", workspace: 0 },
   resume: { label: "Resume.pdf", file: "resume.pdf", icon: "file", workspace: 0 },
   contact: { label: "Contact", file: "contact.sh", icon: "mail", workspace: 0 },
-  quick: { label: "Quick overview", file: "recruiter_view.md", icon: "scan", workspace: 0 },
-  draw: { label: "Draw to navigate", file: "draw2navigate.ai", icon: "spark", workspace: 1 },
+  certifications: { label: "Certifications", file: "certifications/", icon: "award", workspace: 0 },
+  draw: { label: "Draw to navigate", file: "draw2navigate.ai", icon: "spark", workspace: 0 },
   research: { label: "Research", file: "research.md", icon: "network", workspace: 1 },
   stack: { label: "Tech stack", file: "stack.lock", icon: "layers", workspace: 1 },
   experiments: { label: "Experiments", file: "experiments/", icon: "flask", workspace: 1 },

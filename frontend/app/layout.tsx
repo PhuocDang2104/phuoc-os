@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "@fontsource/geist/latin-400.css";
 import "@fontsource/geist/latin-500.css";
 import "@fontsource/geist/latin-600.css";
@@ -17,8 +18,11 @@ export const viewport: Viewport = { themeColor: "#09090b" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`try{document.documentElement.dataset.theme=localStorage.getItem('phuoc-theme')==='light'?'light':'dark'}catch{document.documentElement.dataset.theme='dark'}`}
+        </Script>
         <Shell>{children}</Shell>
       </body>
     </html>

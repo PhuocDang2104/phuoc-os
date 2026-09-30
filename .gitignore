@@ -5,6 +5,7 @@ dist/
 .env
 .env.*
 !.env.example
+!.env.local.example
 !.env.test.example
 __pycache__/
 *.py[cod]

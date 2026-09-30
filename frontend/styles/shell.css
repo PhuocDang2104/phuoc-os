@@ -1,0 +1,255 @@
+:root {
+  --topbar-height: 38px;
+}
+.topbar {
+  height: var(--topbar-height);
+  position: relative;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding: 0 14px;
+  background: #19191c;
+  border-bottom: 1px solid #3d3b43;
+}
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  color: #e3e0e9;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
+.wordmark:hover {
+  color: #fff;
+}
+.brand-symbol {
+  width: 21px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px 3px 0;
+  background: #b8a7ff12;
+  border: 1px solid #635873;
+  border-radius: 6px;
+  color: #d4c6ef;
+  font: 16px var(--mono);
+  letter-spacing: -5px;
+}
+.brand-symbol span {
+  position: relative;
+  top: 4px;
+  font-size: 11px;
+}
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  height: 100%;
+}
+.main-nav a {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
+  color: #95939e;
+  font-size: 11px;
+}
+.main-nav a[aria-current],
+.main-nav a:hover {
+  color: #f0edf5;
+}
+.main-nav a[aria-current]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #c8b7e6;
+}
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  height: 100%;
+}
+.icon-button {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa6b4;
+  border-radius: 4px;
+}
+.icon-button:hover {
+  background: #ffffff0a;
+  color: #ece5f7;
+}
+.topbar-divider {
+  height: 13px;
+  width: 1px;
+  background: #3c3842;
+  margin: 0 4px;
+}
+.resume-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 3px;
+  color: #bdb8c6;
+  font-size: 10px;
+}
+.command-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 5px;
+  border: 1px solid #4a444f;
+  border-radius: 4px;
+  color: #c5bccf;
+  font: 9px var(--mono);
+  margin: 0 5px;
+}
+.command-trigger:hover {
+  border-color: #91819f;
+}
+.topbar-availability {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  font: 8px var(--mono);
+  letter-spacing: 0.6px;
+  color: #d0cad9;
+}
+.topbar-clock {
+  font: 9px var(--mono);
+  margin-left: 12px;
+  color: #d3cdda;
+  display: flex;
+  gap: 7px;
+  white-space: nowrap;
+}
+.topbar-clock span {
+  color: #8e8799;
+}
+@media (max-width: 1100px) {
+  .topbar {
+    gap: 26px;
+  }
+  .main-nav {
+    gap: 17px;
+  }
+  .topbar-tools {
+    gap: 4px;
+  }
+  .overview-trigger {
+    display: none;
+  }
+}
+.theme-toggle {
+  position: relative;
+  border: 1px solid #53495e;
+  background: #b8a7ff0b;
+  overflow: hidden;
+}
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  right: 2px;
+  bottom: 2px;
+  background: #b9a5d1;
+}
+.theme-toggle svg {
+  position: absolute;
+  transition:
+    transform 420ms steps(5, end),
+    opacity 260ms;
+}
+.theme-toggle .theme-sun {
+  opacity: 0;
+  transform: translateY(14px) rotate(-90deg);
+}
+.theme-toggle .theme-moon {
+  opacity: 1;
+  transform: translateY(0) rotate(0);
+}
+:root[data-theme="light"] .theme-toggle .theme-sun {
+  opacity: 1;
+  transform: translateY(0) rotate(0);
+}
+:root[data-theme="light"] .theme-toggle .theme-moon {
+  opacity: 0;
+  transform: translateY(-14px) rotate(90deg);
+}
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  animation: theme-pixel-reveal 550ms steps(12, end) both;
+}
+@keyframes theme-pixel-reveal {
+  from {
+    clip-path: circle(0 at calc(100% - 130px) 19px);
+  }
+  to {
+    clip-path: circle(200vmax at calc(100% - 130px) 19px);
+  }
+}
+@media (min-width: 761px) and (max-width: 850px) {
+  .topbar-clock,
+  .topbar-availability,
+  .resume-link,
+  .topbar-divider {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  :root {
+    --topbar-height: 70px;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    gap: 0;
+    height: 70px;
+    padding: 0 12px;
+    align-content: center;
+  }
+  .wordmark {
+    font-size: 11px;
+    height: 35px;
+  }
+  .topbar-tools {
+    height: 35px;
+    gap: 4px;
+  }
+  .topbar-availability,
+  .topbar-clock,
+  .topbar-divider,
+  .resume-link {
+    display: none;
+  }
+  .command-trigger {
+    margin-right: 0;
+  }
+  .main-nav {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 28px;
+    height: 34px;
+    padding-left: 1px;
+  }
+  .main-nav a {
+    font-size: 10px;
+  }
+}

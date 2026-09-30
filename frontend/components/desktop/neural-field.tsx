@@ -15,7 +15,7 @@ export function NeuralField() {
       frame = 0,
       last = 0,
       phase = 0;
-    const pointer = { x: -1000, y: -1000 };
+    const pointer = { x: 0, y: 0 };
     const resize = () => {
       const rect = element.getBoundingClientRect();
       width = rect.width;
@@ -35,25 +35,29 @@ export function NeuralField() {
       last = time;
       if (!reducedMotion && time) phase += 0.003;
       context.clearRect(0, 0, width, height);
-      const cols = width < 700 ? 58 : 116;
-      const rows = width < 700 ? 28 : 46;
+      const cols = width < 700 ? 90 : 195;
+      const rows = width < 700 ? 110 : 125;
       for (let row = 0; row < rows; row++)
         for (let col = 0; col < cols; col++) {
           const u = col / cols,
             v = row / rows;
-          const wave = Math.sin(u * 9 + v * 3.8 + phase) * Math.cos(v * 4.3 + phase * 0.4);
-          let x = u * width * 1.2 - width * 0.1;
-          let y = height * 0.32 + v * height * 0.7 + wave * (70 + 55 * v);
+          const wave = Math.sin(u * 8.5 + v * 3 + phase) * Math.cos(v * 7.5 - u * 2 + phase * 0.4);
+          const ribbon = Math.sin(u * 13 - v * 5 + wave * 1.8 + phase * 0.5);
+          let x = u * width;
+          let y = v * height;
           const dist = Math.hypot(x - pointer.x, y - pointer.y);
           const influence = !reducedMotion ? Math.max(0, 1 - dist / 160) : 0;
-          y -= influence * 12;
-          x += !reducedMotion ? (pointer.x / width - 0.5) * v * 5 : 0;
-          const fade = Math.sin(u * Math.PI) * (0.15 + v * 0.42);
-          const highlight = Math.max(0, wave - 0.35) * 0.28;
-          context.fillStyle = `rgba(${workspace === 1 ? "158,147,204" : "145,144,169"},${fade + highlight + influence * 0.2})`;
-          context.beginPath();
-          context.arc(x, y, 0.65 + v * 0.55 + influence * 0.4, 0, Math.PI * 2);
-          context.fill();
+          y -= influence * 5;
+          x += !reducedMotion ? (pointer.x / width - 0.5) * 2 : 0;
+          const density = Math.max(0, wave * 0.68 + ribbon * 0.34 + 0.12);
+          if (density < 0.05) continue;
+          const light = document.documentElement.dataset.theme === "light";
+          const alpha = light
+            ? density * 0.26 + influence * 0.05
+            : density * 0.52 + influence * 0.08;
+          context.fillStyle = `rgba(${light ? "80,63,103" : workspace === 1 ? "153,135,182" : density > 0.65 ? "188,180,197" : "128,111,150"},${alpha})`;
+          const pointSize = 0.7 + density * 1.3;
+          context.fillRect(x, y, pointSize, pointSize);
         }
       if (!reducedMotion && !document.hidden) frame = requestAnimationFrame(draw);
     };
@@ -70,11 +74,13 @@ export function NeuralField() {
     observer.observe(element);
     document.addEventListener("visibilitychange", visibility);
     window.addEventListener("mousemove", move, { passive: true });
+    window.addEventListener("phuoc:theme", resize);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       document.removeEventListener("visibilitychange", visibility);
       window.removeEventListener("mousemove", move);
+      window.removeEventListener("phuoc:theme", resize);
     };
   }, [workspace, reducedMotion]);
   return <canvas ref={canvas} className="neural-field" aria-hidden="true" />;

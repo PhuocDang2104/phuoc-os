@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     postgres_db: str = "portfolio"
     postgres_user: str = "portfolio"
     postgres_password: SecretStr = SecretStr("")
+    groq_api_key: SecretStr = SecretStr("")
+    groq_model: str = "llama-3.3-70b-versatile"
 
     @model_validator(mode="after")
     def validate_production(self):

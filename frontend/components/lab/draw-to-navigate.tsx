@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import { prepareDigit, recognizeDigit } from "@/lib/digit-recognition";
 import { useWorkstation } from "../shell";
@@ -14,22 +14,30 @@ const destinations = [
   "Skills & stack",
   "Contact & résumé",
 ];
+const shortLabels = ["Work", "Projects", "Research", "Awards", "Stack", "Contact"];
 
 export default function DrawToNavigate() {
   const canvas = useRef<HTMLCanvasElement>(null),
     drawing = useRef(false),
-    revision = useRef(0);
+    revision = useRef(0),
+    navigationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { openApp } = useWorkstation(),
     router = useRouter();
   const [hasInk, setHasInk] = useState(false),
     [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Awaited<ReturnType<typeof recognizeDigit>> | null>(null);
-  const [message, setMessage] = useState("waiting_for_input...");
+  const [message, setMessage] = useState("A small gesture. A new destination.");
+  useEffect(
+    () => () => {
+      if (navigationTimer.current) clearTimeout(navigationTimer.current);
+    },
+    [],
+  );
   function point(event: PointerEvent<HTMLCanvasElement>) {
     const rect = event.currentTarget.getBoundingClientRect();
     return {
-      x: ((event.clientX - rect.left) * 280) / rect.width,
-      y: ((event.clientY - rect.top) * 280) / rect.height,
+      x: ((event.clientX - rect.left) * event.currentTarget.width) / rect.width,
+      y: ((event.clientY - rect.top) * event.currentTarget.height) / rect.height,
     };
   }
   function start(event: PointerEvent<HTMLCanvasElement>) {
@@ -37,6 +45,11 @@ export default function DrawToNavigate() {
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     drawing.current = true;
+    if (!hasInk) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      event.currentTarget.width = Math.round((rect.width / rect.height) * 280);
+      event.currentTarget.height = 280;
+    }
     const ctx = event.currentTarget.getContext("2d")!,
       p = point(event);
     ctx.lineWidth = 18;
@@ -49,7 +62,7 @@ export default function DrawToNavigate() {
     ctx.stroke();
     setHasInk(true);
     setResult(null);
-    setMessage("drawing...");
+    setMessage("Looking good. Ready when you are.");
     revision.current++;
   }
   function move(event: PointerEvent<HTMLCanvasElement>) {
@@ -61,14 +74,16 @@ export default function DrawToNavigate() {
   }
   function stop() {
     drawing.current = false;
-    if (hasInk) setMessage("ready_to_recognize");
+    if (hasInk) setMessage("Your mark is ready. Let’s read it.");
   }
   function clear() {
+    if (navigationTimer.current) clearTimeout(navigationTimer.current);
     revision.current++;
-    canvas.current!.getContext("2d")!.clearRect(0, 0, 280, 280);
+    const element = canvas.current!;
+    element.getContext("2d")!.clearRect(0, 0, element.width, element.height);
     setHasInk(false);
     setResult(null);
-    setMessage("waiting_for_input...");
+    setMessage("A small gesture. A new destination.");
   }
   async function predict() {
     const input = prepareDigit(canvas.current!);
@@ -78,7 +93,7 @@ export default function DrawToNavigate() {
     }
     const version = revision.current;
     setBusy(true);
-    setMessage("loading_model_and_processing...");
+    setMessage("Waking up a tiny neural network…");
     try {
       const prediction = await recognizeDigit(input);
       if (version !== revision.current) return;
@@ -88,16 +103,22 @@ export default function DrawToNavigate() {
           ? "Try a number from 1 to 6."
           : prediction.confidence < 0.65
             ? "Not quite sure. Try drawing it again."
-            : "prediction_ready — your call.",
+            : `Opening ${destinations[prediction.digit - 1]}…`,
       );
+      if (prediction.digit >= 1 && prediction.digit <= 6 && prediction.confidence >= 0.65)
+        navigationTimer.current = setTimeout(() => {
+          if (revision.current === version) navigate(prediction.digit);
+        }, 900);
     } catch {
-      setMessage("Model unavailable. Use a destination on the left, or retry.");
+      setMessage("Model unavailable. Pick a destination above, or retry.");
     } finally {
       setBusy(false);
     }
   }
   function navigate(digit: number) {
-    if (digit === 1 || digit === 2) router.push("/work");
+    if (navigationTimer.current) clearTimeout(navigationTimer.current);
+    if (digit === 1) router.push("/work");
+    else if (digit === 2) openApp("gallery");
     else if (digit === 3) router.push("/research");
     else if (digit === 4) router.push("/awards");
     else if (digit === 5) openApp("stack");
@@ -107,25 +128,36 @@ export default function DrawToNavigate() {
   return (
     <div className="draw-content">
       <div className="draw-heading">
-        <span className="eyebrow">
-          <Icon name="spark" size={13} /> THE HANDWRITTEN SHORTCUT
-        </span>
-        <h2>A number. A new direction.</h2>
-        <p>Draw a digit from 1 to 6. Let a tiny neural network find your way.</p>
+        <div className="draw-heading-top">
+          <span className="draw-wordmark">
+            nav<span>.ai</span>
+            <Icon name="spark" size={14} />
+          </span>
+          <span className="draw-local">
+            <span className="status-dot" />
+            ON-DEVICE
+          </span>
+        </div>
+        <h2>Where to?</h2>
+        <p>Draw a number. Follow your curiosity.</p>
       </div>
       <div className="draw-layout">
         <div className="draw-destinations">
           {destinations.map((label, i) => (
-            <button key={label} onClick={() => navigate(i + 1)}>
+            <button
+              key={label}
+              onClick={() => navigate(i + 1)}
+              aria-label={`${i + 1} ${label}`}
+              className={result?.digit === i + 1 ? "is-predicted" : ""}
+            >
               <span>{i + 1}</span>
-              {label}
+              {shortLabels[i]}
               <Icon name="external" size={12} />
             </button>
           ))}
-          <p className="draw-fallback">You can click a destination, too.</p>
         </div>
         <div className="drawing-area">
-          <div className="drawing-canvas">
+          <div className={`drawing-canvas ${busy ? "is-processing" : ""}`}>
             <canvas
               ref={canvas}
               width={280}
@@ -138,28 +170,43 @@ export default function DrawToNavigate() {
             />
             {!hasInk && (
               <div className="canvas-placeholder">
-                <span>✎</span>
-                <span>DRAW HERE</span>
-                <small>mouse or touch</small>
+                <svg viewBox="0 0 80 72" fill="none" aria-hidden="true">
+                  <path
+                    d="M24 20c24-20 51 0 18 16 39-6 26 35-12 20"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="m58 53 9 9m-9 0 9-9"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    opacity=".35"
+                  />
+                </svg>
+                <span>YOUR TURN</span>
+                <small>draw 1–6 · mouse or touch</small>
               </div>
             )}
             <span className="canvas-corner corner-tl" />
             <span className="canvas-corner corner-br" />
+            <span className="canvas-grid-label">INPUT / 28 × 28</span>
           </div>
           <div className="drawing-actions">
             <button className="button button-quiet" onClick={clear} disabled={busy}>
+              <Icon name="close" size={12} />
               Clear
             </button>
             <button className="button button-light" onClick={predict} disabled={!hasInk || busy}>
-              {busy ? "Thinking…" : "Recognize"}
-              <Icon name="spark" size={13} />
+              {busy ? "Reading…" : "Recognize"}
+              <Icon name="arrow" size={13} />
             </button>
           </div>
         </div>
       </div>
       <div className="inference-output" aria-live="polite">
         <div>
-          <span className="accent">❯</span> {message}
+          <span className="accent">{busy ? "◌" : "↳"}</span> {message}
         </div>
         {result && (
           <div className="prediction-row">
@@ -181,10 +228,8 @@ export default function DrawToNavigate() {
         )}
       </div>
       <div className="model-footer">
-        <span>
-          <span className="status-dot" /> MNIST CNN · ONNX Runtime
-        </span>
-        <span>In your browser. No data uploaded.</span>
+        <span>MNIST CNN · ONNX</span>
+        <span>Your drawing stays here.</span>
       </div>
     </div>
   );

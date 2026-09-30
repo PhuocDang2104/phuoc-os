@@ -18,39 +18,35 @@ export function AppContent({ id }: { id: AppId }) {
     return (
       <>
         <div className="about-content">
-          <div className="about-topline">
-            <span className="eyebrow">HELLO WORLD. I’M</span>
-            <span className="tiny-label">
-              <span className="status-dot" /> OPEN TO OPPORTUNITIES
-            </span>
+          <div className="about-id-head mono">
+            <span><span className="about-id-symbol">p_</span> PERSONAL IDENTIFICATION</span>
+            <span>NO. 001 / 2026</span>
           </div>
-          <h2>
-            Dang Nhu Phuoc<span className="accent">.</span>
-          </h2>
-          <p className="about-role">AI & Embedded Engineer</p>
-          <p className="about-bio">
-            I build intelligent systems across hardware,
-            <br className="desktop-break" /> firmware, machine learning, and real-world deployment.
-          </p>
-          <div className="tags">
-            {profile.focus.map((focus) => (
-              <span key={focus}>{focus}</span>
-            ))}
+          <div className="about-id-main">
+            <div className="about-portrait-wrap">
+              {/* A verified GitHub profile photo; replace profile.portrait with the final portrait later. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={profile.portrait} alt="Portrait of Dang Nhu Phuoc" width="460" height="460" />
+              <span className="about-photo-corner" />
+            </div>
+            <div className="about-identity">
+              <span className="about-field mono">HOLDER / ENGINEER</span>
+              <h2>Dang Nhu Phuoc<span className="accent">.</span></h2>
+              <p className="about-role">AI & Embedded Engineer</p>
+              <div className="about-status mono"><span className="status-dot" /> OPEN TO OPPORTUNITIES</div>
+              <div className="about-id-code mono" aria-hidden="true"><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /></div>
+            </div>
           </div>
+          <p className="about-bio">{profile.bio}</p>
+          <div className="about-id-meta mono"><span>BASED IN / HO CHI MINH CITY</span><span>FOCUS / {profile.focus.join(" · ")}</span></div>
           <div className="about-actions">
             <button className="button button-light" onClick={() => openApp("journey")}>
-              Explore my journey <Icon name="arrow" size={15} />
+              View journey <Icon name="arrow" size={15} />
             </button>
             <button className="button button-quiet" onClick={() => openApp("resume")}>
               <Icon name="file" size={15} /> Résumé
             </button>
           </div>
-        </div>
-        <div className="window-footer">
-          <span>
-            <span className="location-mark">⌖</span> Ho Chi Minh City, Vietnam
-          </span>
-          <span className="mono">mind → model → machine</span>
         </div>
       </>
     );
@@ -186,7 +182,6 @@ export function AppContent({ id }: { id: AppId }) {
         </div>
       </div>
     );
-  if (id === "gallery") return <Gallery />;
   if (id === "resume")
     return (
       <div className="resume-content">
@@ -212,44 +207,14 @@ export function AppContent({ id }: { id: AppId }) {
         </p>
       </div>
     );
-  if (id === "quick")
+  if (id === "certifications")
     return (
-      <div className="content-pad">
-        <span className="eyebrow">THE 30-SECOND OVERVIEW</span>
-        <h2>{profile.name}</h2>
-        <p className="accent">{profile.role}</p>
-        <p className="body-copy">{profile.bio}</p>
-        <dl className="overview-details">
-          <div>
-            <dt>Focus</dt>
-            <dd>{profile.focus.join(" · ")}</dd>
-          </div>
-          <div>
-            <dt>Research</dt>
-            <dd>Efficient AI, vision & explainability</dd>
-          </div>
-          <div>
-            <dt>Based in</dt>
-            <dd>{profile.location}</dd>
-          </div>
-          <div>
-            <dt>Availability</dt>
-            <dd>
-              <span className="status-dot" /> Open to opportunities
-            </dd>
-          </div>
-        </dl>
-        <div className="button-row">
-          <a className="button button-light" href={profile.resume} download>
-            Résumé <Icon name="download" size={14} />
-          </a>
-          <a className="button" href={`mailto:${profile.email}`}>
-            Email <Icon name="mail" size={14} />
-          </a>
-          <a className="button" href={profile.linkedin} target="_blank" rel="noreferrer">
-            LinkedIn <Icon name="external" size={14} />
-          </a>
-        </div>
+      <div className="content-pad certification-content">
+        <span className="eyebrow">CREDENTIALS / VERIFIED EVIDENCE</span>
+        <h2>Certifications.</h2>
+        <p className="body-copy">Certificates will appear here with issuer, date, and verification link once the originals are added.</p>
+        <div className="certification-empty"><Icon name="award" size={25} /><span>AWAITING VERIFIED DOCUMENTS</span></div>
+        <Link href="/awards" className="text-link">Visit the awards wall <Icon name="external" size={14} /></Link>
       </div>
     );
   if (id === "experiments")
@@ -360,69 +325,6 @@ function Contact() {
         <a className="button" href={profile.linkedin} target="_blank" rel="noreferrer">
           <Icon name="linkedin" size={15} /> LinkedIn
         </a>
-      </div>
-    </div>
-  );
-}
-
-function Gallery() {
-  const [selected, setSelected] = useState(0);
-  const categories = [
-    {
-      name: "edge_intelligence/",
-      title: "Intelligence at the edge",
-      description:
-        "Models, embedded inference, and the engineering that connects them to real devices.",
-    },
-    {
-      name: "computer_vision/",
-      title: "Teaching machines to see",
-      description:
-        "Computer vision systems and the questions behind reliable visual understanding.",
-    },
-    {
-      name: "experiments/",
-      title: "Curiosity, made interactive",
-      description:
-        "Small, working experiments. Start with the handwritten navigation model in the AI Lab.",
-    },
-  ];
-  const { openApp } = useWorkstation();
-  return (
-    <div className="file-browser">
-      <div className="file-path">
-        phuoc / work <span>3 directories</span>
-      </div>
-      <div className="file-browser-columns">
-        <div className="file-list">
-          {categories.map((category, index) => (
-            <button
-              key={category.name}
-              onClick={() => setSelected(index)}
-              aria-pressed={selected === index}
-            >
-              <Icon name="folder" size={17} />
-              {category.name}
-            </button>
-          ))}
-        </div>
-        <div className="file-preview">
-          <div className="folder-art">
-            <Icon name={selected === 2 ? "flask" : "cpu"} size={58} />
-            <span className="mono">{selected === 2 ? "LAB / LIVE" : "WORK / IN PREPARATION"}</span>
-          </div>
-          <h3>{categories[selected].title}</h3>
-          <p className="body-copy">{categories[selected].description}</p>
-          {selected === 2 ? (
-            <button className="text-link" onClick={() => openApp("draw")}>
-              Try the experiment <Icon name="arrow" size={14} />
-            </button>
-          ) : (
-            <Link href="/work" className="text-link">
-              Open work index <Icon name="external" size={14} />
-            </Link>
-          )}
-        </div>
       </div>
     </div>
   );

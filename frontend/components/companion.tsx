@@ -1,234 +1,279 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useWorkstation } from "./shell";
 import { Icon } from "./ui/icon";
+import { CatArt } from "./milo/cat-art";
+import { useCatMotion } from "./milo/use-cat-motion";
+import { askMilo, checkMiloConnection, type ChatLine } from "@/lib/milo-chat";
 
-const pixels = [
-  "     aa       aa      ",
-  "     aba     aba      ",
-  "     abbaaaabba       ",
-  "     abbbbbbbba       ",
-  "    abbbbbbbbbba      ",
-  "    abbcbbbcbbba      ",
-  "    abbcbbbcbbba      ",
-  "    abbbbbbbbbba      ",
-  "     abbbdbbbba       ",
-  "      abbbbba         ",
-  "     abbbbbbba        ",
-  "     abbbbbbba        ",
-  "    abbbbbbbbba       ",
-  "    abbbbbbbbba       ",
-  "    abbbbbbbbba       ",
-  "     abbbaabba        ",
-  "     abba abba        ",
-  "     aaaa aaaa        ",
-];
-const palette: Record<string, string> = { a: "#96929f", b: "#d2cddc", c: "#38313f", d: "#b8a7ff" };
-
-function PixelCat({ sleeping }: { sleeping: boolean }) {
-  return (
-    <svg viewBox="0 0 28 24" className="pixel-cat" shapeRendering="crispEdges" aria-hidden="true">
-      <g className="cat-tail">
-        <path d="M18 20h5v-2h2v-6h-2v5h-2v1h-3z" fill="#96929f" />
-        <path d="M18 19h4v-2h1v-4h1v5h-2v2h-4z" fill="#d2cddc" />
-      </g>
-      <g className="cat-body">
-        {pixels.flatMap((row, y) =>
-          [...row].map((pixel, x) =>
-            pixel !== " " ? (
-              <rect
-                key={`${x}-${y}`}
-                x={x}
-                y={y + 3}
-                width="1"
-                height="1"
-                fill={
-                  sleeping && pixel === "c" ? (y === 5 ? palette.b : palette.c) : palette[pixel]
-                }
-              />
-            ) : null,
-          ),
-        )}
-        <rect className="cat-blink" x="7" y="8" width="8" height="2" fill="#d2cddc" />
-      </g>
-      {sleeping && (
-        <text x="19" y="7" fill="#b8a7ff" fontSize="5">
-          z
-        </text>
-      )}
-    </svg>
-  );
-}
+const suggestions = ["What is Phuoc building?", "Tell me about NAV.AI", "How can I contact Phuoc?"];
 
 export function Companion() {
   const { workspace, openApp, reducedMotion, windows } = useWorkstation();
   const pathname = usePathname(),
     router = useRouter();
-  const [position, setPosition] = useState(83);
-  const [facing, setFacing] = useState(1);
   const [open, setOpen] = useState(false);
-  const [hint, setHint] = useState("");
-  const [sleeping, setSleeping] = useState(false);
-  const [hop, setHop] = useState(false);
-  const [moving, setMoving] = useState(false);
-  const [popupLeft, setPopupLeft] = useState(20);
-  const button = useRef<HTMLButtonElement>(null),
-    dialog = useRef<HTMLDialogElement>(null);
-  const activity = useRef(0);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [prompt, setPrompt] = useState("");
+  const [messages, setMessages] = useState<ChatLine[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [connection, setConnection] = useState<"checking" | "ready" | "offline">("checking");
+  const dialog = useRef<HTMLDialogElement>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const transcript = useRef<HTMLDivElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
+  const drag = useRef<{ id: number; x: number; y: number; moved: boolean } | null>(null);
+  const suppressPet = useRef(false);
+  const gallery =
+    pathname === "/" && workspace === 0 && windows.some((w) => w.id === "gallery" && !w.minimized);
+  const { body, action, speech } = useCatMotion({
+    reducedMotion,
+    paused: open,
+    context: `${pathname}:${workspace}:${gallery}`,
+  });
+
+  function show() {
+    returnFocus.current = document.activeElement as HTMLElement;
+    setOpen(true);
+  }
   useEffect(() => {
-    const scheduled = timers.current;
-    activity.current = Date.now();
-    const move = (event: PointerEvent) => {
-      activity.current = Date.now();
-      setSleeping(false);
-      const rect = button.current?.getBoundingClientRect();
-      if (rect && Math.hypot(event.clientX - rect.left, event.clientY - rect.top) < 150)
-        setFacing(event.clientX > rect.left + 25 ? 1 : -1);
+    const listener = () => {
+      returnFocus.current = document.activeElement as HTMLElement;
+      setOpen(true);
     };
-    const click = (event: PointerEvent) => {
-      if (reducedMotion || event.target === button.current) return;
-      const rect = button.current?.getBoundingClientRect();
-      if (rect && Math.hypot(event.clientX - rect.left, event.clientY - rect.top) < 110) {
-        setHop(true);
-        timers.current.push(setTimeout(() => setHop(false), 350));
-      }
-    };
-    window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("pointerdown", click);
-    const interval = setInterval(() => {
-      if (document.hidden || open || reducedMotion) return;
-      if (Date.now() - activity.current > 55000) {
-        setSleeping(true);
-        return;
-      }
-      setPosition((previous) => {
-        const next = Math.max(65, Math.min(87, previous + (Math.random() - 0.5) * 18));
-        setFacing(next > previous ? 1 : -1);
-        return next;
-      });
-      setMoving(true);
-      timers.current.push(setTimeout(() => setMoving(false), 5000));
-    }, 14000);
-    return () => {
-      clearInterval(interval);
-      scheduled.forEach(clearTimeout);
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerdown", click);
-    };
-  }, [open, reducedMotion]);
+    window.addEventListener("milo:chat", listener);
+    return () => window.removeEventListener("milo:chat", listener);
+  }, []);
   useEffect(() => {
-    if (open || reducedMotion) return;
-    const hints =
-      workspace === 0
-        ? [
-            "Psst. The windows move.",
-            "Need the fast route? Ctrl + K.",
-            "A little curious? Visit the AI Lab.",
-          ]
-        : workspace === 1
-          ? ["Draw a number. See where it leads.", "All inference stays on your device."]
-          : ["Every idea leads somewhere.", "Pick a cluster. Follow your curiosity."];
-    let hide: ReturnType<typeof setTimeout>;
-    const interval = setInterval(() => {
-      if (document.hidden) return;
-      setHint(hints[Math.floor(Math.random() * hints.length)]);
-      hide = setTimeout(() => setHint(""), 4500);
-    }, 19000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(hide);
-    };
-  }, [workspace, open, reducedMotion, pathname]);
-  useEffect(() => {
-    if (open) {
-      dialog.current?.showModal();
-      const rect = button.current!.getBoundingClientRect();
-      setPopupLeft(Math.max(12, Math.min(innerWidth - 322, rect.left - 220)));
-    }
+    if (!open) return;
+    const controller = new AbortController();
+    checkMiloConnection(controller.signal).then((ready) => {
+      if (!controller.signal.aborted) setConnection(ready ? "ready" : "offline");
+    });
+    return () => controller.abort();
   }, [open]);
-  const action = (run: () => void) => {
+  useEffect(() => {
+    transcript.current?.scrollTo({ top: transcript.current.scrollHeight, behavior: "smooth" });
+  }, [messages, busy]);
+  useLayoutEffect(() => {
+    if (!open) return;
+    const element = dialog.current!;
+    const place = () => {
+      const anchor = body.current!.getBoundingClientRect();
+      element.style.left = `${Math.max(12, Math.min(innerWidth - element.offsetWidth - 12, anchor.left + anchor.width / 2 - element.offsetWidth / 2))}px`;
+      const above = anchor.top - element.offsetHeight - 12;
+      const below = anchor.bottom + 8;
+      element.style.top = `${Math.max(45, Math.min(innerHeight - element.offsetHeight - 12, above > 42 ? above : below))}px`;
+    };
+    element.showModal();
+    place();
+    input.current?.focus();
+    const observer = new ResizeObserver(place);
+    observer.observe(element);
+    window.addEventListener("resize", place);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", place);
+      element.close();
+      requestAnimationFrame(() => {
+        if (returnFocus.current?.isConnected) returnFocus.current.focus({ preventScroll: true });
+      });
+    };
+  }, [open, body]);
+
+  function navigate(run: () => void) {
     run();
     setOpen(false);
-  };
+  }
+  async function send(value = prompt) {
+    const content = value.trim();
+    if (!content || busy) return;
+    setPrompt("");
+    const next: ChatLine[] = [...messages.filter((line) => !line.error), { role: "user", content }];
+    setMessages(next);
+    setBusy(true);
+    try {
+      const reply = await askMilo(next);
+      setMessages((current) => [...current, { role: "assistant", content: reply }]);
+      setConnection("ready");
+    } catch (error) {
+      setMessages((current) => [
+        ...current,
+        { role: "assistant", content: (error as Error).message, error: true },
+      ]);
+      setConnection("offline");
+    } finally {
+      setBusy(false);
+      input.current?.focus();
+    }
+  }
+  function dragStart(event: PointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0) return;
+    suppressPet.current = false;
+    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function dragMove(event: PointerEvent<HTMLButtonElement>) {
+    const start = drag.current;
+    if (!start || start.id !== event.pointerId) return;
+    if (!start.moved && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 6) {
+      start.moved = true;
+      suppressPet.current = true;
+      window.dispatchEvent(
+        new CustomEvent("milo:drag-start", { detail: { x: start.x, y: start.y } }),
+      );
+    }
+    if (start.moved)
+      window.dispatchEvent(
+        new CustomEvent("milo:drag-move", { detail: { x: event.clientX, y: event.clientY } }),
+      );
+  }
+  function dragEnd(event: PointerEvent<HTMLButtonElement>) {
+    if (drag.current?.id !== event.pointerId) return;
+    if (drag.current.moved) window.dispatchEvent(new Event("milo:drag-end"));
+    drag.current = null;
+  }
+
   return (
-    <div
-      className={`companion ${moving && !open ? "is-walking" : ""} ${hop ? "is-hopping" : ""}`}
-      style={{ "--cat-position": `${position}%`, "--cat-facing": facing } as CSSProperties}
-      data-window-count={windows.length}
-    >
-      {hint && !open && <div className="cat-hint">{hint}</div>}
-      <button
-        ref={button}
-        className="cat-button"
-        onClick={() => {
-          setOpen((value) => !value);
-          setHint("");
-        }}
-        aria-label="Talk to Milo, the workspace companion"
-        aria-expanded={open}
+    <>
+      <div
+        ref={body}
+        className={`milo action-${action}${open ? " milo-paused" : ""}`}
+        data-action={action}
       >
-        <PixelCat sleeping={sleeping} />
-        <span className="cat-name">
-          milo<span className="accent">.os</span>
-        </span>
-      </button>
+        <span className="milo-shadow" aria-hidden="true" />
+        <button
+          className="milo-pet"
+          aria-label="Pet or drag Milo"
+          onPointerDown={dragStart}
+          onPointerMove={dragMove}
+          onPointerUp={dragEnd}
+          onPointerCancel={dragEnd}
+          onClick={() => {
+            if (suppressPet.current) {
+              suppressPet.current = false;
+              return;
+            }
+            window.dispatchEvent(new Event("milo:pet"));
+          }}
+          title="Click to pet · drag to move"
+        >
+          <span className="milo-orientation">
+            <span className="milo-direction">
+              <CatArt action={action} />
+            </span>
+          </span>
+        </button>
+        {speech && !open && (
+          <button
+            className="milo-bubble"
+            onClick={show}
+            aria-label={`Milo says: ${speech} Open assistant`}
+          >
+            <span className="milo-bubble-name">milo.os</span>
+            {speech}
+            <Icon name="external" size={10} />
+          </button>
+        )}
+        <button
+          className="milo-chat-handle"
+          onClick={show}
+          aria-label="Open Milo chat"
+          title="Ask Milo"
+        >
+          <span>···</span>
+        </button>
+      </div>
       {open && (
         <dialog
           ref={dialog}
-          className="cat-dialog"
-          style={{ left: popupLeft }}
+          className="milo-dialog milo-chat"
+          aria-label="Milo workspace assistant"
           onCancel={() => setOpen(false)}
           onClick={(event) => {
             if (event.target === event.currentTarget) setOpen(false);
           }}
-          aria-label="Milo workspace assistant"
         >
-          <div className="cat-dialog-content">
-            <div className="cat-dialog-header">
-              <span>
-                <span className="status-dot" /> MILO.OS
-              </span>
-              <button
-                className="icon-button"
-                onClick={() => setOpen(false)}
-                aria-label="Close Milo"
-              >
-                <Icon name="close" size={15} />
-              </button>
-            </div>
-            <h3>A little help finding your way?</h3>
-            <p>I live here. I know a few shortcuts.</p>
-            <button className="cat-overview" onClick={() => action(() => openApp("quick"))}>
-              <Icon name="scan" size={17} />
-              <span>Give me the quick overview</span>
-              <Icon name="arrow" size={14} />
+          <div className="milo-dialog-header">
+            <span>
+              <Icon name="cat" size={15} />
+              milo.os <small>resident intelligence</small>
+            </span>
+            <button className="icon-button" onClick={() => setOpen(false)} aria-label="Close Milo">
+              <Icon name="close" size={14} />
             </button>
-            <div className="cat-shortcuts">
-              {["Work", "Research", "Blog", "Awards"].map((label) => (
-                <button
-                  key={label}
-                  onClick={() => action(() => router.push(`/${label.toLowerCase()}`))}
-                >
-                  {label}
-                  <Icon name="external" size={13} />
+          </div>
+          <div className="milo-chat-status mono" data-ready={connection === "ready"}>
+            <span className="status-dot" />
+            {connection === "ready" ? "GROQ CONNECTED" : "GROQ READY WHEN CONFIGURED"}
+          </div>
+          <div className="milo-transcript" ref={transcript} aria-live="polite">
+            <div className="milo-message assistant">
+              <span>milo</span>
+              <p>Hi, I’m Milo. Ask me about Phuoc’s work, research, or this little workspace.</p>
+            </div>
+            {messages.map((line, index) => (
+              <div
+                key={index}
+                className={`milo-message ${line.role}${line.error ? " is-error" : ""}`}
+              >
+                <span>{line.role === "user" ? "you" : line.error ? "connection" : "milo"}</span>
+                <p>{line.content}</p>
+              </div>
+            ))}
+            {busy && (
+              <div className="milo-message assistant milo-typing">
+                <span>milo</span>
+                <p aria-label="Milo is thinking">···</p>
+              </div>
+            )}
+          </div>
+          {messages.length === 0 && (
+            <div className="milo-prompts" aria-label="Suggested questions">
+              {suggestions.map((suggestion) => (
+                <button key={suggestion} onClick={() => send(suggestion)}>
+                  {suggestion} <Icon name="arrow" size={11} />
                 </button>
               ))}
-              <button onClick={() => action(() => openApp("resume"))}>
-                Résumé
-                <Icon name="file" size={13} />
-              </button>
-              <button onClick={() => action(() => openApp("contact"))}>
-                Contact
-                <Icon name="mail" size={13} />
-              </button>
             </div>
-            <div className="cat-dialog-footer mono">Your local guide. A cat of few words.</div>
+          )}
+          <div className="milo-chat-links">
+            <button onClick={() => navigate(() => router.push("/work"))}>Work ↗</button>
+            <button onClick={() => navigate(() => router.push("/research"))}>Research ↗</button>
+            <button onClick={() => navigate(() => openApp("draw"))}>NAV.AI ↗</button>
+            <button onClick={() => navigate(() => openApp("resume"))}>Résumé ↗</button>
+          </div>
+          <form
+            className="milo-command"
+            onSubmit={(event) => {
+              event.preventDefault();
+              send();
+            }}
+          >
+            <span>❯</span>
+            <input
+              ref={input}
+              aria-label="Ask Milo anything"
+              value={prompt}
+              onChange={(event) => setPrompt(event.target.value)}
+              placeholder="Ask Milo anything…"
+              maxLength={1800}
+              autoComplete="off"
+            />
+            <button
+              type="submit"
+              aria-label="Send Milo a message"
+              disabled={!prompt.trim() || busy}
+            >
+              <Icon name="arrow" size={14} />
+            </button>
+          </form>
+          <div className="milo-chat-note mono">
+            Responses use Groq when the backend is connected.
           </div>
         </dialog>
       )}
-    </div>
+    </>
   );
 }

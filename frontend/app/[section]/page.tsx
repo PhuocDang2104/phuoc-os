@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sections, type SectionId } from "@/lib/portfolio";
 import { Icon } from "@/components/ui/icon";
+import { EditorialArchive } from "@/components/editorial-archive";
+import { AwardsWall } from "@/components/awards-wall";
 
 export function generateStaticParams() {
   return Object.keys(sections).map((section) => ({ section }));
@@ -19,6 +21,8 @@ export async function generateMetadata({
 export default async function SectionPage({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;
   if (!(section in sections)) notFound();
+  if (section === "work" || section === "research") return <EditorialArchive area={section} />;
+  if (section === "awards") return <AwardsWall />;
   const content = sections[section as SectionId];
   return (
     <main id="main" className="section-page">
@@ -27,14 +31,7 @@ export default async function SectionPage({ params }: { params: Promise<{ sectio
         <span>/</span>
         {section}
       </div>
-      <div className="section-heading">
-        <span className="eyebrow">
-          <span className="accent-line" />
-          {content.eyebrow}
-        </span>
-        <h1>{content.title}</h1>
-        <p>{content.description}</p>
-      </div>
+      <h1 className="sr-only">{content.label}</h1>
       <div className="section-index">
         <div className="section-index-title mono">
           INDEX / {content.label.toUpperCase()}

@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 
+from app.api.chat import router as chat_router
 from app.api.health import router
 from app.core.config import Settings, get_settings
 
@@ -45,11 +46,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         redoc_url=None,
         openapi_url="/openapi.json" if config.app_env != "production" else None,
     )
+    application.state.settings = config
     application.add_middleware(
         CORSMiddleware,
         allow_origins=config.cors_origins,
         allow_credentials=False,
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["Content-Type"],
     )
 
@@ -71,6 +73,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             )
 
     application.include_router(router)
+    application.include_router(chat_router)
     return application
 
 
