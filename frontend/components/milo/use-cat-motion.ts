@@ -48,6 +48,7 @@ export function useCatMotion({
       next?: () => void;
     } | null = null;
     let nextAt = 1500;
+    let nextPlatformAt = 10000 + Math.random() * 5000;
     const hints: Partial<Record<CatAction, string[]>> = {
       walk: [
         "Just checking on the workspace.",
@@ -57,7 +58,7 @@ export function useCatMotion({
       run: ["Important cat business.", "On my way. Probably.", "A little burst of curiosity."],
       hop: ["Oh! You found my jump button.", "Tiny paws. Excellent suspension."],
       climb: ["The view is better up here.", "Walls are just vertical floors."],
-      jump: ["Taking the scenic route.", "A little leap of curiosity."],
+      jump: ["This window makes a nice perch.", "Landing gear: four paws.", "A little leap of curiosity."],
       stretch: ["A quick stretch between ideas.", "Even a cat needs a screen break."],
       lie: [
         "Okay. This is my spot now.",
@@ -142,6 +143,18 @@ export function useCatMotion({
         next,
       );
     }
+    function platforms() {
+      return Array.from(document.querySelectorAll<HTMLElement>(".app-window:not(.is-maximized) .window-titlebar"))
+        .map((node) => node.getBoundingClientRect())
+        .filter((rect) => rect.width > 150 && rect.top > size.top + 20 && rect.top < size.floor + size.h - 10);
+    }
+    function perch(rect: DOMRect, x = rect.left + rect.width * (.2 + Math.random() * .45), stay = false) {
+      const landingX = clampX(Math.max(rect.left + 5, Math.min(rect.right - size.w - 5, x)));
+      const landingY = clampY(rect.top - size.h + 5);
+      begin("jump", landingX, landingY, 950, Math.min(105, Math.max(52, Math.abs(position.current.y - landingY) * .4)), 0, () => {
+        begin("sit", landingX, landingY, stay ? 5200 : 2600, 0, 0, stay ? undefined : () => begin("hop", landingX + facing * 75, size.floor, 900, 55));
+      });
+    }
     function explore() {
       measure();
       cycle++;
@@ -165,20 +178,10 @@ export function useCatMotion({
           );
         });
       } else if (cycle % 4 === 0 && innerWidth > 900) {
-        const platforms = Array.from(
-          document.querySelectorAll(".app-window:not(.is-maximized) .window-titlebar"),
-        )
-          .map((node) => node.getBoundingClientRect())
-          .filter((rect) => rect.top > size.top + size.h + 45 && rect.top < innerHeight - 160);
-        const platform = platforms[Math.floor(Math.random() * platforms.length)];
+        const available = platforms();
+        const platform = available[Math.floor(Math.random() * available.length)];
         if (platform) {
-          const x = clampX(platform.right - size.w - 38),
-            y = platform.top - size.h + 5;
-          walkTo(x, () =>
-            begin("jump", x, y, 1150, 85, 0, () =>
-              begin("sit", x, y, 2800, 0, 0, () => begin("jump", x + 125, size.floor, 1050, 80)),
-            ),
-          );
+          perch(platform);
         } else begin("hop", position.current.x + facing * 85, size.floor, 800, 75);
       } else if (cycle % 3 === 0) {
         begin("stretch", position.current.x, size.floor, 1700, 0, 0, () =>
@@ -204,6 +207,11 @@ export function useCatMotion({
       if (!paused && !dragging && !(near && ["walk", "run", "climb"].includes(current)))
         clock += delta;
       if (!paused && !dragging && !reducedMotion) {
+        if (clock > nextPlatformAt && !["lie", "sleep"].includes(current)) {
+          nextPlatformAt = clock + 10000 + Math.random() * 5000;
+          const available = platforms();
+          if (available.length) perch(available[Math.floor(Math.random() * available.length)]);
+        }
         if (journey) {
           const p = Math.min(1, (clock - journey.start) / journey.duration);
           const t =
@@ -285,10 +293,16 @@ export function useCatMotion({
       if (!dragging) return;
       dragging = false;
       element.dataset.dragging = "false";
+      const center = position.current.x + size.w / 2;
+      const eligible = platforms()
+        .filter((rect) => center >= rect.left - 35 && center <= rect.right + 35 && rect.top > position.current.y - size.h / 2)
+        .sort((a, b) => Math.abs(a.top - position.current.y - size.h) - Math.abs(b.top - position.current.y - size.h));
+      const landing = eligible[0];
       if (reducedMotion) {
-        position.current.y = size.floor;
+        position.current.y = landing ? clampY(landing.top - size.h + 5) : size.floor;
         paint();
-      } else begin("jump", position.current.x, size.floor, 690, 30);
+      } else if (landing) perch(landing, position.current.x, true);
+      else begin("jump", position.current.x, size.floor, 690, 30);
     }
     function reactToClick(event: PointerEvent) {
       const target = event.target as Element;
@@ -341,7 +355,7 @@ export function useCatMotion({
       if (!document.hidden) frame = requestAnimationFrame(tick);
     }
     measure();
-    if (position.current.x < 0) position.current = { x: innerWidth * 0.7, y: size.floor };
+    if (position.current.x < 0) position.current = { x: innerWidth * 0.92, y: size.floor };
     position.current.x = clampX(position.current.x);
     position.current.y = clampY(position.current.y);
     if (reducedMotion) {

@@ -1,8 +1,10 @@
-// Replace src with public image paths when the original documents are available.
+// Certificate images migrated from the owner's previous portfolio.
 // Native image dimensions control the wall frame and inspector; no crop or aspect ratio is imposed.
 export type AwardItem = { id: string; label: string; category: string; src: string | null };
 export const awards: AwardItem[] = [
-  { id: "award-01", label: "Award / 01", category: "Recognition", src: null },
-  { id: "certificate-01", label: "Certificate / 01", category: "Certification", src: null },
-  { id: "award-02", label: "Award / 02", category: "Recognition", src: null },
+  { id: "vnpt-2025", label: "VNPT AI Hackathon", category: "2025 / Top 3", src: "/portfolio/awards/vnpt-cert.png" },
+  { id: "fpt-2025", label: "FPT IoT Challenge", category: "2025 / Top 2", src: "/portfolio/awards/fsoft-certi.jpg" },
+  { id: "humanlog-2025", label: "HumanLog Hackathon", category: "2025 / Top 3", src: "/portfolio/awards/klu-certi.jpg" },
+  { id: "rmit-2025", label: "RMIT Hackathon", category: "2025 / Top 10", src: "/portfolio/awards/rmit-certi.jpg" },
+  { id: "denso-2025", label: "Denso Hackathon", category: "2025 / Top 10", src: "/portfolio/awards/denso-certi.png" },
 ];

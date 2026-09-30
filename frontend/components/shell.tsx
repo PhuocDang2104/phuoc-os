@@ -42,7 +42,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const [windows, setWindows] = useState<WindowState[]>([
     { id: "about", minimized: false },
     { id: "journey", minimized: false },
-    { id: "current", minimized: false },
     { id: "gallery", minimized: false },
   ]);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -94,8 +93,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const openApp = useCallback(
     (id: AppId) => {
       setWindows((previous) => [...previous.filter((w) => w.id !== id), { id, minimized: false }]);
-      setWorkspace(apps[id].workspace);
-      if (pathname !== "/") router.push("/");
+      if (id !== "contact") {
+        setWorkspace(apps[id].workspace);
+        if (pathname !== "/") router.push("/");
+      }
     },
     [pathname, router, setWorkspace],
   );
@@ -151,11 +152,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         (event.target as HTMLElement).closest("input, textarea, select, [contenteditable]")
       )
         return;
-      if (pathname !== "/") return;
       if (event.key === "Escape") {
-        const top = windows.findLast((w) => !w.minimized && apps[w.id].workspace === workspace);
+        const top = windows.findLast((w) => !w.minimized && (w.id === "contact" || w.id === "draw" || (pathname === "/" && apps[w.id].workspace === workspace)));
         if (top) closeApp(top.id);
       }
+      if (pathname !== "/") return;
       if (
         (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
         !(event.target as HTMLElement).closest("button, a, canvas")
@@ -230,6 +231,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 {section.label}
               </Link>
             ))}
+            <button className="nav-contact" onClick={() => openApp("contact")} disabled={!hydrated}>
+              Contact <Icon name="arrow" size={12} />
+            </button>
           </nav>
           <div className="topbar-tools">
             <button
@@ -323,6 +327,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
               focused={windows.at(-1)?.id === "draw"}
             >
               <AppContent id="draw" />
+            </AppWindow>
+          </div>
+        )}
+        {windows.some((item) => item.id === "contact" && !item.minimized) && (
+          <div className="global-window-layer contact-window-layer">
+            <AppWindow id="contact" index={windows.findIndex((item) => item.id === "contact")} focused={windows.at(-1)?.id === "contact"}>
+              <AppContent id="contact" />
             </AppWindow>
           </div>
         )}

@@ -44,6 +44,14 @@ export const sections = {
     items: ["Engineering notes", "Research notes", "Build logs"],
     empty: "The notebook is open. The first entry is still being written.",
   },
+  social: {
+    label: "Social",
+    eyebrow: "COMMUNITY & IMPACT",
+    title: "Beyond the build.",
+    description: "Community-minded engineering, charity and club activity.",
+    items: ["Humanitarian technology", "Charity", "Clubs"],
+    empty: "More community activities will be added with photos and dates.",
+  },
   awards: {
     label: "Awards",
     eyebrow: "RECOGNITION & MILESTONES",
@@ -59,7 +67,6 @@ export type AppId =
   | "about"
   | "snapshot"
   | "journey"
-  | "current"
   | "gallery"
   | "resume"
   | "contact"
@@ -78,7 +85,6 @@ export const apps: Record<
   about: { label: "About me", file: "about.md", icon: "user", workspace: 0 },
   snapshot: { label: "Career snapshot", file: "career_snapshot.yml", icon: "scan", workspace: 0 },
   journey: { label: "Journey", file: "journey.log", icon: "route", workspace: 0 },
-  current: { label: "Current work", file: "current_work.sh", icon: "terminal", workspace: 0 },
   gallery: { label: "Work gallery", file: "work/", icon: "folder", workspace: 0 },
   resume: { label: "Resume.pdf", file: "resume.pdf", icon: "file", workspace: 0 },
   contact: { label: "Contact", file: "contact.sh", icon: "mail", workspace: 0 },

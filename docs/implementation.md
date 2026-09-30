@@ -4,7 +4,7 @@
 
 Nền graphite/đen, accent lavender, Geist + Geist Mono self-host, border mảnh,
 cửa sổ có hierarchy rõ. Navbar mảnh và file launcher hai cột ở góc trái trên.
-Nền Home chỉ có neural field, không có hero/watermark/caption. About dạng thẻ ID, Journey và Current Work mở sẵn; Work Gallery tự mở ở đáy. NAV.AI là popup toàn site, giữ nguyên vị trí và trạng thái qua các trang, chỉ đóng khi người dùng bấm x.
+Nền Home chỉ có neural field, không có hero/watermark/caption. About dạng thẻ ID ngang, Journey dạng log dọc bên phải mở sẵn; Work Gallery tự mở ở đáy. NAV.AI là popup toàn site, giữ nguyên vị trí và trạng thái qua các trang, chỉ đóng khi người dùng bấm x.
 
 Home có 3 trải nghiệm khác nhau:
 
@@ -12,8 +12,7 @@ Home có 3 trải nghiệm khác nhau:
 2. AI Lab: stack, research, experiments.
 3. Neural Core: vùng khám phá dạng spherical point cloud với bốn portal.
 
-Work / Research có archive bài viết về những phần đã triển khai trong repo;
-Blog chờ nội dung thật; Awards đã có tường trưng bày, khung chờ ảnh và inspector kéo xoay 3D, giữ tỷ lệ tự nhiên khi thêm ảnh.
+Work / Research có archive bài viết, dự án thật và bài paper cùng asset đã chuyển từ portfolio cũ; Blog chờ nội dung thật. Social ghi lại SAVINA/HumanLog và để ngỏ hoạt động từ thiện, CLB khi có bằng chứng. Awards dùng ảnh chứng nhận thật, inspector kéo xoay 3D và tỷ lệ ảnh tự nhiên.
 
 ## Các lựa chọn triển khai
 
@@ -114,9 +113,5 @@ Không commit dump vào Git. Docker volume không thay thế backup; định k�
   nên trở lại Home vẫn thấy popup. Các nút chọn đích vẫn hoạt động khi model lỗi.
 - Theme sáng/tối lưu trong localStorage. View Transition dùng bước pixel; reduced motion
   bỏ hiệu ứng. GitHub/LinkedIn hiện trên navbar cả mobile.
-- Work/Research dùng dữ liệu trong `frontend/lib/editorial.ts`: thư mục chủ đề, search,
-  index và bài đọc. Các ghi chú dựa trên code có thật của repo; không gán công bố
-  hoặc kết quả dự án chưa được cung cấp.
-- Playwright hiện có 35 kiểm thử đạt trên desktop/mobile, 1 kiểm thử kéo cửa sổ
-  desktop được bỏ qua trên mobile. Backend: 9 kiểm thử đạt, Ruff đạt. API Groq
-  được xác minh bằng provider giả lập; chưa có khóa thật để gọi model trực tiếp.
+- Work/Research dùng dữ liệu trong `frontend/lib/editorial.ts`: thư mục chủ đề, search, index và bài đọc. Dự án, chứng chỉ và paper lấy từ portfolio cũ và thư mục paper do chủ website cung cấp.
+- Playwright kiểm tra desktop/mobile, cửa sổ, carousel, NAV.AI, Contact, Social và paper; backend có 9 kiểm thử. Groq cần khóa backend để gọi model trực tiếp.

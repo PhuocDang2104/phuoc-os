@@ -21,8 +21,6 @@ const profileApps: AppId[] = [
   "resume",
   "journey",
   "certifications",
-  "current",
-  "contact",
 ];
 const labApps: AppId[] = ["draw", "research", "stack", "experiments", "notes"];
 const appOrder = Object.keys(apps);
@@ -36,7 +34,7 @@ export function Desktop() {
   const galleryOpen = visible.some((w) => w.id === "gallery");
   // Stable DOM order preserves pointer capture while the focused window's z-index changes.
   const renderOrder = visible
-    .filter((w) => w.id !== "gallery" && w.id !== "draw")
+    .filter((w) => w.id !== "gallery" && w.id !== "draw" && w.id !== "contact")
     .sort((a, b) => appOrder.indexOf(a.id) - appOrder.indexOf(b.id));
   const minimized = windows.filter((w) => w.minimized && apps[w.id].workspace === workspace);
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { galleryItems, type GalleryItem } from "@/lib/gallery";
 import { useWorkstation } from "../shell";
 import { Icon } from "../ui/icon";
@@ -83,7 +84,7 @@ export function WorkGallery() {
       suppressClick.current = true;
       event.currentTarget.setPointerCapture(event.pointerId);
       const width = event.currentTarget.scrollWidth / 2;
-      event.currentTarget.scrollLeft = (((drag.current.scroll - distance) % width) + width) % width;
+      event.currentTarget.scrollTo({ left: (((drag.current.scroll - distance) % width) + width) % width, behavior: "instant" });
     }
   }
   function step(direction: number) {
@@ -149,6 +150,7 @@ export function WorkGallery() {
         }}
         onPointerDown={(event) => {
           if (event.button !== 0) return;
+          event.currentTarget.scrollTo({ left: event.currentTarget.scrollLeft, behavior: "instant" });
           suppressClick.current = false;
           drag.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft, moved: false };
         }}
@@ -183,7 +185,7 @@ export function WorkGallery() {
                   aria-label={`Open ${item.title}`}
                 >
                   <div className="gallery-thumbnail">
-                    <GalleryArt art={item.art} />
+                    {item.src ? <Image className="gallery-art" src={item.src} alt="" fill sizes="228px" draggable={false} /> : <GalleryArt art={item.art} />}
                     <span className="gallery-card-category">{item.category}</span>
                     <span className="gallery-open">
                       <Icon name="external" size={14} />

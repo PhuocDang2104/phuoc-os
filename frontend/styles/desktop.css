@@ -27,13 +27,13 @@
   background: #09090c38;
 }
 .desktop-file {
-  height: 28px;
+  height: 30px;
   padding: 4px 7px 4px 2px;
   display: flex;
   align-items: center;
   gap: 8px;
   color: #bfbdc8;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   border-radius: 3px;
 }
@@ -207,6 +207,12 @@
 }
 .window-contact {
   width: 470px;
+}
+@media (min-width: 901px) {
+  .window-about { left: 6%; top: 20%; width: min(665px, 49vw); max-height: calc(100svh - 300px); }
+  .window-journey { left: 60%; top: 13%; width: min(445px, 35vw); height: min(550px, calc(100svh - 280px)); max-height: none; }
+  .window-journey .window-body { flex: 1; }
+  .contact-window-layer .window-contact { left: calc(50% - 235px); top: max(90px, calc(50% - 218px)); width: min(470px, calc(100vw - 30px)); max-height: min(530px, calc(100svh - 120px)); }
 }
 .window-certifications {
   width: 420px;
@@ -657,7 +663,7 @@
   }
   .desktop-file {
     height: 30px;
-    font-size: 10px;
+    font-size: 11px;
   }
   .has-gallery {
     padding-bottom: 220px;
@@ -710,4 +716,12 @@
   .portal-awards {
     right: 4%;
   }
+}
+@media (max-width: 900px) {
+  .global-window-layer .window-contact { position: fixed; left: 50%; top: calc(var(--topbar-height) + 16px); transform: translateX(-50%); width: min(470px, calc(100vw - 24px)); max-height: calc(100svh - var(--topbar-height) - 30px); }
+}
+@media (min-width: 901px) {
+  .desktop .window-about { left: 6%; top: 20%; width: min(710px, 52vw); }
+  .desktop .window-journey { left: 60%; top: 13%; width: min(445px, 35vw); height: min(550px, calc(100svh - 280px)); max-height: none; }
+  .desktop .window-about.is-maximized, .desktop .window-journey.is-maximized { left: 16px; top: 124px; width: auto; height: auto; max-height: none; }
 }

@@ -1,7 +1,7 @@
 .awards-page { min-height: calc(100svh - var(--topbar-height)); background: #18171a; color: #f0edf1; overflow: hidden; }
 .awards-wall-intro { padding: 28px clamp(22px, 4vw, 70px) 0; }
 .awards-wall-intro .archive-breadcrumb { color: #a99eaa; }
-.awards-wall { display: flex; align-items: flex-start; justify-content: center; gap: clamp(35px, 6vw, 105px); min-height: 550px; padding: 145px 30px 115px; }
+.awards-wall { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 95px clamp(35px, 5vw, 90px); min-height: 550px; padding: 145px 30px 115px; }
 .award-hanging { position: relative; display: flex; flex-direction: column; align-items: center; width: max-content; max-width: 30%; padding: 0; color: inherit; transition: transform .35s ease; }
 .award-hanging:hover { transform: translateY(-7px) rotate(-1deg); }
 .award-hanging-2 { margin-top: 52px; }

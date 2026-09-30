@@ -7,11 +7,57 @@ export type EditorialEntry = {
   title: string;
   summary: string;
   tags: string[];
+  thumbnail?: string;
+  document?: { label: string; href: string };
   sections: { heading: string; text: string }[];
 };
 
-// Notes about implemented work in this repository. Add verified external work here later.
+// Project media and documents are migrated from the owner's previous portfolio and paper folder.
 export const entries: EditorialEntry[] = [
+  {
+    id: "vnpt-meetmate", area: "work", category: "AI systems", kind: "SELECTED PROJECT",
+    title: "SAVINAI MeetMate · VNPT AI Hackathon 2025",
+    summary: "A meeting intelligence system using speech and agent workflows, built for the VNPT AI Hackathon. Top 3 among more than 200 teams.",
+    thumbnail: "/portfolio/projects/vnpt-ai-banner.png", tags: ["Speech AI", "LangGraph", "Cloud"],
+    sections: [
+      { heading: "Problem", text: "Meeting decisions and action items are easy to lose across recordings and notes. MeetMate was built around the full meeting lifecycle, from speech to useful follow-up." },
+      { heading: "System", text: "The team integrated a low-latency LangGraph pipeline with VNPT APIs and cloud services to produce recaps and structured meeting outputs. The original project archive documents the architecture and deployment." },
+      { heading: "Recognition", text: "The project received 2nd Runner-up at VNPT AI Hackathon 2025. The certificate is available on the Awards wall." },
+    ],
+  },
+  {
+    id: "fpt-iot", area: "work", category: "Embedded & IoT", kind: "SELECTED PROJECT",
+    title: "FPT IoT Challenge · connected intelligence",
+    summary: "An end-to-end AIoT solution delivered under competition constraints; Top 2 among 140 teams.",
+    thumbnail: "/portfolio/projects/iot_challenge_banner.png", tags: ["AIoT", "Embedded", "System integration"],
+    sections: [
+      { heading: "Build", text: "The project connected embedded hardware, software and intelligent processing into a working AIoT flow. My contribution included system integration and engineering delivery under a short competition timeline." },
+      { heading: "Recognition", text: "The team placed Top 2 in FPT IoT Challenge 2025. The corresponding certificate is available on the Awards wall." },
+    ],
+  },
+  {
+    id: "savina", area: "work", category: "Embedded & IoT", kind: "SELECTED PROJECT",
+    title: "SAVINA · humanitarian logistics AIoT",
+    summary: "An AIoT logistics MVP with hardware–software integration and real-time monitoring, recognized at HumanLog 2025.",
+    thumbnail: "/portfolio/projects/humanlog2025_banner.png", tags: ["Humanitarian technology", "AIoT", "Monitoring"],
+    sections: [
+      { heading: "Purpose", text: "SAVINA explores how connected sensing and software can support humanitarian logistics. It is a technology project for a social-impact challenge, rather than a claim of charity or club membership." },
+      { heading: "Delivery", text: "The team built a working MVP spanning firmware, edge AI and software integration with real-time monitoring." },
+      { heading: "Recognition", text: "SAVINA finished 2nd Runner-up at HumanLog Hackathon 2025, among 165 teams. The certificate is shown in Awards." },
+    ],
+  },
+  {
+    id: "wrist-fall", area: "research", category: "Intelligent sensing", kind: "PAPER / PDF",
+    title: "Explainable Compact Neural Network for Wrist-Based Fall Detection and Direction Recognition with UCI Feature Pruning — Subject-Independent Evaluation on BITS and WEDA",
+    summary: "Subject-independent evaluation on BITS and WEDA with UCI feature pruning for compact, explainable wrist-sensor inference.",
+    thumbnail: "/portfolio/research/wrist-fall-overview.png", document: { label: "Read paper PDF", href: "/portfolio/research/wrist-fall-detection.pdf" },
+    tags: ["Fall detection", "Explainable AI", "Wearables", "BITS / WEDA"],
+    sections: [
+      { heading: "Research question", text: "Can a compact neural network detect falls and recognize direction from wrist-worn sensing while remaining interpretable and useful under subject-independent evaluation?" },
+      { heading: "Approach", text: "The study combines UCI-guided feature pruning with a compact neural architecture and explainability analysis. BITS and WEDA provide the evaluation datasets." },
+      { heading: "Read the paper", text: "The full manuscript is available as a local PDF above. Refer to the paper for experimental protocol, quantitative results, authors and publication details." },
+    ],
+  },
   {
     id: "phuoc-os",
     area: "work",

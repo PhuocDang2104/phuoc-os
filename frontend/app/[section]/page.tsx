@@ -5,6 +5,7 @@ import { sections, type SectionId } from "@/lib/portfolio";
 import { Icon } from "@/components/ui/icon";
 import { EditorialArchive } from "@/components/editorial-archive";
 import { AwardsWall } from "@/components/awards-wall";
+import { SocialPage } from "@/components/social-page";
 
 export function generateStaticParams() {
   return Object.keys(sections).map((section) => ({ section }));
@@ -23,6 +24,7 @@ export default async function SectionPage({ params }: { params: Promise<{ sectio
   if (!(section in sections)) notFound();
   if (section === "work" || section === "research") return <EditorialArchive area={section} />;
   if (section === "awards") return <AwardsWall />;
+  if (section === "social") return <SocialPage />;
   const content = sections[section as SectionId];
   return (
     <main id="main" className="section-page">

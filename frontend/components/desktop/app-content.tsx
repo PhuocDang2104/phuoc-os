@@ -33,12 +33,13 @@ export function AppContent({ id }: { id: AppId }) {
               <span className="about-field mono">HOLDER / ENGINEER</span>
               <h2>Dang Nhu Phuoc<span className="accent">.</span></h2>
               <p className="about-role">AI & Embedded Engineer</p>
+              <p className="about-school mono">HCMUT / Ho Chi Minh City University of Technology</p>
               <div className="about-status mono"><span className="status-dot" /> OPEN TO OPPORTUNITIES</div>
               <div className="about-id-code mono" aria-hidden="true"><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /><span /></div>
             </div>
           </div>
           <p className="about-bio">{profile.bio}</p>
-          <div className="about-id-meta mono"><span>BASED IN / HO CHI MINH CITY</span><span>FOCUS / {profile.focus.join(" · ")}</span></div>
+          <div className="about-id-meta mono"><span>FOCUS <b>Edge AI · Computer Vision · Embedded Systems</b></span><span>RESEARCH <b>Explainable AI · Intelligent sensing</b></span><span>BUILD <b>Hardware · Firmware · Edge inference</b></span></div>
           <div className="about-actions">
             <button className="button button-light" onClick={() => openApp("journey")}>
               View journey <Icon name="arrow" size={15} />
@@ -135,51 +136,18 @@ export function AppContent({ id }: { id: AppId }) {
     );
   if (id === "journey")
     return (
-      <div className="content-pad">
-        <span className="eyebrow">A WORK IN PROGRESS, BY DESIGN</span>
-        <h2>The path is part of the work.</h2>
-        <div className="journey-log">
-          <p>
-            <span className="accent">❯</span> cat journey.log
-          </p>
-          <div>
-            <span className="log-marker">NOW</span>
-            <h3>Building across disciplines</h3>
-            <p>Connecting hardware, firmware, computer vision, and machine learning.</p>
-            <button className="text-link" onClick={() => openApp("current")}>
-              View current focus <Icon name="arrow" size={14} />
-            </button>
-          </div>
-          <div>
-            <span className="log-marker muted">NEXT</span>
-            <h3>Documenting the journey</h3>
-            <p>
-              Education, roles, and project milestones will be added with their dates and supporting
-              work.
-            </p>
-          </div>
+      <div className="journey-content">
+        <div className="journey-head mono"><span><b>p_</b> PHUOC.OS / JOURNEY.LOG</span><span>2023—2026</span></div>
+        <div className="journey-intro"><span className="mono">LEARN / BUILD / RESEARCH / GROW</span><h2>From foundations to intelligent systems<span className="accent">.</span></h2></div>
+        <div className="journey-timeline">
+          {[
+            { year: "2023", type: "FOUNDATION", title: "HCMUT", detail: "Computer Engineering · Ho Chi Minh City University of Technology", href: "/work" },
+            { year: "2025", type: "EMBEDDED", title: "FPT Software", detail: "Embedded engineering internship · hardware and firmware", href: "/work" },
+            { year: "2026", type: "RESEARCH", title: "MLIoT Lab", detail: "Research assistant · AI for IoT and intelligent sensing", href: "/research" },
+            { year: "2026", type: "AI TRACK", title: "FPT Software", detail: "ML/DL AI engineering internship · machine learning and vision", href: "/research" },
+          ].map((item, index) => <Link href={item.href} className="journey-milestone" key={`${item.year}-${item.type}`}><span className="journey-year mono">{item.year}<small>{item.type}</small></span><span className="journey-node" /><span className="journey-event"><span className="mono">0{index + 1} / {item.type}</span><strong>{item.title}</strong><small>{item.detail}</small></span><Icon name="arrow" size={15} /></Link>)}
         </div>
-      </div>
-    );
-  if (id === "current")
-    return (
-      <div className="content-pad">
-        <span className="eyebrow">ON THE WORKBENCH</span>
-        <h2>Currently exploring.</h2>
-        <div className="current-list">
-          {["Edge AI & embedded intelligence", "Computer vision", "Research & explainability"].map(
-            (item, i) => (
-              <Link href={i ? "/research" : "/work"} key={item}>
-                <span className="mono muted">0{i + 1}</span>
-                <span>
-                  {item}
-                  <small>ONGOING FOCUS</small>
-                </span>
-                <Icon name="external" />
-              </Link>
-            ),
-          )}
-        </div>
+        <div className="journey-foot mono">EDGE AI · EMBEDDED SYSTEMS · COMPUTER VISION</div>
       </div>
     );
   if (id === "resume")
@@ -210,10 +178,12 @@ export function AppContent({ id }: { id: AppId }) {
   if (id === "certifications")
     return (
       <div className="content-pad certification-content">
-        <span className="eyebrow">CREDENTIALS / VERIFIED EVIDENCE</span>
+        <span className="eyebrow">CREDENTIALS / DOCUMENTS</span>
         <h2>Certifications.</h2>
-        <p className="body-copy">Certificates will appear here with issuer, date, and verification link once the originals are added.</p>
-        <div className="certification-empty"><Icon name="award" size={25} /><span>AWAITING VERIFIED DOCUMENTS</span></div>
+        <div className="certification-list">
+          <a href="/portfolio/awards/intel-certi.pdf" target="_blank" rel="noreferrer"><Icon name="award" size={16} /><span>Intel AI Global Challenge<small>2025 / PDF certificate</small></span><Icon name="external" size={14} /></a>
+          <Link href="/awards"><Icon name="award" size={16} /><span>Competition certificates<small>VNPT · FPT · HumanLog · RMIT · Denso</small></span><Icon name="external" size={14} /></Link>
+        </div>
         <Link href="/awards" className="text-link">Visit the awards wall <Icon name="external" size={14} /></Link>
       </div>
     );
@@ -294,38 +264,12 @@ function Contact() {
     }
   }
   return (
-    <div className="content-pad contact-content">
-      <p className="terminal-command">
-        <span>❯</span> let’s build something meaningful.
-      </p>
-      {[
-        { command: "whoami", text: profile.name },
-        { command: "status", text: "Open to opportunities" },
-        { command: "location", text: profile.location },
-      ].map((item) => (
-        <div className="contact-line" key={item.command}>
-          <span>~/{item.command}</span>
-          <p>{item.text}</p>
-        </div>
-      ))}
-      <div className="contact-line">
-        <span>~/mail</span>
-        <a href={`mailto:${profile.email}`}>
-          {profile.email} <Icon name="external" size={14} />
-        </a>
-      </div>
-      <div className="button-row">
-        <button className="button button-light" onClick={copy} aria-live="polite">
-          <Icon name="mail" size={14} />
-          {copyState}
-        </button>
-        <a className="button" href={profile.github} target="_blank" rel="noreferrer">
-          <Icon name="github" size={15} /> GitHub
-        </a>
-        <a className="button" href={profile.linkedin} target="_blank" rel="noreferrer">
-          <Icon name="linkedin" size={15} /> LinkedIn
-        </a>
-      </div>
+    <div className="contact-content">
+      <div className="contact-hero mono"><span>01 / DIRECT CHANNEL</span><span className="contact-live"><i /> AVAILABLE</span></div>
+      <div className="contact-intro"><span className="eyebrow">LET’S CONNECT</span><h2>Have an idea worth building<span className="accent">?</span></h2><p>Open to engineering opportunities, research collaborations and thoughtful conversations.</p></div>
+      <a className="contact-email" href={`mailto:${profile.email}`}><Icon name="mail" size={19} /><span><small>EMAIL / FASTEST WAY TO REACH ME</small><strong>{profile.email}</strong></span><Icon name="external" size={17} /></a>
+      <div className="contact-links"><a href={profile.github} target="_blank" rel="noreferrer"><Icon name="github" size={16} /> GitHub <Icon name="external" size={13} /></a><a href={profile.linkedin} target="_blank" rel="noreferrer"><Icon name="linkedin" size={16} /> LinkedIn <Icon name="external" size={13} /></a></div>
+      <div className="contact-foot"><span className="mono">HO CHI MINH CITY, VIETNAM</span><button className="mono" onClick={copy} aria-live="polite">{copyState} <Icon name="arrow" size={13} /></button></div>
     </div>
   );
 }

@@ -26,14 +26,13 @@ npm run start
 
 ## Đã triển khai
 
-- **Profile Desk:** About dạng thẻ ID với avatar GitHub tạm; Journey, Current Work và Work Gallery mở sẵn. Launcher có Certifications ngay trên Contact.
+- **Profile Desk:** About là thẻ ID ngang, Journey là cửa sổ log dọc bên phải; cả hai cùng Work Gallery mở sẵn. Contact nằm ngay sau Awards trên navbar và mở popup toàn site.
 - **Hệ cửa sổ:** kéo bằng title bar, focus, minimize/restore, close, maximize bằng
   nút hoặc double-click title bar; Escape đóng cửa sổ trên cùng.
 - **NAV.AI ngay trên Home:** popup canvas chuột/chạm nhỏ gọn, CNN MNIST pretrained chạy bằng ONNX Runtime Web,
   confidence và latency thực, tự điều hướng khi nhận diện đủ chắc chắn; popup giữ trạng thái khi quay lại Home. Có đường điều hướng
   bằng nút khi model lỗi hoặc không muốn vẽ.
-- **Work Gallery:** popup ở đáy màn hình, carousel chạy liên tục, kéo/vuốt,
-  pause khi hover/focus và có nút điều khiển. Thumbnail SVG minh họa các demo và hướng nghiên cứu.
+- **Work Gallery:** carousel ở đáy màn hình có ảnh dự án thật, chạy liên tục, kéo/vuốt, pause khi hover/focus và có nút điều khiển.
 - **AI Lab:** workspace riêng cho stack, research và experiments.
 - **Neural Core:** point cloud hình cầu có bốn portal đến Work, Research, Blog, Awards.
 - **Milo:** mèo SVG nhiều lớp, đi/chạy, nhảy lên title bar, leo tường và đổi lời nhắn
@@ -42,8 +41,8 @@ npm run start
   và các nút điều hướng. Khóa Groq chỉ nằm trên backend.
 - **Light / dark:** nút chuyển trên navbar với hiệu ứng pixel, ghi nhớ lựa chọn; GitHub
   và LinkedIn luôn có biểu tượng trên navbar.
-- **Work / Research:** danh sách article dạng archive, sidebar phẳng như trình chọn thư mục, tìm kiếm và thumbnail 16:9 cho từng bài. Nội dung hiện mô tả các tính năng đã xây trong repo, không gán dự án hay công bố chưa được xác thực.
-- **Awards:** tường trưng bày nền trống; khung ảnh chờ tài liệu gốc. Bấm khung để xem ở chế độ 3D, kéo xoay và phóng to. Ảnh thật giữ tỷ lệ tự nhiên.
+- **Work / Research:** archive có sidebar thư mục, tìm kiếm và thumbnail 16:9. Đã thêm các dự án có chứng chỉ từ portfolio cũ và PDF bài nghiên cứu wrist-based fall detection.
+- **Awards:** tường treo ảnh chứng nhận thật từ portfolio cũ; bấm để inspect 3D, xoay và phóng to. Ảnh giữ tỷ lệ tự nhiên.
 - **Command palette:** Ctrl/Cmd+K, fuzzy search, ↑/↓, Enter, Escape, native focus trap.
 - **Responsive:** navbar và file launcher gọn ở góc trái; nền Home không có chữ
   trang trí. Mobile xếp các cửa sổ nội dung dọc, NAV.AI là popup nổi, gallery neo đáy.
@@ -68,7 +67,7 @@ tạm có ghi rõ trạng thái, chỉ chứa thông tin đã cung cấp. Link x
 không cần đổi. Có script tái tạo PDF tạm tại `scripts/create-placeholder-resume.py`
 (cần `reportlab`, không phải dependency chạy web).
 
-Blog vẫn chờ bài viết thật. Awards đã có giao diện tường và inspector nhưng chưa có ảnh giải thưởng hoặc chứng chỉ xác thực. Thay `src` trong `frontend/lib/awards.ts` bằng đường dẫn ảnh trong `frontend/public/`; hệ thống dùng tỷ lệ tự nhiên của ảnh. Avatar About hiện lấy tạm từ GitHub tại `frontend/public/portrait-github.png`; thay file này bằng ảnh chân dung chính thức khi có. Journey chưa gắn mốc thời gian khi chưa có dữ liệu xác thực.
+Blog vẫn chờ bài viết thật. Social hiện có dự án SAVINA tại HumanLog; hoạt động từ thiện và CLB sẽ bổ sung khi có tư liệu. Assets dự án, chứng chỉ và bài paper nằm trong `frontend/public/portfolio/`. Avatar About vẫn dùng ảnh GitHub tạm tại `frontend/public/portrait-github.png`; thay ảnh chân dung và `frontend/public/resume.pdf` khi có bản chính thức.
 
 ## Bật chat Groq cho Milo
 

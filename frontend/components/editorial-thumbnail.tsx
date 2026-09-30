@@ -7,7 +7,8 @@ const motifs: Record<string, { code: string; color: string; tint: string }> = {
   "human-ai-interface": { code: "03 / UX", color: "#e4b6d9", tint: "#32243a" },
 };
 
-export function EditorialThumbnail({ id }: { id: string }) {
+export function EditorialThumbnail({ id, src }: { id: string; src?: string }) {
+  if (src) return <span className="editorial-thumbnail" aria-hidden="true"><img src={src} alt="" loading="lazy" /></span>; // eslint-disable-line @next/next/no-img-element
   const motif = motifs[id] ?? motifs["phuoc-os"];
   return (
     <span className="editorial-thumbnail" aria-hidden="true">

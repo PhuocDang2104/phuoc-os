@@ -9,13 +9,13 @@ test("first paint tells the story and all main routes are reachable", async ({ p
   });
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Dang Nhu Phuoc." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "The path is part of the work." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Currently exploring." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "From foundations to intelligent systems." })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Journey", exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "Work gallery", exact: true })).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();
-  for (const name of ["Work", "Research", "Blog", "Awards"]) {
+  for (const name of ["Work", "Research", "Blog", "Social", "Awards"]) {
     await page
       .getByRole("navigation", { name: "Main navigation" })
       .getByRole("link", { name, exact: true })
@@ -160,7 +160,7 @@ test("desktop dragging and maximization stay within the workspace", async ({ pag
   await page.getByRole("button", { name: "Maximize About me", exact: true }).click();
   expect((await window.boundingBox())!.width).toBeGreaterThan(1300);
   await page.getByRole("button", { name: "Restore About me", exact: true }).click();
-  expect((await window.boundingBox())!.width).toBeLessThan(700);
+  expect((await window.boundingBox())!.width).toBeLessThan(750);
 });
 
 test("reduced motion preference persists", async ({ page }) => {

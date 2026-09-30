@@ -285,6 +285,52 @@
 .contact-content .button-row {
   margin-top: 28px;
 }
+.journey-content { min-height: 100%; background: #17151c; }
+.journey-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 15px 21px; color: #aaa0b8; border-bottom: 1px solid #51475b; font-size: 8px; letter-spacing: .6px; }
+.journey-head b { display: inline-grid; place-items: center; width: 25px; height: 25px; margin-right: 7px; background: #bba7ed; color: #1a1520; font-size: 10px; }
+.journey-intro { padding: 17px 22px 9px; }
+.journey-intro > span { color: #a393b4; font-size: 8px; letter-spacing: .8px; }
+.journey-intro h2 { margin: 8px 0 0; max-width: 340px; font-size: 23px; line-height: 1.15; letter-spacing: -.8px; }
+.journey-timeline { padding: 3px 22px 12px; }
+.journey-milestone { position: relative; display: grid; grid-template-columns: 50px 19px minmax(0,1fr) 15px; gap: 10px; align-items: start; min-height: 78px; color: inherit; }
+.journey-milestone:hover .journey-event { border-color: #9d83bd; background: #b8a7ff0b; }
+.journey-milestone > svg { align-self: center; color: #9c83b7; }
+.journey-year { padding-top: 12px; color: #bda8e5; font-size: 15px; font-weight: 700; }
+.journey-year small { display: block; margin-top: 5px; color: #9888a8; font-size: 6px; font-weight: 400; letter-spacing: .7px; }
+.journey-node { position: relative; align-self: stretch; border-left: 1px solid #665878; margin-left: 8px; }
+.journey-node:before { content: ""; position: absolute; left: -6px; top: 17px; width: 11px; height: 11px; border: 1px solid #bda8e5; background: #32283e; box-shadow: inset 0 0 0 2px #17151c; }
+.journey-event { display: flex; flex-direction: column; gap: 4px; margin: 3px 0 7px; padding: 8px 13px; border: 1px solid #4d4356; background: #1d1a24; transition: border-color .2s, background .2s; }
+.journey-event > span { color: #a28db9; font-size: 7px; letter-spacing: .7px; }
+.journey-event strong { color: #f0eaf4; font-size: 14px; font-weight: 600; }
+.journey-event small { color: #b7aabd; font-size: 9px; line-height: 1.45; }
+.journey-foot { border-top: 1px solid #51475b; padding: 8px 21px; color: #a397b1; font-size: 7px; letter-spacing: .5px; }
+.contact-content { background: #19161f; color: #f0edf4; }
+.contact-hero { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #4a4052; color: #b09fc3; font-size: 8px; letter-spacing: .8px; }
+.contact-live { display: flex; align-items: center; gap: 7px; color: #d3c4e2; }
+.contact-live i { width: 6px; height: 6px; border-radius: 50%; background: #c4a4e9; box-shadow: 0 0 0 4px #c4a4e91c; }
+.contact-intro { padding: 26px 22px 17px; }
+.contact-intro .eyebrow { color: #bba6da; font-size: 8px; }
+.contact-intro h2 { max-width: 380px; margin: 9px 0; font-size: 27px; line-height: 1.16; letter-spacing: -.9px; }
+.contact-intro p { max-width: 360px; color: #b8afc0; font-size: 11px; line-height: 1.6; }
+.contact-email { display: flex; align-items: center; gap: 12px; margin: 0 20px; padding: 15px 13px; border: 1px solid #6a587b; background: #b8a7ff0b; transition: border-color .2s, background .2s, transform .2s; }
+.contact-email:hover { border-color: #bba8e3; background: #b8a7ff16; transform: translateY(-2px); }
+.contact-email > svg { color: #c2aee3; flex: none; }
+.contact-email > svg:last-child { margin-left: auto; }
+.contact-email span { display: grid; gap: 5px; min-width: 0; }
+.contact-email small { color: #9b8bab; font: 7px var(--mono); letter-spacing: .7px; }
+.contact-email strong { color: #f0e9fa; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.contact-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 9px 20px 19px; }
+.contact-links a { display: flex; align-items: center; gap: 9px; padding: 12px; border: 1px solid #4f435a; color: #d9cce5; font-size: 11px; transition: border-color .2s, color .2s; }
+.contact-links a:hover { border-color: #a892bf; color: white; }
+.contact-links a svg:last-child { margin-left: auto; }
+.contact-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 13px 20px; border-top: 1px solid #4a4052; }
+.contact-foot span, .contact-foot button { color: #ae9ebd; font-size: 8px; }
+.contact-foot button { display: flex; align-items: center; gap: 5px; color: #c9b2e8; }
+:root[data-theme="light"] .journey-content, :root[data-theme="light"] .contact-content { background: #f3edf6; color: #2d2337; }
+:root[data-theme="light"] .journey-event { background: #f7f2fa; }
+:root[data-theme="light"] .journey-event strong, :root[data-theme="light"] .contact-email strong { color: #33253c; }
+:root[data-theme="light"] .contact-email { background: #ac8aca10; }
+@media (max-width: 480px) { .journey-head { font-size: 7px; padding-inline: 14px; } .journey-intro { padding-inline: 15px; } .journey-intro h2 { font-size: 22px; } .journey-timeline { padding-inline: 14px; } .journey-milestone { grid-template-columns: 44px 15px minmax(0,1fr) 12px; gap: 7px; } .journey-event { padding: 8px; } .contact-intro h2 { font-size: 24px; } .contact-email strong { font-size: 11px; } }
 .resume-toolbar {
   padding: 14px 18px;
   display: flex;

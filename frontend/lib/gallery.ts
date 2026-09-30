@@ -1,15 +1,19 @@
 import type { AppId, WorkspaceId } from "./portfolio";
 
-// Replace preview art with image paths here when real project media is available.
-// These entries describe working site experiments and research areas, not invented case studies.
+// Verified project media sits alongside artwork for this site's live experiments.
 export type GalleryItem = {
   id: string;
   title: string;
   category: string;
   art: "digit" | "field" | "chip" | "vision" | "notes" | "core" | "workspace";
+  src?: string;
   action: { app: AppId } | { workspace: WorkspaceId } | { href: string };
 };
 export const galleryItems: GalleryItem[] = [
+  { id: "vnpt", title: "SAVINAI MeetMate", category: "AI SYSTEMS / 2025", art: "vision", src: "/portfolio/projects/vnpt-ai-banner.png", action: { href: "/work" } },
+  { id: "fpt", title: "FPT IoT Challenge", category: "AIoT / 2025", art: "chip", src: "/portfolio/projects/iot_challenge_banner.png", action: { href: "/work" } },
+  { id: "humanlog", title: "SAVINA · HumanLog", category: "SOCIAL IMPACT / 2025", art: "field", src: "/portfolio/projects/humanlog2025_banner.png", action: { href: "/social" } },
+  { id: "fall", title: "Wrist fall detection", category: "PAPER / RESEARCH", art: "vision", src: "/portfolio/research/wrist-fall-overview.png", action: { href: "/research" } },
   {
     id: "draw",
     title: "A handwritten shortcut",

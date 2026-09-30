@@ -108,7 +108,8 @@ export function EditorialArchive({ area }: { area: EditorialArea }) {
               </div>
               <h2>{article.title}</h2>
               <p className="archive-article-lead">{article.summary}</p>
-              <EditorialThumbnail id={article.id} />
+              <EditorialThumbnail id={article.id} src={article.thumbnail} />
+              {article.document && <a className="archive-document" href={article.document.href} target="_blank" rel="noreferrer"><Icon name="file" size={15} /> {article.document.label} <Icon name="external" size={14} /></a>}
               <div className="archive-tags">
                 {article.tags.map((tag) => (
                   <span key={tag}>{tag}</span>
@@ -140,7 +141,7 @@ export function EditorialArchive({ area }: { area: EditorialArea }) {
                   <span className="archive-row-number mono">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <EditorialThumbnail id={entry.id} />
+                  <EditorialThumbnail id={entry.id} src={entry.thumbnail} />
                   <span className="archive-row-content">
                     <span className="archive-row-kicker mono">
                       {entry.kind} <i /> {entry.category}

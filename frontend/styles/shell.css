@@ -71,6 +71,13 @@
   height: 1px;
   background: #c8b7e6;
 }
+.nav-contact { display: inline-flex; align-items: center; gap: 6px; position: relative; padding: 6px 9px; border: 1px solid #6a5879; color: #d4c1e8; font-size: 10px; letter-spacing: .15px; background: #b8a7ff0a; transition: color .22s, border-color .22s, background .22s, transform .22s; }
+.nav-contact::before { content: ""; position: absolute; inset: -1px; border: 1px solid #c8b1e8; opacity: 0; transform: scale(1.1); transition: opacity .25s, transform .25s; pointer-events: none; }
+.nav-contact:hover, .nav-contact:focus-visible { border-color: #c8b1e8; color: #f5effa; background: #b8a7ff1a; transform: translateY(-1px); }
+.nav-contact:hover::before, .nav-contact:focus-visible::before { opacity: .65; transform: scale(1); }
+.nav-contact svg { transition: transform .22s; }
+.nav-contact:hover svg { transform: translateX(2px); }
+:root[data-theme="light"] .nav-contact { color: #5b3a74; border-color: #9d80b7; }
 .topbar-tools {
   display: flex;
   align-items: center;
@@ -245,11 +252,16 @@
     order: 3;
     width: 100%;
     justify-content: flex-start;
-    gap: 28px;
+    gap: clamp(12px, 3vw, 28px);
     height: 34px;
     padding-left: 1px;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
+  .main-nav::-webkit-scrollbar { display: none; }
   .main-nav a {
     font-size: 10px;
+    flex: none;
   }
+  .nav-contact { flex: none; font-size: 9px; padding: 4px 6px; }
 }

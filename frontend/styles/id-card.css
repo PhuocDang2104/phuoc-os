@@ -23,6 +23,7 @@
 .about-field { color: #a69aaf; font-size: 8px; letter-spacing: .9px; margin: 4px 0 12px; }
 .about-identity h2 { font-size: 30px; letter-spacing: -1.35px; line-height: 1.08; margin: 0; }
 .about-identity .about-role { color: #d0c2ea; font-size: 11px; margin: 9px 0 0; }
+.about-school { color: #a89bb5; font-size: 8px; line-height: 1.5; margin-top: 13px; }
 .about-status { font-size: 7px; letter-spacing: .35px; color: #b4a9c6; margin-top: 18px; display: flex; align-items: center; gap: 7px; }
 .about-id-code { display: flex; align-items: end; gap: 3px; height: 28px; margin-top: auto; padding-top: 12px; }
 .about-id-code span { width: 2px; height: 15px; background: #b7a9c6; opacity: .65; }
@@ -31,6 +32,25 @@
 .about-bio { max-width: none; margin: 22px 20px 0; font-size: 11px; line-height: 1.7; color: #c5bbc8; }
 .about-id-meta { display: grid; gap: 5px; border-top: 1px solid #ffffff1b; margin: 18px 20px 0; padding-top: 12px; color: #aea3b9; font-size: 7px; line-height: 1.5; letter-spacing: .3px; }
 .about-actions { margin: 17px 20px 0; }
+@media (min-width: 901px) {
+  .about-content { min-height: 396px; }
+  .about-id-head { padding: 12px 22px; font-size: 9px; }
+  .about-id-main { grid-template-columns: 172px minmax(0, 1fr); gap: 24px; padding: 20px 22px 0; }
+  .about-identity h2 { font-size: clamp(29px, 2.5vw, 38px); }
+  .about-identity .about-role { font-size: 14px; }
+  .about-status { margin-top: 13px; }
+  .about-bio { margin: 17px 22px 0; font-size: 12px; line-height: 1.5; }
+  .about-id-meta { margin: 14px 22px 0; padding-top: 10px; gap: 7px; font-size: 8px; }
+  .about-id-meta span { display: grid; grid-template-columns: 74px 1fr; gap: 6px; }
+  .about-id-meta b { font-weight: 400; color: #d6cbe0; }
+  .about-actions { display: flex; gap: 8px; margin: 14px 22px 0; }
+}
+@media (min-width: 901px) and (max-width: 1150px) {
+  .about-id-main { grid-template-columns: 135px minmax(0,1fr); gap: 15px; }
+  .about-id-head { font-size: 7px; }
+  .about-identity h2 { font-size: 28px; }
+  .about-bio { font-size: 10px; }
+}
 .certification-content { min-height: 265px; }
 .certification-content .body-copy { margin-top: 12px; }
 .certification-empty { display: flex; align-items: center; gap: 15px; border-block: 1px solid var(--border); padding: 23px 3px; margin: 20px 0; color: var(--muted); font: 9px var(--mono); letter-spacing: .6px; }
@@ -42,6 +62,7 @@
 :root[data-theme="light"] .about-status, :root[data-theme="light"] .about-bio { color: #62576c; }
 :root[data-theme="light"] .about-id-meta { border-color: #a993b355; }
 :root[data-theme="light"] .about-id-code span { background: #685478; }
+:root[data-theme="light"] .about-id-meta b { color: #493954; }
 @media (max-width: 1100px) and (min-width: 901px) { .about-id-main { grid-template-columns: 135px minmax(0, 1fr); gap: 13px; } .about-identity h2 { font-size: 27px; } }
 @media (max-width: 900px) { .about-content { padding: 0 0 19px; } .about-identity h2 { font-size: 32px; } .about-bio { max-width: none; font-size: 12px; } }
 @media (max-width: 480px) { .about-id-main { grid-template-columns: 120px minmax(0, 1fr); gap: 13px; padding: 16px 14px 0; } .about-id-head { padding: 10px 13px; font-size: 6px; } .about-identity h2 { font-size: 23px; } .about-field { font-size: 6px; margin-bottom: 8px; } .about-identity .about-role { font-size: 9px; } .about-status { margin-top: 10px; font-size: 6px; } .about-bio { margin: 17px 14px 0; font-size: 11px; } .about-id-meta { margin: 15px 14px 0; font-size: 6px; } .about-actions { margin: 14px 14px 0; } }

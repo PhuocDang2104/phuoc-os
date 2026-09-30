@@ -19,6 +19,47 @@ test("Milo can be dragged without triggering the pet action", async ({ page }) =
   await expect(cat).not.toHaveAttribute("data-action", "lie");
 });
 
+test("Home ID card and Journey have distinct proportions, and Milo lands on an open window", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Desktop windows use the horizontal ID and portrait log layout.");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const about = (await page.getByRole("region", { name: "About me", exact: true }).boundingBox())!;
+  const journey = (await page.getByRole("region", { name: "Journey", exact: true }).boundingBox())!;
+  expect(about.width / about.height).toBeGreaterThan(1.55);
+  expect(journey.height).toBeGreaterThan(journey.width);
+  expect(journey.x).toBeGreaterThan(about.x + about.width);
+  const cat = page.locator(".milo");
+  await expect(cat).toBeVisible();
+  const start = (await cat.boundingBox())!;
+  await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(journey.x + journey.width / 2, journey.y - start.height / 2, { steps: 15 });
+  await page.mouse.up();
+  const landed = (await cat.boundingBox())!;
+  expect(Math.abs(landed.y + landed.height - journey.y)).toBeLessThan(12);
+});
+
+test("Contact opens beside Awards without changing route, and Social shows verified material", async ({ page, request }) => {
+  await page.goto("/awards");
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await expect(nav.getByRole("button", { name: "Contact" })).toBeVisible();
+  await nav.getByRole("button", { name: "Contact" }).click();
+  await expect(page).toHaveURL(/\/awards$/);
+  await expect(page.getByRole("region", { name: "Contact", exact: true })).toContainText("phuoc.dang2104@gmail.com");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("region", { name: "Contact", exact: true })).toHaveCount(0);
+  await nav.getByRole("link", { name: "Social" }).click();
+  await expect(page.getByRole("heading", { name: "SAVINA" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "SAVINA team at HumanLog 2025" })).toBeVisible();
+  await page.goto("/research");
+  await page.getByRole("button", { name: /Explainable Compact Neural Network/ }).click();
+  const paper = page.getByRole("link", { name: "Read paper PDF" });
+  await expect(paper).toHaveAttribute("href", "/portfolio/research/wrist-fall-detection.pdf");
+  const response = await request.head("/portfolio/research/wrist-fall-detection.pdf");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toContain("application/pdf");
+});
+
 test("theme and social links work across routes and reload", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("link", { name: "GitHub" })).toBeVisible();
@@ -71,8 +112,8 @@ test("About portrait loads and Awards frames open a rotatable inspector", async 
   await expect(portrait).toBeVisible();
   expect(await portrait.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(400);
   await page.goto("/awards");
-  await page.getByRole("button", { name: "Inspect Award / 01" }).click();
-  const inspector = page.getByRole("dialog", { name: "Inspect Award / 01" });
+  await page.getByRole("button", { name: "Inspect VNPT AI Hackathon" }).click();
+  const inspector = page.getByRole("dialog", { name: "Inspect VNPT AI Hackathon" });
   await expect(inspector).toBeVisible();
   const object = inspector.locator(".award-inspector-object");
   const before = await object.evaluate((element) => getComputedStyle(element).transform);

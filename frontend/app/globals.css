@@ -8,6 +8,7 @@
 @import url("../styles/editorial.css");
 @import url("../styles/id-card.css");
 @import url("../styles/awards.css");
+@import url("../styles/social.css");
 
 :root {
   --bg: #09090b;

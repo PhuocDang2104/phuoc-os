@@ -4,7 +4,7 @@
   left: 0;
   width: 136px;
   height: 98px;
-  z-index: 76;
+  z-index: 79;
   visibility: hidden;
   pointer-events: none;
   will-change: transform;
@@ -179,24 +179,26 @@
 .milo-chat-handle {
   pointer-events: auto;
   position: absolute;
-  right: 5px;
-  top: 10px;
+  right: 0;
+  top: 4px;
   display: grid;
   place-items: center;
   padding: 0;
-  width: 23px;
-  height: 18px;
+  width: 30px;
+  height: 24px;
   border-radius: 5px;
-  border: 1px solid #7c6a9240;
-  background: #221a2bd9;
-  color: #cec0dc;
-  opacity: 0;
-  transition: opacity 0.2s;
-  font: 18px/1 var(--mono);
+  border: 1px solid #ae92d0;
+  background: #241b30f5;
+  box-shadow: 0 2px 8px #0008;
+  color: #f3e5ff;
+  opacity: .92;
+  transition: opacity 0.2s, transform .2s;
+  font: 20px/1 var(--mono);
 }
 .milo:hover .milo-chat-handle,
 .milo:focus-within .milo-chat-handle {
   opacity: 1;
+  transform: translateY(-2px);
 }
 .milo-bubble {
   position: absolute;
@@ -204,22 +206,22 @@
   left: 50%;
   transform: translateX(-50%);
   width: max-content;
-  max-width: 216px;
-  border: 1px solid #685476;
+  max-width: 250px;
+  border: 1px solid #a18ab8;
   border-radius: 8px 8px 8px 2px;
-  background: #231d2beb;
+  background: #211a2af7;
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 30px #0004;
-  padding: 10px 13px 12px;
-  color: #dbd0e4;
-  font: 10px/1.6 var(--sans);
+  padding: 11px 14px 12px;
+  color: #f0e8f5;
+  font: 12px/1.45 var(--sans);
   pointer-events: auto;
   animation: milo-bubble-in 0.2s ease-out;
 }
 .milo-bubble-name {
   display: block;
-  color: #9985af;
-  font: 7px var(--mono);
+  color: #ceb6e4;
+  font: 8px var(--mono);
   letter-spacing: 0.5px;
   margin-bottom: 5px;
 }
@@ -507,8 +509,8 @@
     height: 81px;
   }
   .milo-bubble {
-    max-width: 180px;
-    font-size: 9px;
+    max-width: 205px;
+    font-size: 11px;
   }
   .milo-chat-handle {
     opacity: 0.8;

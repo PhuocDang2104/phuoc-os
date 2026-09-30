@@ -15,7 +15,6 @@ test("compact chrome and file launcher leave the desktop free of decorative text
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Close About me", exact: true }).click();
   await page.getByRole("button", { name: "Close Journey", exact: true }).click();
-  await page.getByRole("button", { name: "Close Current work", exact: true }).click();
   await page.getByRole("button", { name: "Close Work gallery", exact: true }).click();
   await expect(page.locator(".app-window")).toHaveCount(0);
   await expect(page.getByText("A little room to think.")).toHaveCount(0);

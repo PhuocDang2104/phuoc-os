@@ -152,6 +152,9 @@
 }
 .editorial-thumbnail { display: block; aspect-ratio: 16 / 9; width: 100%; overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
 .editorial-thumbnail svg { display: block; width: 100%; height: 100%; }
+.editorial-thumbnail img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.archive-document { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 25px; padding: 10px 13px; border: 1px solid var(--accent); color: var(--accent); font: 10px var(--mono); transition: background .2s; }
+.archive-document:hover { background: #b8a7ff16; }
 .archive-row:hover .editorial-thumbnail { border-color: var(--accent); }
 .archive-article > .editorial-thumbnail { max-width: 730px; margin: 7px 0 24px; }
 .archive-row-content {
