@@ -142,6 +142,23 @@ export function createVehicleRoute(index: number): VehicleRoute {
   return route;
 }
 export const junctionKey = (node: THREE.Vector2) => `${node.x}/${node.y}`;
+export function cloneVehicleRoute(route: VehicleRoute): VehicleRoute {
+  return {
+    ...route,
+    from: route.from.clone(),
+    to: route.to.clone(),
+    reserved: false,
+    committed: false,
+  };
+}
+export function setVehicleTurn(route: VehicleRoute, exit: number) {
+  if (route.phase !== "street" || !validExit(route.to, exit)) return false;
+  route.exit = exit;
+  route.turn = exit === (route.heading + 1) % 4 ? "right" : "left";
+  route.nextCurve = junctionCurve(route);
+  route.nextLength = route.nextCurve.getLength();
+  return true;
+}
 export function routePosition(
   route: VehicleRoute,
   distance = route.progress,

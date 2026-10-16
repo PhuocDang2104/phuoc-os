@@ -177,13 +177,14 @@ export function updateTraffic(actors: TrafficActor[], time: number, delta: numbe
       const forward = dx * tangent.x + dz * tangent.z;
       const lateral = Math.abs(dx * tangent.z - dz * tangent.x);
       if (forward > 0 && lateral < (actor.dimensions.x + other.dimensions.x) * 0.43) {
+        const length = other.dimensions.z + (other.companionHeld ? 12 : 0);
         clearance = Math.min(
           clearance,
-          Math.max(0, forward - (actor.dimensions.z + other.dimensions.z) * 0.5 - 1.8),
+          Math.max(0, forward - (actor.dimensions.z + length) * 0.5 - 1.8),
         );
         physicalClearance = Math.min(
           physicalClearance,
-          Math.max(0, forward - (actor.dimensions.z + other.dimensions.z) * 0.5 - 0.3),
+          Math.max(0, forward - (actor.dimensions.z + length) * 0.5 - 0.3),
         );
       }
     }

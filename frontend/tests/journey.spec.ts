@@ -130,7 +130,7 @@ test("Milo dissolves into real city geometry and returns to the 2D companion", a
     isMobile,
     "The full round trip is checked on desktop; mobile scene and touch interactions have separate coverage.",
   );
-  test.setTimeout(120000);
+  test.setTimeout(160000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/?spatialDebug=1");
@@ -190,7 +190,7 @@ test("Milo dissolves into real city geometry and returns to the 2D companion", a
       return cat?.dataset.inCity === "false" && cat?.dataset.dimension === "morphing";
     },
     {},
-    { timeout: 75000 },
+    { timeout: 110000 },
   );
   await expect(cat).toHaveAttribute("data-dimension", "2d");
   await expect(rendered).toHaveAttribute("data-milo3d", "false");

@@ -59,20 +59,30 @@ remain accessible through the command palette.
   jumps with rooftop clearance, and returns to the desktop floor. CLI windows are
   no longer perches. Most moves are short walks along a roof or sidewalk, with
   listening, grooming, stretching and occasional curled naps between them.
-  `city-cat.ts` and `city-cat-rig.ts` provide an articulated 3D cat with smooth
-  overlapping volumes, capsule limbs, textured fur, closed sleeping eyes and a
-  single tapered tail. Its transported surface frames stay continuous as it curls.
-  It receives city lighting and depth occlusion.
+  `city-cat.ts`, `city-cat-rig.ts` and `voxel-geometry.ts` provide an articulated
+  high-resolution voxel cat. Small real cubes form its body, paws, muzzle, ears,
+  whiskers and eyes, with a tabby palette and baked corner occlusion. Hidden cube
+  faces are omitted and exposed surfaces are batched per joint. The base cell is
+  0.12 units on desktop and 0.16 on mobile, with finer facial features. A single
+  instanced cube mesh forms its animated tapered tail, including the sleeping curl.
+  Cubic edges remain visible while the joints move smoothly. City lighting and
+  depth occlusion apply to the model.
   Entry/exit share a projected trajectory with the SVG companion, using a pixel
   dissolve plus SVG alpha blending. During the dissolve the model faces sideways
   to align its silhouette, then turns with its route. Drag, pet and chat remain
   accessible through the projected interaction layer.
-- `city-car-play.ts`: Milo's street visit includes walking, then an occasional
-  pounce on a slow car with a clear destination. A short actor lease reserves a
-  landing 11–14 m away on the same road, carries the original mesh through an arc,
-  and resumes its existing traffic route from rest. Other vehicles brake for the
-  reserved landing. Interrupted play settles the car onto the nearer valid lane
-  position instead of leaving it suspended. To get onto a building, Milo first
+- `city-car-play.ts` and `city-carry-path.ts`: Milo's street visit includes walking,
+  then an occasional pounce on a slow car with a clear destination. Milo lowers
+  its head, opens and closes its jaw on the roof, lifts the original car mesh,
+  and walks a long road route containing a curved left or right turn. The car
+  follows the articulated mouth's world-space grip each frame, including head
+  bob and heading, while all four paws walk. Roof height comes from the actual
+  car geometry. Milo then lowers the car, opens its jaw and leaves it on the
+  reserved road position. The same traffic actor and route object resume from
+  rest at that point. Other vehicles leave room for Milo and the reserved landing.
+  Interrupted play eases the car onto the nearest traveled route position before
+  traffic resumes, including when the cat is dragged or chat is opened.
+  To get onto a building, Milo first
   crouches for about 650 ms, springs upward outside the facade, crosses above the
   ledge, and compresses its legs on landing. Vertical wall walking is removed;
   narrow alleys remain excluded. 2D roaming also favors walks and has a separate
@@ -184,8 +194,10 @@ roaming/drag/chat lifecycle. A native GPU-pixel check verifies the 3D cat while
 its SVG is hidden, then checks the return to 2D.
 `traffic.spec.ts` simulates 90 seconds with the real actor population and checks
 road containment, turns, steering and bounded acceleration through signal cycles.
-It also checks car identity, route preservation, a reserved road landing and
-interruption recovery. The two-layer hover test samples actual GPU pixels to
+It also checks car identity, a long route with a 90-degree turn, attachment to the
+real articulated mouth, a reserved road landing and interruption recovery.
+`milo-voxel.spec.ts` verifies real cube normals, interior-face removal, dense
+colored geometry and bounded mesh counts. The two-layer hover test samples actual GPU pixels to
 verify that the core changes while the surrounding semantic surface stays intact.
 Existing integration tests cover desktop windows, NAV.AI, carousel, navigation,
 theme, chat and mobile layouts. Browser review captures live WebGL images in
@@ -201,3 +213,5 @@ Implementation references: [Three.js normals](https://threejs.org/docs/pages/Mes
 [render targets](https://threejs.org/docs/pages/RenderTarget.html),
 [ray casting](https://threejs.org/docs/pages/Raycaster.html), plus the owner-supplied
 master spec, four reference frames, video and Journey HTML.
+Voxel meshing follows the exposed-face approach described in the
+[Three.js voxel geometry guide](https://threejs.org/manual/pages/voxel-geometry.html).

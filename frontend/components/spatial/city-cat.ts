@@ -6,7 +6,7 @@ export function createCityCat() {
   const root = new THREE.Group(),
     morph = { value: 0 };
   const model = createCityCatRig(morph);
-  root.name = "Milo / soft articulated 3D companion";
+  root.name = "Milo / high-resolution voxel companion";
   root.visible = false;
   root.add(model.rig);
   root.scale.setScalar(1.8);
@@ -56,7 +56,7 @@ export function createCityCat() {
       rect: DOMRect,
     ) {
       if (!pose || !root.visible) return;
-      const { action, carrying = false, progress = 0.5, jumpPhase } = pose;
+      const { action, carrying = false, progress = 0.5, jumpPhase, carryPhase } = pose;
       root.position.set(pose.point.x, pose.point.y, pose.point.z);
       if (pose.screen) {
         const depth = root.position.clone().project(camera).z;
@@ -108,7 +108,6 @@ export function createCityCat() {
               : sit && index < 2
                 ? 0.95
                 : 0;
-        if (carrying && index > 1) target = 0.7;
         if (grooming && index === 3) target = 1.8 + Math.sin(time * 3) * 0.05;
         if (launch) target = compression * (index < 2 ? 0.95 : -0.34);
         leg.rotation.z = THREE.MathUtils.lerp(leg.rotation.z, target, damping);
@@ -144,37 +143,59 @@ export function createCityCat() {
         action === "stretch" ? -0.11 : launch ? compression * 0.12 : 0,
         damping,
       );
-      const headY = sleeping
+      let headY = sleeping
         ? 1.75
         : resting
           ? 2.35
           : 4.5 - (sit ? 0.32 : 0) - compression * 0.8 + breath;
+      let jawOpen = 0;
+      const gripHeadY = 0.656 + ((pose.carRoofHeight ?? 1.5) + 0.14 - pose.point.y) / 1.8;
+      if (carryPhase === "grab") {
+        const lower = smooth(progress / 0.35),
+          lift = smooth((progress - 0.68) / 0.32);
+        headY = 4.5 + lower * (gripHeadY - 4.5) + lift * (3.15 - gripHeadY);
+        jawOpen = smooth(progress / 0.3) * (1 - smooth((progress - 0.4) / 0.2));
+      } else if (carryPhase === "walk") headY = 3.15 + breath;
+      else if (carryPhase === "drop") {
+        headY =
+          3.15 +
+          smooth(progress / 0.65) * (gripHeadY - 3.15) +
+          smooth((progress - 0.8) / 0.2) * (4.15 - gripHeadY);
+        jawOpen = smooth((progress - 0.65) / 0.12) * (1 - smooth((progress - 0.88) / 0.12));
+      }
+      model.jaw.rotation.z = -jawOpen * 0.42;
       model.head.position.lerp(
         new THREE.Vector3(sleeping ? 1.65 : 2.25, headY, sleeping ? 1.08 : 0),
-        damping,
+        carryPhase ? 1 - Math.exp(-delta * 16) : damping,
       );
       model.head.rotation.y = THREE.MathUtils.lerp(
         model.head.rotation.y,
-        sleeping ? -0.55 : walking || jumping ? 0 : Math.sin(time * 0.65) * 0.13,
+        sleeping ? -0.55 : walking || jumping || carrying ? 0 : Math.sin(time * 0.65) * 0.13,
         damping,
       );
       model.head.rotation.z = THREE.MathUtils.lerp(
         model.head.rotation.z,
-        sleeping
-          ? -0.16
-          : grooming
-            ? -0.22 + Math.sin(time * 3) * 0.04
-            : jumping
-              ? 0.15 * Math.sin(progress * Math.PI)
-              : -0.08 * compression,
+        carryPhase
+          ? -0.1
+          : sleeping
+            ? -0.16
+            : grooming
+              ? -0.22 + Math.sin(time * 3) * 0.04
+              : jumping
+                ? 0.15 * Math.sin(progress * Math.PI)
+                : -0.08 * compression,
         damping,
       );
       model.neck.position.y = THREE.MathUtils.lerp(
         model.neck.position.y,
-        resting ? 2.05 : 3.65 - compression * 0.5,
+        resting ? 2.05 : carryPhase ? headY * 0.65 + 0.5 : 3.65 - compression * 0.5,
         damping,
       );
-      model.neck.scale.y = THREE.MathUtils.lerp(model.neck.scale.y, resting ? 1.05 : 1.8, damping);
+      model.neck.scale.y = THREE.MathUtils.lerp(
+        model.neck.scale.y,
+        resting ? 0.58 : carryPhase ? 0.85 : 1,
+        damping,
+      );
       model.collar.position.y = model.neck.position.y;
       model.tag.position.y = model.neck.position.y - 0.37;
       model.rig.rotation.z = THREE.MathUtils.lerp(
@@ -192,8 +213,14 @@ export function createCityCat() {
         eye.visible = curl >= 0.6;
       });
       model.updateTail(time, curl);
+      root.userData.voxelCount = model.voxelCount;
       shadowMaterial.opacity = pose.blend * (jumping ? 0.24 : 0.78);
       shadow.scale.setScalar(resting ? 0.85 : jumping ? 0.72 : 1);
+    },
+    grip() {
+      root.updateMatrixWorld(true);
+      const point = model.mouth.getWorldPosition(new THREE.Vector3());
+      return { point: { x: point.x, y: point.y, z: point.z }, heading };
     },
     dispose() {
       model.dispose();

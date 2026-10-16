@@ -8,7 +8,18 @@ export type CityAnchor = {
   landing?: CityPoint;
   roofId?: string;
 };
-export type CityCarPlay = { id: string; from: CityPoint; to: CityPoint; heading: number };
+export type CityCarryWaypoint = { point: CityPoint; heading: number; distance: number };
+export type CityCarryPhase = "grab" | "walk" | "drop";
+export type CityCarPlay = {
+  id: string;
+  from: CityPoint;
+  to: CityPoint;
+  heading: number;
+  path: CityCarryWaypoint[];
+  length: number;
+  duration: number;
+  roofHeight: number;
+};
 export type CityProjection = { x: number; y: number; height: number; visible: boolean };
 export type CityCatPose = {
   point: CityPoint;
@@ -20,6 +31,9 @@ export type CityCatPose = {
   progress?: number;
   carrying?: boolean;
   jumpPhase?: "prepare" | "flight" | "land";
+  carId?: string;
+  carryPhase?: CityCarryPhase;
+  carRoofHeight?: number;
 };
 export type CityBridge = {
   available: () => boolean;
@@ -29,7 +43,6 @@ export type CityBridge = {
   clearance: (from: CityPoint, to: CityPoint) => number;
   companion: (pose: CityCatPose | null) => void;
   borrowCar: (near: CityPoint) => CityCarPlay | null;
-  moveCar: (id: string, point: CityPoint, progress: number) => void;
   returnCar: (id: string, completed: boolean) => void;
 };
 let current: CityBridge | null = null;

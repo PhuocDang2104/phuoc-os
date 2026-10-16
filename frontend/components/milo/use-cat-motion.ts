@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CatAction } from "./cat-art";
+import { sampleMiloCarry } from "../spatial/city-carry-path";
 import {
   getCityBridge,
   type CityAnchor,
@@ -65,7 +66,7 @@ export function useCatMotion({
       realStart?: number;
     } | null = null;
     let cityHeading = lastCityHeading.current;
-    let carPlay: { plan: CityCarPlay; phase: "pounce" | "carry" } | null = null;
+    let carPlay: { plan: CityCarPlay; phase: "pounce" | "grab" | "carry" | "drop" } | null = null;
     let triedCar = false;
     let city: {
       point: CityPoint;
@@ -223,28 +224,50 @@ export function useCatMotion({
       const bridge = cityAvailable();
       if (!bridge) return;
       if (carPlay?.phase === "pounce") {
+        carPlay.phase = "grab";
+        city.from = { ...city.point };
+        city.target = { ...city.target, point: { ...city.point } };
+        city.start = clock;
+        city.duration = 1250;
+        city.arc = 0;
+        city.waitUntil = 0;
+        current = "sit";
+        setAction(current);
+        element.dataset.cityActivity = "biting";
+        return;
+      }
+      if (carPlay?.phase === "grab") {
         carPlay.phase = "carry";
         const { plan } = carPlay;
         city.from = { ...city.point };
         city.target = {
           id: `CARRY_${plan.id}`,
           kind: "street",
-          point: {
-            x: plan.to.x - Math.cos(plan.heading) * 5,
-            y: 0.4,
-            z: plan.to.z + Math.sin(plan.heading) * 5,
-          },
+          point: sampleMiloCarry(plan, 1).point,
         };
         city.start = clock;
-        city.duration = 2100;
-        city.arc = 3.6;
+        city.duration = plan.duration;
+        city.arc = 0;
         city.waitUntil = 0;
-        current = "jump";
+        current = "walk";
         setAction(current);
         element.dataset.cityActivity = "carrying";
         return;
       }
       if (carPlay?.phase === "carry") {
+        carPlay.phase = "drop";
+        city.from = { ...city.point };
+        city.target = { ...city.target, point: { ...city.point } };
+        city.start = clock;
+        city.duration = 1450;
+        city.arc = 0;
+        city.waitUntil = 0;
+        current = "sit";
+        setAction(current);
+        element.dataset.cityActivity = "lowering";
+        return;
+      }
+      if (carPlay?.phase === "drop") {
         bridge.returnCar(carPlay.plan.id, true);
         carPlay = null;
         city.steps++;
@@ -303,9 +326,9 @@ export function useCatMotion({
               id: `POUNCE_${plan.id}`,
               kind: "street",
               point: {
-                x: plan.from.x - Math.cos(plan.heading) * 5,
+                x: plan.from.x - Math.cos(plan.heading) * 6.93,
                 y: 0.4,
-                z: plan.from.z + Math.sin(plan.heading) * 5,
+                z: plan.from.z + Math.sin(plan.heading) * 6.93,
               },
             };
             city.start = clock;
@@ -501,16 +524,10 @@ export function useCatMotion({
           jumpPhase === "prepare" ? "crouching" : jumpPhase === "flight" ? "roof-jump" : "landing";
       }
       if (carPlay?.phase === "carry") {
-        const { plan } = carPlay;
-        bridge.moveCar(
-          plan.id,
-          {
-            x: plan.from.x + (plan.to.x - plan.from.x) * t,
-            y: plan.from.y + 4 * p * (1 - p) * city.arc,
-            z: plan.from.z + (plan.to.z - plan.from.z) * t,
-          },
-          p,
-        );
+        const sample = sampleMiloCarry(carPlay.plan, t);
+        city.point = sample.point;
+        cityHeading = sample.heading;
+        lastCityHeading.current = cityHeading;
       }
       const projected = bridge.project(city.point);
       const height = projected.height,
@@ -541,15 +558,32 @@ export function useCatMotion({
         facing,
         progress: poseProgress,
         jumpPhase,
-        carrying: carPlay?.phase === "carry",
+        carrying: !!carPlay && carPlay.phase !== "pounce",
+        carId: carPlay?.phase !== "pounce" ? carPlay?.plan.id : undefined,
+        carRoofHeight: carPlay?.plan.roofHeight,
+        carryPhase:
+          carPlay?.phase === "grab"
+            ? "grab"
+            : carPlay?.phase === "carry"
+              ? "walk"
+              : carPlay?.phase === "drop"
+                ? "drop"
+                : undefined,
         screen: city.entry
           ? { x: position.current.x + width * 0.52, y: position.current.y + height * 0.91 }
           : undefined,
       });
       element.dataset.citySurface = city.target.kind;
+      element.dataset.cityHeading = String(cityHeading);
       cityPosition.current = { ...city.point };
       if (p === 1) {
         angle = 0;
+        // Keep biting, walking and lowering contiguous; ambient idle gestures
+        // should not interrupt the car between these three deliberate motions.
+        if (carPlay && carPlay.phase !== "pounce") {
+          cityStep();
+          return true;
+        }
         if (!city.waitUntil) {
           city.roofLeap = false;
           const nap =
@@ -564,15 +598,16 @@ export function useCatMotion({
             city.napped = true;
             city.restPhase = "curl";
           }
-          current =
-            city.petAfterLanding || nap
+          current = carPlay
+            ? "sit"
+            : city.petAfterLanding || nap
               ? "lie"
               : city.steps % 4 === 0
                 ? "groom"
                 : city.steps % 3 === 0
                   ? "stretch"
                   : "sit";
-          element.dataset.cityActivity = nap ? "curling" : "resting";
+          if (!carPlay) element.dataset.cityActivity = nap ? "curling" : "resting";
           city.petAfterLanding = false;
           setAction(current);
         }

@@ -12,7 +12,12 @@ import { PointerScanner } from "./scanner";
 import { snapshotActor, updateTraffic, type TrafficActor } from "./traffic";
 import { createCity, type CityWorld } from "./world";
 import type { SceneSubject } from "./scene-objects";
-import { registerCityBridge, type CityAnchor, type CityPoint } from "./city-bridge";
+import {
+  registerCityBridge,
+  type CityAnchor,
+  type CityPoint,
+  type CityCatPose,
+} from "./city-bridge";
 import { createCityCat } from "./city-cat";
 import { createCityCarPlay } from "./city-car-play";
 
@@ -44,6 +49,7 @@ export class SpatialEngine {
   );
   private world: CityWorld;
   private cityCat = createCityCat();
+  private cityPose: CityCatPose | null = null;
   private carPlay: ReturnType<typeof createCityCarPlay>;
   private uniforms = createScanUniforms();
   private materials = createMaterialFactory(this.uniforms);
@@ -242,9 +248,9 @@ export class SpatialEngine {
     }
     this.unregisterCity = registerCityBridge({
       borrowCar: (near) => this.carPlay.borrow(near),
-      moveCar: (id, point, progress) => this.carPlay.move(id, point, progress),
       returnCar: (id, completed) => this.carPlay.release(id, completed),
       companion: (pose) => {
+        this.cityPose = pose;
         this.cityCat.setPose(pose);
         this.host.dataset.milo3d = String(!!pose && pose.blend > 0.001);
         this.host.dataset.miloBlend = String(pose?.blend ?? 0);
@@ -761,6 +767,16 @@ export class SpatialEngine {
         this.height,
         this.host.getBoundingClientRect(),
       );
+      if (this.cityPose?.carId && this.cityPose.carryPhase) {
+        const grip = this.cityCat.grip();
+        this.carPlay.hold(
+          this.cityPose.carId,
+          grip.point,
+          grip.heading,
+          this.cityPose.carryPhase,
+          this.cityPose.progress ?? 0,
+        );
+      }
       this.world.root.updateMatrixWorld(true);
       let active = this.active && !this.pressed?.orbit;
       if (this.mobile && now - this.touchedAt > 1600) active = false;
