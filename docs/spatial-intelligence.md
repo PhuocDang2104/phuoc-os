@@ -47,17 +47,22 @@ remain accessible through the command palette.
   the frontier. Surface shading, cuboids and structure lines share this mask.
   A fourteen-pixel readback samples the same GPU mask for projected DOM labels.
   Segmentation expands the outer reveal radius by 8%, retaining its semantic
-  colors and pixel frontier. A separate 72 px cursor core (44 px on mobile) blends
-  blue/violet/magenta orientation shading into those surfaces with a soft boundary.
+  colors and pixel frontier. A separate 84 px cursor core (52 px on mobile) blends
+  blue/violet/magenta orientation shading into those surfaces. Its animated pixel
+  frontier uses the same grid as the outer scan, with a gently changing dither.
   The core follows the cursor rather than accumulating along the outer trail.
 - `scene-objects.ts`: tree/signal detection cuboids share one geometry and draw call.
   Building dimensions remain available for Milo navigation and occlusion, but
   never produce detection boxes or labels.
 - `city-bridge.ts`: the companion projects real world coordinates through the live
   camera. Milo chooses visible roofs, wall anchors and sidewalks, follows parabolic
-  jumps with rooftop clearance, and returns to CLI perches. `city-cat.ts` is a real
-  articulated 3D cat with coat stripes, ear prisms, facial detail, four legs, a
-  jointed tail and a contact shadow. It receives city lighting and depth occlusion.
+  jumps with rooftop clearance, and returns to the desktop floor. CLI windows are
+  no longer perches. Most moves are short walks along a roof or sidewalk, with
+  listening, grooming, stretching and occasional curled naps between them.
+  `city-cat.ts` and `city-cat-rig.ts` provide an articulated 3D cat with smooth
+  overlapping volumes, capsule limbs, textured fur, closed sleeping eyes and a
+  single tapered tail. Its transported surface frames stay continuous as it curls.
+  It receives city lighting and depth occlusion.
   Entry/exit share a projected trajectory with the SVG companion, using a pixel
   dissolve plus SVG alpha blending. During the dissolve the model faces sideways
   to align its silhouette, then turns with its route. Drag, pet and chat remain
@@ -67,11 +72,18 @@ remain accessible through the command palette.
   landing 11–14 m away on the same road, carries the original mesh through an arc,
   and resumes its existing traffic route from rest. Other vehicles brake for the
   reserved landing. Interrupted play settles the car onto the nearer valid lane
-  position instead of leaving it suspended. Wall climbs alternate paw contacts,
-  raise the body vertically, then pull onto the ledge; narrow alleys are excluded.
+  position instead of leaving it suspended. To get onto a building, Milo first
+  crouches for about 650 ms, springs upward outside the facade, crosses above the
+  ledge, and compresses its legs on landing. Vertical wall walking is removed;
+  narrow alleys remain excluded. 2D roaming also favors walks and has a separate
+  curled sleeping illustration, with occasional small hops after a crouch.
 - `engine.ts`: one animation loop owns camera, simulation, render passes, ray
   picking, occlusion checks, projected 3D bounds, labels and inspector anchors.
   Pointer movement is mutable renderer state, rather than React render state.
+
+About keeps its existing width and grows to its full content height. On short
+desktop viewports it sits beside the launchers, keeping the complete bio and
+actions visible above the Work Gallery without an internal scrollbar.
 
 3D & Object, Sensor Fusion, Segmentation, Depth and Control & SLAM use the same scene
 and camera. Depth uses the actual orthographic fragment depth with the camera's

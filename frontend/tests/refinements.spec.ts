@@ -19,7 +19,7 @@ test("Milo can be dragged without triggering the pet action", async ({ page }) =
   await expect(cat).not.toHaveAttribute("data-action", "lie");
 });
 
-test("Home ID card and Journey have distinct proportions, and Milo lands on an open window", async ({
+test("Home ID fits its content, Journey stays portrait, and Milo settles below windows", async ({
   page,
   isMobile,
 }) => {
@@ -31,6 +31,11 @@ test("Home ID card and Journey have distinct proportions, and Milo lands on an o
   expect(about.width / about.height).toBeGreaterThan(1.1);
   expect(journey.height).toBeGreaterThan(journey.width);
   expect(journey.x).toBeGreaterThan(about.x + about.width);
+  expect(
+    await page
+      .locator(".window-about .window-body")
+      .evaluate((node) => node.scrollHeight - node.clientHeight),
+  ).toBeLessThanOrEqual(1);
   const cat = page.locator(".milo");
   await expect(cat).toBeVisible();
   const start = (await cat.boundingBox())!;
@@ -39,7 +44,12 @@ test("Home ID card and Journey have distinct proportions, and Milo lands on an o
   await page.mouse.move(journey.x + journey.width / 2, journey.y - start.height / 2, { steps: 15 });
   await page.mouse.up();
   const landed = (await cat.boundingBox())!;
-  expect(Math.abs(landed.y + landed.height - journey.y)).toBeLessThan(12);
+  const galleryHeight = await page
+    .locator(".work-gallery")
+    .evaluate((node) => node.getBoundingClientRect().height);
+  expect(
+    Math.abs(landed.y + landed.height - (page.viewportSize()!.height - galleryHeight - 14)),
+  ).toBeLessThan(2);
 });
 
 test("Contact opens beside Awards without changing route, and Social shows verified material", async ({

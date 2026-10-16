@@ -164,17 +164,28 @@ export class SpatialEngine {
       {
         id: subject.id,
         kind: "roof" as const,
+        roofId: subject.id,
         point: {
           x: subject.object.position.x,
           y: subject.dimensions.y + 0.5,
           z: subject.object.position.z,
         },
       },
+      ...[-1, 1].map((side) => ({
+        id: `${subject.id}-stroll-${side}`,
+        kind: "roof" as const,
+        roofId: subject.id,
+        point: {
+          x: subject.object.position.x + side * subject.dimensions.x * 0.17,
+          y: subject.dimensions.y + 0.5,
+          z: subject.object.position.z + side * subject.dimensions.z * 0.1,
+        },
+      })),
       {
         id: `${subject.id}-wall`,
         kind: "wall" as const,
         point: {
-          x: subject.object.position.x + subject.dimensions.x * 0.5 + 4.8,
+          x: subject.object.position.x + subject.dimensions.x * 0.5 + 8.2,
           y: subject.dimensions.y + 0.4,
           z: subject.object.position.z,
         },
@@ -772,7 +783,8 @@ export class SpatialEngine {
       const pointTarget = active && this.settings.mode === "control" ? 1 : 0;
       const pointDamping = this.settings.reducedMotion ? 1 : 1 - Math.exp(-delta * 14);
       this.uniforms.uPointer.value.lerp(this.pointer, pointDamping);
-      this.uniforms.uNormalCoreRadius.value = this.mobile ? 44 : 72;
+      this.uniforms.uNormalCoreRadius.value = this.mobile ? 52 : 84;
+      this.uniforms.uNormalCoreTime.value = this.settings.reducedMotion ? 0 : this.time;
       this.uniforms.uNormalCoreStrength.value = THREE.MathUtils.lerp(
         this.uniforms.uNormalCoreStrength.value,
         active && this.settings.mode === "segments" ? 1 : 0,

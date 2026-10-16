@@ -1,12 +1,24 @@
 "use client";
 
 export type CatAction =
-  "idle" | "walk" | "run" | "hop" | "jump" | "climb" | "sit" | "stretch" | "lie" | "sleep";
+  | "idle"
+  | "walk"
+  | "run"
+  | "hop"
+  | "jump"
+  | "climb"
+  | "sit"
+  | "crouch"
+  | "groom"
+  | "stretch"
+  | "lie"
+  | "sleep";
 
 // Original layered pixel illustration. Each limb can animate independently;
 // lying/sitting have their own silhouettes instead of scaling the standing sprite.
 export function CatArt({ action }: { action: CatAction }) {
   const resting = action === "lie" || action === "sleep";
+  const sleeping = action === "sleep";
   const sitting = action === "sit" || action === "idle";
   return (
     <svg viewBox="0 0 90 64" className="milo-art" shapeRendering="crispEdges" aria-hidden="true">
@@ -76,7 +88,7 @@ export function CatArt({ action }: { action: CatAction }) {
           <path d="M65 36H67V37H65Z" fill="#f2e4ff" />
         </g>
       </g>
-      <g className="milo-resting" style={{ opacity: resting ? 1 : 0 }}>
+      <g className="milo-resting" style={{ opacity: resting && !sleeping ? 1 : 0 }}>
         <path d="M29 48H19V44H14V37H9V39H7V47H13V52H25Z" fill="#a496b5" />
         <path d="M23 46H29V40H38V37H54V41H63V46H68V54H65V58H26V56H22Z" fill="#7b6b8b" />
         <path d="M26 47H32V42H41V40H53V43H60V48H65V54H59V56H29V53H25Z" fill="#c5b7d3" />
@@ -95,6 +107,25 @@ export function CatArt({ action }: { action: CatAction }) {
         <path d="M66 48H70V50H66Z" fill="#b68ea8" />
         <path d="M65 51h6M50 49h8m19 0h8" stroke="#a589b1" />
         <path d="M54 55H69V59H51V57H54ZM71 54H82V58H70Z" fill="#ece4f2" />
+      </g>
+      <g className="milo-curled" style={{ opacity: sleeping ? 1 : 0 }}>
+        <path
+          d="M20 44V39H25V34H32V31H49V33H58V37H65V42H71V49H69V55H63V59H29V57H23V53H19V47Z"
+          fill="#796689"
+        />
+        <path d="M24 43V39H29V36H35V34H48V36H56V40H61V45H65V51H60V55H31V53H25Z" fill="#c6b7d3" />
+        <path d="M31 39H37V36H47V39H53V43H55V50H49V53H36V50H30V44Z" fill="#dcd1e4" />
+        <path d="M30 38H34V45H31ZM41 35H45V41H42ZM50 39H54V45H51Z" fill="#a18bb5" />
+        <path d="M48 44V36H52V39H57V41H63V38H67V47H70V51H66V55H54V53H49Z" fill="#ad96bf" />
+        <path d="M51 45V41H54V44H60V43H64V42H65V48H67V51H61V53H55V50H51Z" fill="#e7ddeb" />
+        <path d="m52 47 2 2h3m4 0h3l1-2" fill="none" stroke="#715579" strokeWidth="1.3" />
+        <path d="M58 51H61V53H58Z" fill="#b78da9" />
+        <path
+          d="M20 45H25V49H28V53H35V55H48V53H54V50H58V54H54V58H47V61H32V59H25V56H21V52H18V47Z"
+          fill="#9e89b2"
+        />
+        <path d="M21 47H24V51H28V55H35V57H47V55H53V53H55V56H49V59H33V57H26V54H22Z" fill="#d7c9e1" />
+        <path d="M28 54H32V58H28ZM38 57H42V60H38ZM49 54H52V58H49Z" fill="#ad96bf" />
       </g>
       {action === "sleep" && (
         <g className="milo-sleep-symbol" fill="#b5a2c9" fontFamily="monospace">

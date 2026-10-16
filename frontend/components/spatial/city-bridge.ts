@@ -6,6 +6,7 @@ export type CityAnchor = {
   kind: "roof" | "street" | "wall";
   point: CityPoint;
   landing?: CityPoint;
+  roofId?: string;
 };
 export type CityCarPlay = { id: string; from: CityPoint; to: CityPoint; heading: number };
 export type CityProjection = { x: number; y: number; height: number; visible: boolean };
@@ -18,6 +19,7 @@ export type CityCatPose = {
   screen?: { x: number; y: number };
   progress?: number;
   carrying?: boolean;
+  jumpPhase?: "prepare" | "flight" | "land";
 };
 export type CityBridge = {
   available: () => boolean;

@@ -130,7 +130,7 @@ test("Milo dissolves into real city geometry and returns to the 2D companion", a
     isMobile,
     "The full round trip is checked on desktop; mobile scene and touch interactions have separate coverage.",
   );
-  test.setTimeout(90000);
+  test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/?spatialDebug=1");
@@ -140,6 +140,22 @@ test("Milo dissolves into real city geometry and returns to the 2D companion", a
   await page.getByRole("button", { name: "Focus scene", exact: true }).click();
   const cat = page.locator(".milo"),
     rendered = page.locator(".spatial-renderer");
+  const history = await cat.evaluateHandle((node) => {
+    const events: Array<{ action: string; activity: string; surface: string }> = [];
+    const observer = new MutationObserver(() => {
+      const element = node as HTMLElement;
+      events.push({
+        action: element.dataset.action ?? "",
+        activity: element.dataset.cityActivity ?? "",
+        surface: element.dataset.citySurface ?? "",
+      });
+    });
+    observer.observe(node, {
+      attributes: true,
+      attributeFilter: ["data-action", "data-city-activity"],
+    });
+    return { events, observer };
+  });
   await expect(cat).toHaveAttribute("data-dimension", "3d", { timeout: 20000 });
   await expect(rendered).toHaveAttribute("data-milo3d", "true");
   await expect(page.locator(".milo-art")).toHaveCSS("opacity", "0");
@@ -174,10 +190,21 @@ test("Milo dissolves into real city geometry and returns to the 2D companion", a
       return cat?.dataset.inCity === "false" && cat?.dataset.dimension === "morphing";
     },
     {},
-    { timeout: 45000 },
+    { timeout: 75000 },
   );
   await expect(cat).toHaveAttribute("data-dimension", "2d");
   await expect(rendered).toHaveAttribute("data-milo3d", "false");
   await expect(page.locator(".milo-art")).toHaveCSS("opacity", "1");
+  const events = await history.evaluate((log) => {
+    log.observer.disconnect();
+    return log.events;
+  });
+  expect(events.some((event) => event.action === "walk" && event.surface === "roof")).toBe(true);
+  expect(events.some((event) => event.action === "walk" && event.surface === "street")).toBe(true);
+  expect(events.some((event) => event.action === "sleep")).toBe(true);
+  expect(events.some((event) => event.activity === "crouching")).toBe(true);
+  expect(events.some((event) => event.activity === "roof-jump")).toBe(true);
+  expect(events.some((event) => event.action === "climb")).toBe(false);
+  await history.dispose();
   expect(errors).toEqual([]);
 });

@@ -56,8 +56,7 @@ export function useCatMotion({
       next?: () => void;
     } | null = null;
     let nextAt = 1500;
-    let nextPlatformAt = 10000 + Math.random() * 5000;
-    let nextCityAt = 3200;
+    let nextCityAt = 8000;
     let exitMorph: {
       start: number;
       duration: number;
@@ -78,8 +77,12 @@ export function useCatMotion({
       steps: number;
       waitUntil: number;
       entry: { x: number; y: number } | null;
-      climb?: { wall: CityPoint; landing: CityPoint };
-      streetWalked?: boolean;
+      roofLeap?: boolean;
+      hasAscended?: boolean;
+      roofWalks?: number;
+      streetWalks?: number;
+      napped?: boolean;
+      restPhase?: "curl" | "nap" | "wake";
       petAfterLanding?: boolean;
     } | null = null;
     const hints: Partial<Record<CatAction, string[]>> = {
@@ -90,12 +93,9 @@ export function useCatMotion({
       ],
       run: ["Important cat business.", "On my way. Probably.", "A little burst of curiosity."],
       hop: ["Oh! You found my jump button.", "Tiny paws. Excellent suspension."],
-      climb: ["The view is better up here.", "Walls are just vertical floors."],
-      jump: [
-        "This window makes a nice perch.",
-        "Landing gear: four paws.",
-        "A little leap of curiosity.",
-      ],
+      crouch: ["One careful look, then a leap."],
+      groom: ["Keeping the little details in order.", "A moment for the whiskers."],
+      jump: ["A rooftop with a view.", "Landing gear: four paws.", "A little leap of curiosity."],
       stretch: ["A quick stretch between ideas.", "Even a cat needs a screen break."],
       lie: [
         "Okay. This is my spot now.",
@@ -157,7 +157,7 @@ export function useCatMotion({
         element.style.setProperty("--milo-2d-opacity", "1");
         element.dataset.dimension = "2d";
       }
-      nextCityAt = clock + 8000 + Math.random() * 6000;
+      nextCityAt = clock + 14000 + Math.random() * 8000;
       measure();
     }
     function cancelCarPlay() {
@@ -187,7 +187,9 @@ export function useCatMotion({
       });
     }
     function enterCity(anchor?: CityAnchor) {
-      const candidates = cityAnchors().filter((item) => item.kind === "roof");
+      const candidates = cityAnchors().filter(
+        (item) => item.kind === "roof" && item.id === item.roofId,
+      );
       const bridge = cityAvailable();
       if (!bridge || (!anchor && !candidates.length)) return false;
       const target = anchor ?? candidates[Math.floor(Math.random() * candidates.length)];
@@ -246,6 +248,7 @@ export function useCatMotion({
         bridge.returnCar(carPlay.plan.id, true);
         carPlay = null;
         city.steps++;
+        city.streetWalks = 3;
         element.dataset.cityActivity = "roaming";
       }
       if (city.target.kind === "wall" && city.point.y < 1) {
@@ -254,27 +257,33 @@ export function useCatMotion({
           .find((anchor) => anchor.id === city!.target.id);
         if (wall) {
           city.from = { ...city.point };
-          city.climb = { wall: { ...wall.point }, landing: { ...(wall.landing ?? wall.point) } };
-          city.target = { ...wall, point: city.climb.landing };
+          city.target = {
+            id: wall.id.replace(/-wall$/, ""),
+            kind: "roof",
+            roofId: wall.id.replace(/-wall$/, ""),
+            point: { ...(wall.landing ?? wall.point) },
+          };
+          city.roofLeap = true;
+          city.hasAscended = true;
           city.start = clock;
-          city.duration = Math.max(2800, Math.min(4200, wall.point.y * 115));
+          city.duration = 2300;
           city.arc = 0;
           city.entry = null;
           city.waitUntil = 0;
           city.steps++;
-          current = "climb";
+          current = "crouch";
           cityHeading = Math.PI;
           lastCityHeading.current = cityHeading;
           angle = 0;
-          element.dataset.cityActivity = "climbing";
-          setAction("climb");
+          element.dataset.cityActivity = "crouching";
+          setAction(current);
           return;
         }
       }
       // Let the street visit include an actual stroll before chasing a slow car.
-      if (city.target.kind === "street" && city.streetWalked && !triedCar) {
+      if (city.target.kind === "street" && (city.streetWalks ?? 0) >= 2 && !triedCar) {
         triedCar = true;
-        const plan = bridge.borrowCar(city.point);
+        const plan = Math.random() < 0.55 ? bridge.borrowCar(city.point) : null;
         if (plan) {
           const projected = bridge.project(plan.from);
           const node = document.elementFromPoint(projected.x, projected.y - 25);
@@ -317,30 +326,84 @@ export function useCatMotion({
           bridge.returnCar(plan.id, false);
         }
       }
-      const candidates = cityAnchors()
+      const allAnchors = cityAnchors();
+      // Stroll on the same roof or along a straight, clear sidewalk before
+      // choosing another level. Most decisions remain walks, not jumps.
+      const onRoof = city.target.kind === "roof";
+      const strolls = allAnchors.filter((anchor) => {
+        const distance = Math.hypot(anchor.point.x - city!.point.x, anchor.point.z - city!.point.z);
+        if (onRoof)
+          return (
+            anchor.kind === "roof" &&
+            anchor.roofId === city!.target.roofId &&
+            anchor.id !== city!.target.id &&
+            distance > 1.5
+          );
+        return (
+          anchor.kind === "street" &&
+          distance > 5 &&
+          distance < 28 &&
+          (Math.abs(anchor.point.x - city!.point.x) < 0.2 ||
+            Math.abs(anchor.point.z - city!.point.z) < 0.2) &&
+          bridge.clearance(city!.point, anchor.point) < 4.5
+        );
+      });
+      if (
+        !city.hasAscended &&
+        strolls.length &&
+        (onRoof ? (city.roofWalks ?? 0) < 2 : (city.streetWalks ?? 0) < 3)
+      ) {
+        const target = strolls[Math.floor(Math.random() * strolls.length)];
+        city.from = { ...city.point };
+        city.target = target;
+        city.start = clock;
+        city.duration = onRoof
+          ? 2400
+          : Math.max(
+              2600,
+              Math.min(
+                4800,
+                Math.hypot(target.point.x - city.point.x, target.point.z - city.point.z) * 190,
+              ),
+            );
+        city.arc = 0;
+        city.waitUntil = 0;
+        city.entry = null;
+        city.steps++;
+        if (onRoof) city.roofWalks = (city.roofWalks ?? 0) + 1;
+        else city.streetWalks = (city.streetWalks ?? 0) + 1;
+        cityHeading = Math.atan2(-(target.point.z - city.from.z), target.point.x - city.from.x);
+        lastCityHeading.current = cityHeading;
+        current = "walk";
+        setAction(current);
+        element.dataset.cityActivity = "walking";
+        return;
+      }
+      const candidates = allAnchors
         .filter((anchor) => anchor.id !== city!.target.id)
         .map((anchor) => ({
           anchor,
           distance: Math.hypot(anchor.point.x - city!.point.x, anchor.point.z - city!.point.z),
         }))
         .filter((item) => item.distance < 52 && item.distance > 5);
-      const desired =
-        (city.target.kind === "roof" && city.steps >= 1) ||
-        (city.target.kind === "street" && !city.streetWalked)
-          ? "street"
-          : city.target.kind === "wall"
-            ? "roof"
-            : city.target.kind === "street"
-              ? "wall"
-              : "roof";
+      const desired = onRoof ? "street" : "wall";
       const nearby = candidates
-        .filter((item) => item.anchor.kind === desired)
+        .filter(
+          (item) =>
+            item.anchor.kind === desired &&
+            (desired !== "wall" ||
+              bridge.clearance(city!.point, { ...item.anchor.point, y: 0.4 }) < 4.5),
+        )
         .sort((a, b) => a.distance - b.distance)
         .slice(0, 5);
-      const options = nearby.length
-        ? nearby
-        : candidates.sort((a, b) => a.distance - b.distance).slice(0, 5);
-      if (!options.length || city.steps >= 8) {
+      const options =
+        nearby.length || desired !== "wall"
+          ? nearby
+          : candidates
+              .filter((item) => item.anchor.kind === "wall")
+              .sort((a, b) => a.distance - b.distance)
+              .slice(0, 3);
+      if (!options.length || city.steps >= 11 || city.hasAscended) {
         exitMorph = {
           start: clock,
           duration: 1100,
@@ -348,15 +411,14 @@ export function useCatMotion({
           heading: cityHeading,
         };
         clearCity(true);
-        const available = platforms();
-        if (available.length) perch(available[Math.floor(Math.random() * available.length)]);
-        else begin("jump", position.current.x, size.floor, 1000, 65);
-        nextPlatformAt = clock + 11000;
+        begin("jump", position.current.x, size.floor, 1000, 45, 0, () =>
+          walkTo(clampX(position.current.x - facing * 160)),
+        );
         return;
       }
       const { anchor, distance } = options[Math.floor(Math.random() * options.length)];
       city.from = { ...city.point };
-      city.climb = undefined;
+      city.roofLeap = false;
       city.target =
         anchor.kind === "wall" ? { ...anchor, point: { ...anchor.point, y: 0.4 } } : anchor;
       city.start = clock;
@@ -371,11 +433,11 @@ export function useCatMotion({
       const clearance = getCityBridge()!.clearance(city.from, city.target.point);
       const walking =
         (anchor.kind === "street" || anchor.kind === "wall") && city.point.y < 1 && clearance < 5;
-      if (walking && anchor.kind === "street") city.streetWalked = true;
+      if (walking && anchor.kind === "street") city.streetWalks = (city.streetWalks ?? 0) + 1;
       current = walking ? "walk" : "jump";
       element.dataset.cityActivity = walking ? "walking" : "leaping";
       city.duration = walking
-        ? Math.max(1100, Math.min(2200, distance * 65))
+        ? Math.max(2600, Math.min(4800, distance * 190))
         : Math.max(950, Math.min(1700, distance * 32));
       city.arc = walking ? 0 : Math.max(4, Math.min(13, distance * 0.23), clearance);
       angle = 0;
@@ -405,29 +467,38 @@ export function useCatMotion({
       }
       const p = Math.min(1, (clock - city.start) / city.duration),
         t = p * p * (3 - 2 * p);
+      let poseProgress = p;
+      let jumpPhase: "prepare" | "flight" | "land" | undefined;
       city.point = {
         x: city.from.x + (city.target.point.x - city.from.x) * t,
         y: city.from.y + (city.target.point.y - city.from.y) * t + 4 * p * (1 - p) * city.arc,
         z: city.from.z + (city.target.point.z - city.from.z) * t,
       };
-      if (city.climb) {
-        const { wall, landing } = city.climb;
-        const rise = Math.max(0, Math.min(1, (p - 0.14) / 0.63));
-        const pull = Math.max(0, Math.min(1, (p - 0.77) / 0.23));
-        const easedPull = pull * pull * (3 - 2 * pull);
-        const plant = Math.max(0, Math.min(1, p / 0.14));
-        const wallContactX = wall.x - 4.5 * plant * plant * (3 - 2 * plant);
-        const easedRise = rise * rise * (3 - 2 * rise);
+      if (city.roofLeap) {
+        const q = Math.max(0, Math.min(1, (p - 0.28) / 0.6));
+        const advance = Math.max(0, Math.min(1, (q - 0.22) / 0.78));
+        const horizontal = advance * advance * (3 - 2 * advance);
+        const landing = city.target.point;
+        // Rise outside the facade first, then cross the ledge above roof height.
         city.point = {
-          x: wallContactX + (landing.x - wallContactX) * easedPull,
-          y: city.from.y + Math.max(0, landing.y - 6 - city.from.y) * easedRise + 6 * easedPull,
-          z: wall.z + (landing.z - wall.z) * easedPull,
+          x: city.from.x + (landing.x - city.from.x) * horizontal,
+          y:
+            (1 - q) ** 3 * city.from.y +
+            3 * (1 - q) ** 2 * q * (landing.y + 7) +
+            3 * (1 - q) * q * q * (landing.y + 5) +
+            q ** 3 * landing.y,
+          z: city.from.z + (landing.z - city.from.z) * horizontal,
         };
-        // The ledge height is exact even on the lowest buildings.
-        if (pull > 0)
-          city.point.y =
-            Math.max(city.from.y, landing.y - 6) +
-            (landing.y - Math.max(city.from.y, landing.y - 6)) * easedPull;
+        jumpPhase = p < 0.28 ? "prepare" : p < 0.88 ? "flight" : "land";
+        poseProgress =
+          jumpPhase === "prepare" ? p / 0.28 : jumpPhase === "flight" ? q : (p - 0.88) / 0.12;
+        const next = jumpPhase === "prepare" ? "crouch" : jumpPhase === "flight" ? "jump" : "sit";
+        if (current !== next) {
+          current = next;
+          setAction(current);
+        }
+        element.dataset.cityActivity =
+          jumpPhase === "prepare" ? "crouching" : jumpPhase === "flight" ? "roof-jump" : "landing";
       }
       if (carPlay?.phase === "carry") {
         const { plan } = carPlay;
@@ -468,7 +539,8 @@ export function useCatMotion({
         action: current,
         blend: morph,
         facing,
-        progress: p,
+        progress: poseProgress,
+        jumpPhase,
         carrying: carPlay?.phase === "carry",
         screen: city.entry
           ? { x: position.current.x + width * 0.52, y: position.current.y + height * 0.91 }
@@ -479,22 +551,50 @@ export function useCatMotion({
       if (p === 1) {
         angle = 0;
         if (!city.waitUntil) {
+          city.roofLeap = false;
+          const nap =
+            city.target.kind === "roof" &&
+            !city.napped &&
+            (city.roofWalks ?? 0) > 0 &&
+            !city.petAfterLanding;
           city.waitUntil =
-            clock + (city.petAfterLanding ? 9000 : carPlay ? 400 : 700 + Math.random() * 850);
-          if (city.climb) {
-            city.target = {
-              ...city.target,
-              id: city.target.id.replace(/-wall$/, ""),
-              kind: "roof",
-            };
-            city.climb = undefined;
-            element.dataset.cityActivity = "roaming";
+            clock +
+            (city.petAfterLanding ? 9000 : nap ? 800 : carPlay ? 400 : 1100 + Math.random() * 1300);
+          if (nap) {
+            city.napped = true;
+            city.restPhase = "curl";
           }
-          current = city.petAfterLanding ? "lie" : city.steps % 3 === 0 ? "stretch" : "sit";
+          current =
+            city.petAfterLanding || nap
+              ? "lie"
+              : city.steps % 4 === 0
+                ? "groom"
+                : city.steps % 3 === 0
+                  ? "stretch"
+                  : "sit";
+          element.dataset.cityActivity = nap ? "curling" : "resting";
           city.petAfterLanding = false;
           setAction(current);
         }
-        if (clock > city.waitUntil) cityStep();
+        if (clock > city.waitUntil) {
+          if (city.restPhase === "curl") {
+            city.restPhase = "nap";
+            current = "sleep";
+            setAction(current);
+            city.waitUntil = clock + 6500 + Math.random() * 2500;
+            element.dataset.cityActivity = "sleeping";
+            say("sleep");
+          } else if (city.restPhase === "nap") {
+            city.restPhase = "wake";
+            current = "stretch";
+            setAction(current);
+            city.waitUntil = clock + 1500;
+            element.dataset.cityActivity = "waking";
+          } else {
+            city.restPhase = undefined;
+            cityStep();
+          }
+        }
       }
       return true;
     }
@@ -539,85 +639,38 @@ export function useCatMotion({
         next,
       );
     }
-    function platforms() {
-      return Array.from(
-        document.querySelectorAll<HTMLElement>(".app-window:not(.is-maximized) .window-titlebar"),
-      )
-        .filter(
-          (node) =>
-            node.getClientRects().length > 0 && getComputedStyle(node).visibility !== "hidden",
-        )
-        .map((node) => node.getBoundingClientRect())
-        .filter(
-          (rect) =>
-            rect.width > 150 && rect.top > size.top + 20 && rect.top < size.floor + size.h - 10,
-        );
-    }
-    function perch(
-      rect: DOMRect,
-      x = rect.left + rect.width * (0.2 + Math.random() * 0.45),
-      stay = false,
-    ) {
-      const landingX = clampX(Math.max(rect.left + 5, Math.min(rect.right - size.w - 5, x)));
-      const landingY = clampY(rect.top - size.h + 5);
-      begin(
-        "jump",
-        landingX,
-        landingY,
-        950,
-        Math.min(105, Math.max(52, Math.abs(position.current.y - landingY) * 0.4)),
-        0,
-        () => {
-          begin(
-            "sit",
-            landingX,
-            landingY,
-            stay ? 5200 : 2600,
-            0,
-            0,
-            stay ? undefined : () => begin("hop", landingX + facing * 75, size.floor, 900, 55),
-          );
-        },
-      );
-    }
     function explore() {
       measure();
       cycle++;
-      if (cycle % 5 === 0 && innerWidth > 700) {
-        const right = position.current.x > innerWidth / 2,
-          edge = right ? size.maxX : 4;
-        walkTo(edge, () => {
-          facing = right ? 1 : -1;
-          begin(
-            "climb",
-            edge,
-            Math.max(size.top + 95, size.floor - 240),
-            2800,
-            0,
-            right ? -82 : 82,
-            () => {
-              begin("sit", edge, position.current.y, 600, 0, right ? -82 : 82, () =>
-                begin("jump", edge + (right ? -180 : 180), size.floor, 1050, 70),
-              );
-            },
-          );
-        });
-      } else if (cycle % 4 === 0 && innerWidth > 900) {
-        const available = platforms();
-        const platform = available[Math.floor(Math.random() * available.length)];
-        if (platform) {
-          perch(platform);
-        } else begin("hop", position.current.x + facing * 85, size.floor, 800, 75);
-      } else if (cycle % 3 === 0) {
+      if (cycle % 6 === 3) {
+        begin("lie", position.current.x, size.floor, 850, 0, 0, () =>
+          begin("sleep", position.current.x, size.floor, 7500 + Math.random() * 4500, 0, 0, () =>
+            begin("stretch", position.current.x, size.floor, 1600),
+          ),
+        );
+      } else if (cycle % 7 === 0) {
+        begin("crouch", position.current.x, size.floor, 450, 0, 0, () =>
+          begin("hop", position.current.x + facing * 55, size.floor, 850, 35),
+        );
+      } else if (cycle % 4 === 0) {
+        begin("groom", position.current.x, size.floor, 2200, 0, 0, () =>
+          walkTo(clampX(position.current.x + facing * 130)),
+        );
+      } else if (cycle % 5 === 0) {
         begin("stretch", position.current.x, size.floor, 1700, 0, 0, () =>
-          begin("run", innerWidth * (0.12 + Math.random() * 0.62), size.floor, 1800),
+          begin("run", clampX(position.current.x + facing * 190), size.floor, 1800),
         );
       } else {
-        const target =
-          position.current.x > innerWidth / 2
-            ? innerWidth * (0.08 + Math.random() * 0.25)
-            : innerWidth * (0.58 + Math.random() * 0.22);
-        walkTo(target, () => begin("sit", position.current.x, size.floor, 1200));
+        const direction =
+          position.current.x > innerWidth * 0.7
+            ? -1
+            : position.current.x < innerWidth * 0.2
+              ? 1
+              : facing;
+        const target = clampX(position.current.x + direction * (140 + Math.random() * 220));
+        walkTo(target, () =>
+          begin("sit", position.current.x, size.floor, 1200 + Math.random() * 1500),
+        );
       }
     }
     function tick(now: number) {
@@ -638,11 +691,6 @@ export function useCatMotion({
         if (city) {
           animateCity();
         } else {
-          if (clock > nextPlatformAt && !["lie", "sleep"].includes(current)) {
-            nextPlatformAt = clock + 10000 + Math.random() * 5000;
-            const available = platforms();
-            if (available.length) perch(available[Math.floor(Math.random() * available.length)]);
-          }
           if (journey) {
             const p = Math.min(1, (clock - journey.start) / journey.duration);
             const t =
@@ -702,7 +750,7 @@ export function useCatMotion({
       if (paused) return;
       measure();
       if (city) {
-        if (city.climb || carPlay) {
+        if (city.roofLeap || carPlay) {
           if (carPlay) {
             cancelCarPlay();
             city.from = { ...city.point };
@@ -719,7 +767,8 @@ export function useCatMotion({
           return;
         }
         cancelCarPlay();
-        city.climb = undefined;
+        city.roofLeap = false;
+        city.restPhase = undefined;
         city.waitUntil = clock + 9000;
         city.start = clock - city.duration;
         city.from = { ...city.point };
@@ -785,25 +834,10 @@ export function useCatMotion({
       if (!dragging) return;
       dragging = false;
       element.dataset.dragging = "false";
-      const center = position.current.x + size.w / 2;
-      const eligible = platforms()
-        .filter(
-          (rect) =>
-            center >= rect.left - 35 &&
-            center <= rect.right + 35 &&
-            rect.top > position.current.y - size.h / 2,
-        )
-        .sort(
-          (a, b) =>
-            Math.abs(a.top - position.current.y - size.h) -
-            Math.abs(b.top - position.current.y - size.h),
-        );
-      const landing = eligible[0];
       if (reducedMotion) {
-        position.current.y = landing ? clampY(landing.top - size.h + 5) : size.floor;
+        position.current.y = size.floor;
         paint();
-      } else if (landing) perch(landing, position.current.x, true);
-      else {
+      } else {
         const bridge = cityAvailable(),
           footX = position.current.x + size.w * 0.5,
           footY = position.current.y + size.h * 0.9;
@@ -816,7 +850,11 @@ export function useCatMotion({
           })[0];
         const p = roof && bridge?.project(roof.point);
         const ground = bridge?.ground(footX, footY);
-        if (roof && p && Math.hypot(p.x - footX, p.y - footY) < 140) enterCity(roof);
+        const onWindow = document
+          .elementsFromPoint(footX, footY)
+          .some((node) => node.closest(".app-window,.app-launcher,.spatial-controls"));
+        if (onWindow) begin("jump", position.current.x, size.floor, 690, 25);
+        else if (roof && p && Math.hypot(p.x - footX, p.y - footY) < 140) enterCity(roof);
         else if (ground) enterCity({ id: "DROP", kind: "street", point: ground });
         else begin("jump", position.current.x, size.floor, 690, 30);
       }

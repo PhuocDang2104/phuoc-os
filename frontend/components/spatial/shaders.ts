@@ -80,6 +80,7 @@ uniform vec3 uNormalViolet;
 uniform vec3 uNormalMagenta;
 uniform float uNormalCoreRadius;
 uniform float uNormalCoreStrength;
+uniform float uNormalCoreTime;
 varying vec3 vScanNormal;
 varying vec3 vScanWorld;
 uniform vec3 uRgbTint;
@@ -146,7 +147,17 @@ vec3 analysisSurfaceForMode(vec3 beauty,vec3 rgb,int mode,vec3 worldDx,vec3 worl
   if(mode==2) {
     result=toLinear(mix(uClassColor,uInstanceColor,uInstance))*(.54+.42*luminance);
     vec2 css=gl_FragCoord.xy/uDrawingSize*uCssSize;
-    float core=(1.-smoothstep(uNormalCoreRadius*.66,uNormalCoreRadius,length(css-uPointer)))*uNormalCoreStrength;
+    // Use the same CSS pixel grid as the outer scan, with a slowly breathing,
+    // dithered frontier rather than a circular alpha gradient.
+    vec2 cell=floor(css/uPixelSize);
+    vec2 pixel=(cell+.5)*uPixelSize;
+    float phase=uNormalCoreTime*.8;
+    float ripple=sin(dot(floor(cell/5.),vec2(.71,1.13))+phase)*.035;
+    float radius=uNormalCoreRadius*(.96+ripple+.055*scanHash(floor(cell/6.)));
+    float envelope=1.-smoothstep(radius*.55,radius,length(pixel-uPointer));
+    float threshold=.12+.38*scanHash(cell)+.12*scanHash(floor(cell/3.));
+    float shimmer=sin(phase+scanHash(cell)*6.283)*.045;
+    float core=smoothstep(threshold-.055,threshold+.065,envelope+shimmer)*uNormalCoreStrength;
     result=mix(result,normalColor,core);
   }
   if(mode==3) {

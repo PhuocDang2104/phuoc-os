@@ -164,8 +164,7 @@
 }
 @media (min-width: 901px) and (max-height: 810px) {
   .window-about:not(.is-maximized) .about-field,
-  .window-about:not(.is-maximized) .about-id-code,
-  .window-about:not(.is-maximized) .about-bio {
+  .window-about:not(.is-maximized) .about-id-code {
     display: none;
   }
   .window-about:not(.is-maximized) .about-id-main {
