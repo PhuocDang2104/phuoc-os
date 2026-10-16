@@ -9,7 +9,7 @@ test("first paint tells the story and all main routes are reachable", async ({ p
   });
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Dang Nhu Phuoc." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "From foundations to intelligent systems." })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Journey", exact: true })).toContainText("HCMUT");
   await expect(page.getByRole("region", { name: "Journey", exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "Work gallery", exact: true })).toBeVisible();
   expect(
@@ -59,11 +59,16 @@ test("command palette supports fuzzy search, keyboard selection, and focus retur
   await expect(page.getByRole("button", { name: "Open command palette" })).toBeFocused();
 });
 
-test("neural core, Milo, and the PDF have working navigation", async ({ page, request }) => {
+test("the single workspace, Milo, and the PDF have working navigation", async ({
+  page,
+  request,
+}) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Open Neural core workspace" }).click();
-  await expect(page.getByRole("heading", { name: "Follow your curiosity." })).toBeVisible();
-  await page.locator(".portal-research").click();
+  await expect(page.getByRole("navigation", { name: "Workspaces" })).toHaveCount(0);
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Research", exact: true })
+    .click();
   await expect(page).toHaveURL(/\/research$/);
   await page.getByRole("button", { name: "Talk to Milo, the workspace companion" }).click();
   await page
@@ -79,10 +84,7 @@ test("neural core, Milo, and the PDF have working navigation", async ({ page, re
 test("real local CNN recognizes a drawn one and reports inference", async ({ page, isMobile }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Draw to navigate", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Open Profile desk workspace" })).toHaveAttribute(
-    "aria-current",
-    "step",
-  );
+  await expect(page.locator(".desktop")).toHaveClass(/workspace-0/);
   const canvas = page.getByLabel(
     "Draw a number from 1 to 6; alternatively use the destination buttons",
   );

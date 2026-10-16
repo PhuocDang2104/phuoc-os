@@ -30,9 +30,14 @@ export function AppWindow({
   } | null>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [maximized, setMaximized] = useState(false);
+  const scrollOnMount = useRef(hydrated);
 
   useEffect(() => {
-    if (matchMedia("(max-width: 900px)").matches && !["about", "snapshot", "stack"].includes(id)) {
+    if (
+      scrollOnMount.current &&
+      matchMedia("(max-width: 900px)").matches &&
+      !["about", "snapshot", "stack"].includes(id)
+    ) {
       ref.current?.scrollIntoView({ block: "start", behavior: "instant" });
     }
   }, [id]);
@@ -106,7 +111,11 @@ export function AppWindow({
           {apps[id].file}
         </span>
         <div className="window-controls">
-          <button onClick={() => minimizeApp(id)} disabled={!hydrated} aria-label={`Minimize ${apps[id].label}`}>
+          <button
+            onClick={() => minimizeApp(id)}
+            disabled={!hydrated}
+            aria-label={`Minimize ${apps[id].label}`}
+          >
             <Icon name="minus" size={13} />
           </button>
           <button
@@ -117,7 +126,11 @@ export function AppWindow({
           >
             <Icon name={maximized ? "minimize" : "maximize"} size={12} />
           </button>
-          <button onClick={() => closeApp(id)} disabled={!hydrated} aria-label={`Close ${apps[id].label}`}>
+          <button
+            onClick={() => closeApp(id)}
+            disabled={!hydrated}
+            aria-label={`Close ${apps[id].label}`}
+          >
             <Icon name="close" size={14} />
           </button>
         </div>

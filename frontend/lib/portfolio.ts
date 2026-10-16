@@ -24,7 +24,7 @@ export const sections = {
       "Projects at the intersection of machine learning, embedded hardware, and real-world deployment.",
     items: ["Edge AI & embedded intelligence", "Computer vision systems", "Hardware & firmware"],
     empty:
-      "Project case studies are being prepared. Explore the AI Lab for a working experiment in the meantime.",
+      "Project case studies are being prepared. Try NAV.AI on Home for a working experiment in the meantime.",
   },
   research: {
     label: "Research",
@@ -76,28 +76,18 @@ export type AppId =
   | "stack"
   | "experiments"
   | "notes";
-export type WorkspaceId = 0 | 1 | 2;
 
-export const apps: Record<
-  AppId,
-  { label: string; file: string; icon: string; workspace: WorkspaceId }
-> = {
-  about: { label: "About me", file: "about.md", icon: "user", workspace: 0 },
-  snapshot: { label: "Career snapshot", file: "career_snapshot.yml", icon: "scan", workspace: 0 },
-  journey: { label: "Journey", file: "journey.log", icon: "route", workspace: 0 },
-  gallery: { label: "Work gallery", file: "work/", icon: "folder", workspace: 0 },
-  resume: { label: "Resume.pdf", file: "resume.pdf", icon: "file", workspace: 0 },
-  contact: { label: "Contact", file: "contact.sh", icon: "mail", workspace: 0 },
-  certifications: { label: "Certifications", file: "certifications/", icon: "award", workspace: 0 },
-  draw: { label: "Draw to navigate", file: "draw2navigate.ai", icon: "spark", workspace: 0 },
-  research: { label: "Research", file: "research.md", icon: "network", workspace: 1 },
-  stack: { label: "Tech stack", file: "stack.lock", icon: "layers", workspace: 1 },
-  experiments: { label: "Experiments", file: "experiments/", icon: "flask", workspace: 1 },
-  notes: { label: "Build notes", file: "notes.md", icon: "code", workspace: 1 },
+export const apps: Record<AppId, { label: string; file: string; icon: string }> = {
+  about: { label: "About me", file: "about.md", icon: "user" },
+  snapshot: { label: "Career snapshot", file: "career_snapshot.yml", icon: "scan" },
+  journey: { label: "Journey", file: "journey.log", icon: "route" },
+  gallery: { label: "Work gallery", file: "work/", icon: "folder" },
+  resume: { label: "Resume.pdf", file: "resume.pdf", icon: "file" },
+  contact: { label: "Contact", file: "contact.sh", icon: "mail" },
+  certifications: { label: "Certifications", file: "certifications/", icon: "award" },
+  draw: { label: "Draw to navigate", file: "draw2navigate.ai", icon: "spark" },
+  research: { label: "Research", file: "research.md", icon: "network" },
+  stack: { label: "Tech stack", file: "stack.lock", icon: "layers" },
+  experiments: { label: "Experiments", file: "experiments/", icon: "flask" },
+  notes: { label: "Build notes", file: "notes.md", icon: "code" },
 };
-
-export const workspaces = [
-  { name: "Profile desk", label: "THE PERSON BEHIND THE SYSTEM", number: "01" },
-  { name: "AI Lab", label: "A LITTLE CURIOSITY. REAL INFERENCE.", number: "02" },
-  { name: "Neural core", label: "EVERYTHING IS CONNECTED", number: "03" },
-] as const;

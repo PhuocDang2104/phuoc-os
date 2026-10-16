@@ -2,7 +2,7 @@
 
 Personal Engineering Workstation của **Dang Nhu Phuoc**.
 
-Homepage theo concept desktop/Linux: hai workspace tương tác, một Neural Core riêng,
+Homepage theo concept desktop/Linux: một workspace với thành phố 3D tương tác,
 và Milo — mèo pixel kiêm trợ lý điều hướng. Nội dung cá nhân được quản lý tập trung,
 frontend hoạt động độc lập với backend.
 
@@ -27,15 +27,16 @@ npm run start
 ## Đã triển khai
 
 - **Profile Desk:** About là thẻ ID ngang, Journey là cửa sổ log dọc bên phải; cả hai cùng Work Gallery mở sẵn. Contact nằm ngay sau Awards trên navbar và mở popup toàn site.
+- **Spatial Home:** thành phố 700 tòa nhà phủ kín khung nhìn, đồng bộ dark/light. Segmentation là mode mặc định. 3D & Object đứng thứ hai, hover hiện vật liệu RGB tự nhiên: gạch, kính, bê tông, nhựa đường và cây xanh; chỉ hiện box/nhãn cho cây, đèn tín hiệu, xe và người. Có Depth, Sensor Fusion và Control & SLAM. 40 xe thuộc sáu kiểu thân bo mềm và 32 người chạy trên mạng đường. Focus scene thu gọn popup, Return to desk khôi phục. Đây là dữ liệu mô phỏng.
+- **Journey tương tác:** cửa sổ 9:16 được thu gọn khoảng trống trên, giữ đủ bốn mốc. Tín hiệu di chuyển làm sáng toàn bộ đoạn đường đã đi qua, với sóng pixel nổi dạng isometric. Bấm logo để mở chi tiết, Replay để chạy lại. Hai bảng trái có độ đục khoảng 66%, hover/focus bàn phím tăng lên 96%. Work Gallery khoảng 157px trên desktop. Chi tiết tại [docs/spatial-intelligence.md](docs/spatial-intelligence.md).
 - **Hệ cửa sổ:** kéo bằng title bar, focus, minimize/restore, close, maximize bằng
   nút hoặc double-click title bar; Escape đóng cửa sổ trên cùng.
 - **NAV.AI ngay trên Home:** popup canvas chuột/chạm nhỏ gọn, CNN MNIST pretrained chạy bằng ONNX Runtime Web,
   confidence và latency thực, tự điều hướng khi nhận diện đủ chắc chắn; popup giữ trạng thái khi quay lại Home. Có đường điều hướng
   bằng nút khi model lỗi hoặc không muốn vẽ.
 - **Work Gallery:** carousel ở đáy màn hình có ảnh dự án thật, chạy liên tục, kéo/vuốt, pause khi hover/focus và có nút điều khiển.
-- **AI Lab:** workspace riêng cho stack, research và experiments.
-- **Neural Core:** point cloud hình cầu có bốn portal đến Work, Research, Blog, Awards.
-- **Milo:** mèo SVG nhiều lớp, đi/chạy, nhảy lên title bar, leo tường và đổi lời nhắn
+- **Một workspace:** bỏ tab AI Lab và Neural Core; stack, research và experiments vẫn mở qua command palette.
+- **Milo:** mèo 2D SVG chuyển dần thành mô hình 3D có khớp khi nhảy vào thành phố, dùng ánh sáng và kiểm tra chiều sâu của scene. Khi nhảy ra hoặc được kéo ra, mô hình chuyển lại thành mèo 2D bằng hiệu ứng dissolve pixel đồng bộ vị trí. Mèo đi/chạy, nhảy mái nhà, leo tường, xuống vỉa hè và đổi lời nhắn
   theo hành động. Click nền để đổi động tác; click mèo để nằm xuống, kéo để chuyển chỗ.
   Popup là chat nhiều lượt qua Groq khi cấu hình backend, có câu hỏi gợi ý, trạng thái kết nối
   và các nút điều hướng. Khóa Groq chỉ nằm trên backend.
@@ -46,7 +47,7 @@ npm run start
 - **Command palette:** Ctrl/Cmd+K, fuzzy search, ↑/↓, Enter, Escape, native focus trap.
 - **Responsive:** navbar và file launcher gọn ở góc trái; nền Home không có chữ
   trang trí. Mobile xếp các cửa sổ nội dung dọc, NAV.AI là popup nổi, gallery neo đáy.
-  Có swipe ngang và trackpad ngang trên nền trống.
+  Không còn thao tác chuyển sang workspace phụ.
 - **Accessibility:** semantic controls, skip link, focus ring, reduced motion theo
   hệ thống hoặc nút Motion; model không cần thiết cho điều hướng.
 - **Backend:** FastAPI, liveness/readiness, CORS theo origin, logging, SQLAlchemy,
@@ -177,9 +178,10 @@ khi model tải thất bại, carousel và tương tác với Milo.
 
 - Fonts Geist / Geist Mono được self-host qua `@fontsource`, không gọi Google Fonts.
 - Icons: Lucide.
-- Neural Field / Core: Canvas 2D procedural projection, không cần GPU/WebGL. Có
-  adaptive point count, giới hạn tốc độ vẽ và dừng khi tab không hoạt động.
+- Home: thành phố Three.js với Segmentation, RGB, Depth, Sensor Fusion và Control;
+  hover hai lớp, traffic có quẹo và Milo chuyển 2D/3D. Xem [chi tiết triển khai](docs/spatial-intelligence.md).
+- Journey: một quỹ đạo phát sáng, hiệu ứng voxel wave và bốn cột mốc trong popup dọc.
 - [MNIST model của Microsoft](https://github.com/microsoft/onnxruntime-inference-examples/blob/main/c_cxx/MNIST/mnist.onnx): MIT, đã lưu license và checksum cùng model.
 - [ONNX Runtime Web](https://onnxruntime.ai/docs/get-started/with-javascript/web.html): lazy load khi bấm Recognize; dữ liệu nét vẽ không rời trình duyệt.
 
-Chưa có remote GitHub, domain hoặc deployment production được tạo tự động.
+Source: [PhuocDang2104/phuoc-os](https://github.com/PhuocDang2104/phuoc-os). Cấu hình production xem [deployment](docs/deployment.md).

@@ -14,7 +14,7 @@ function fuzzy(query: string, text: string) {
 
 export function CommandPalette({ onClose }: { onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const { openApp, setWorkspace } = useWorkstation();
+  const { openApp } = useWorkstation();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
@@ -26,7 +26,6 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
       detail: "Workspace",
       icon: "terminal",
       run: () => {
-        setWorkspace(0);
         router.push("/");
       },
     },

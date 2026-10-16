@@ -5,7 +5,7 @@ import { useWorkstation } from "../shell";
 
 export function NeuralField() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const { workspace, reducedMotion } = useWorkstation();
+  const { reducedMotion } = useWorkstation();
   useEffect(() => {
     const element = canvas.current!;
     const context = element.getContext("2d");
@@ -55,7 +55,7 @@ export function NeuralField() {
           const alpha = light
             ? density * 0.26 + influence * 0.05
             : density * 0.52 + influence * 0.08;
-          context.fillStyle = `rgba(${light ? "80,63,103" : workspace === 1 ? "153,135,182" : density > 0.65 ? "188,180,197" : "128,111,150"},${alpha})`;
+          context.fillStyle = `rgba(${light ? "80,63,103" : density > 0.65 ? "188,180,197" : "128,111,150"},${alpha})`;
           const pointSize = 0.7 + density * 1.3;
           context.fillRect(x, y, pointSize, pointSize);
         }
@@ -82,6 +82,6 @@ export function NeuralField() {
       window.removeEventListener("mousemove", move);
       window.removeEventListener("phuoc:theme", resize);
     };
-  }, [workspace, reducedMotion]);
+  }, [reducedMotion]);
   return <canvas ref={canvas} className="neural-field" aria-hidden="true" />;
 }

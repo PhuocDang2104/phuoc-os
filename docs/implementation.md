@@ -4,22 +4,16 @@
 
 Nền graphite/đen, accent lavender, Geist + Geist Mono self-host, border mảnh,
 cửa sổ có hierarchy rõ. Navbar mảnh và file launcher hai cột ở góc trái trên.
-Nền Home chỉ có neural field, không có hero/watermark/caption. About dạng thẻ ID ngang, Journey dạng log dọc bên phải mở sẵn; Work Gallery tự mở ở đáy. NAV.AI là popup toàn site, giữ nguyên vị trí và trạng thái qua các trang, chỉ đóng khi người dùng bấm x.
+Home dùng thành phố 3D đồng bộ dark/light, Segmentation mặc định. 3D & Object đứng thứ hai và hiện vật liệu RGB tự nhiên khi hover, bỏ box/nhãn của nhà; landmark point cloud chỉ còn trong Control & SLAM. Hai bảng trái có độ đục khoảng 66%, tăng lên 96% khi hover/focus bàn phím. Có 40 xe bo mềm thuộc sáu kiểu và 32 người. Milo chuyển 2D sang mô hình 3D có khớp trong thành phố, rồi dissolve về 2D theo cùng quỹ đạo khi nhảy ra. Journey 9:16 bỏ khoảng trống trên, đường phía sau đốm sáng được thắp sáng cùng wave pixel isometric. Focus scene tạm thu gọn popup, Return to desk khôi phục. NAV.AI giữ nguyên vị trí qua các trang. Xem [spatial-intelligence.md](spatial-intelligence.md).
 
-Home có 3 trải nghiệm khác nhau:
-
-1. Profile Desk: giới thiệu, lối tắt cho recruiter, NAV.AI và Work Gallery.
-2. AI Lab: stack, research, experiments.
-3. Neural Core: vùng khám phá dạng spherical point cloud với bốn portal.
+Home chỉ giữ Profile Desk; tab 2/3 và chuyển workspace bằng swipe/keyboard đã bỏ. Stack, research và experiments vẫn mở từ command palette.
 
 Work / Research có archive bài viết, dự án thật và bài paper cùng asset đã chuyển từ portfolio cũ; Blog chờ nội dung thật. Social ghi lại SAVINA/HumanLog và để ngỏ hoạt động từ thiện, CLB khi có bằng chứng. Awards dùng ảnh chứng nhận thật, inspector kéo xoay 3D và tỷ lệ ảnh tự nhiên.
 
 ## Các lựa chọn triển khai
 
 - **Next.js App Router / React / TypeScript**; CSS được tách theo shell, desktop,
-  app. Chưa cần Tailwind/GSAP/Three.js để đáp ứng phần này.
-- **Canvas 2D procedural** tạo neural field và projection 3D của core. Ít dependency,
-  có animation vòng đời rõ, hoạt động không cần WebGL. Core được dynamic import.
+  app. Spatial Home load Three.js theo chunk riêng; fallback SVG khi WebGL không khả dụng.
 - **Window manager nhẹ:** state trong Shell, z-order theo focus, state giữ khi
   điều hướng sang trang khác; không lưu session vào localStorage ngoài motion preference.
 - **Native dialog** cho command palette và popup mèo, hỗ trợ focus trap/Escape.

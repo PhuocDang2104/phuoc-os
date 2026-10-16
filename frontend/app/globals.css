@@ -9,6 +9,8 @@
 @import url("../styles/id-card.css");
 @import url("../styles/awards.css");
 @import url("../styles/social.css");
+@import url("../styles/spatial.css");
+@import url("../styles/journey.css");
 
 :root {
   --bg: #09090b;

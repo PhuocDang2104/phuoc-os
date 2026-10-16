@@ -3,6 +3,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Award,
+  Box,
   Braces,
   Cat,
   ChevronLeft,
@@ -24,7 +25,10 @@ import {
   Network,
   Pause,
   Play,
+  Plus,
   Route,
+  Radar,
+  Shapes,
   ScanLine,
   Search,
   Sparkles,
@@ -36,6 +40,9 @@ import {
 
 const icons = {
   user: UserRound,
+  box: Box,
+  radar: Radar,
+  shapes: Shapes,
   award: Award,
   route: Route,
   terminal: Terminal,
@@ -66,6 +73,7 @@ const icons = {
   next: ChevronRight,
   pause: Pause,
   play: Play,
+  plus: Plus,
   sun: Sun,
   moon: Moon,
 };

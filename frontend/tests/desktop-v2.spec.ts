@@ -45,7 +45,10 @@ test("gallery opens at the bottom, loops, pauses, drags, and restores", async ({
   expect(await rail.evaluate((node) => node.scrollLeft)).toBeGreaterThan(beforeDrag + 50);
   await page.getByRole("button", { name: "Minimize Work gallery" }).click();
   await expect(gallery).toHaveCount(0);
-  await page.getByRole("navigation", { name: "Desktop apps" }).getByRole("button", { name: "Work gallery" }).click();
+  await page
+    .getByRole("navigation", { name: "Desktop apps" })
+    .getByRole("button", { name: "Work gallery" })
+    .click();
   await expect(gallery).toBeVisible();
   await page.getByRole("button", { name: "Close Work gallery" }).click();
   await expect(gallery).toHaveCount(0);
@@ -57,10 +60,7 @@ test("NAV.AI is a compact Home popup and project shortcut opens the carousel", a
   const popup = page.getByRole("region", { name: "Draw to navigate", exact: true });
   await expect(popup.getByRole("heading", { name: "Where to?" })).toBeVisible();
   expect((await popup.boundingBox())!.width).toBeLessThanOrEqual(425);
-  await expect(page.getByRole("button", { name: "Open Profile desk workspace" })).toHaveAttribute(
-    "aria-current",
-    "step",
-  );
+  await expect(page.locator(".desktop")).toHaveClass(/workspace-0/);
   await page.getByRole("button", { name: "2 Selected projects" }).click();
   await expect(page.getByRole("region", { name: "Work gallery" })).toBeVisible();
   const box = (await popup.boundingBox())!,
@@ -70,7 +70,9 @@ test("NAV.AI is a compact Home popup and project shortcut opens the carousel", a
   await expect(popup).toHaveCount(0);
 });
 
-test("NAV.AI stays open and in place across navigation until explicitly closed", async ({ page }) => {
+test("NAV.AI stays open and in place across navigation until explicitly closed", async ({
+  page,
+}) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Draw to navigate", exact: true }).click();
   const popup = page.getByRole("region", { name: "Draw to navigate", exact: true });
@@ -81,7 +83,10 @@ test("NAV.AI stays open and in place across navigation until explicitly closed",
   const after = (await popup.boundingBox())!;
   expect(Math.abs(after.x - before.x)).toBeLessThan(4);
   expect(Math.abs(after.y - before.y)).toBeLessThan(4);
-  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Home" }).click();
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("link", { name: "Home" })
+    .click();
   await expect(popup).toBeVisible();
   await popup.getByRole("button", { name: "Close Draw to navigate" }).click();
   await expect(popup).toHaveCount(0);

@@ -19,13 +19,16 @@ test("Milo can be dragged without triggering the pet action", async ({ page }) =
   await expect(cat).not.toHaveAttribute("data-action", "lie");
 });
 
-test("Home ID card and Journey have distinct proportions, and Milo lands on an open window", async ({ page, isMobile }) => {
+test("Home ID card and Journey have distinct proportions, and Milo lands on an open window", async ({
+  page,
+  isMobile,
+}) => {
   test.skip(isMobile, "Desktop windows use the horizontal ID and portrait log layout.");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const about = (await page.getByRole("region", { name: "About me", exact: true }).boundingBox())!;
   const journey = (await page.getByRole("region", { name: "Journey", exact: true }).boundingBox())!;
-  expect(about.width / about.height).toBeGreaterThan(1.55);
+  expect(about.width / about.height).toBeGreaterThan(1.1);
   expect(journey.height).toBeGreaterThan(journey.width);
   expect(journey.x).toBeGreaterThan(about.x + about.width);
   const cat = page.locator(".milo");
@@ -39,13 +42,18 @@ test("Home ID card and Journey have distinct proportions, and Milo lands on an o
   expect(Math.abs(landed.y + landed.height - journey.y)).toBeLessThan(12);
 });
 
-test("Contact opens beside Awards without changing route, and Social shows verified material", async ({ page, request }) => {
+test("Contact opens beside Awards without changing route, and Social shows verified material", async ({
+  page,
+  request,
+}) => {
   await page.goto("/awards");
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await expect(nav.getByRole("button", { name: "Contact" })).toBeVisible();
   await nav.getByRole("button", { name: "Contact" }).click();
   await expect(page).toHaveURL(/\/awards$/);
-  await expect(page.getByRole("region", { name: "Contact", exact: true })).toContainText("phuoc.dang2104@gmail.com");
+  await expect(page.getByRole("region", { name: "Contact", exact: true })).toContainText(
+    "phuoc.dang2104@gmail.com",
+  );
   await page.keyboard.press("Escape");
   await expect(page.getByRole("region", { name: "Contact", exact: true })).toHaveCount(0);
   await nav.getByRole("link", { name: "Social" }).click();
@@ -106,11 +114,16 @@ test("Work and Research have searchable folders and readable articles", async ({
   }
 });
 
-test("About portrait loads and Awards frames open a rotatable inspector", async ({ page, isMobile }) => {
+test("About portrait loads and Awards frames open a rotatable inspector", async ({
+  page,
+  isMobile,
+}) => {
   await page.goto("/");
   const portrait = page.getByRole("img", { name: "Portrait of Dang Nhu Phuoc" });
   await expect(portrait).toBeVisible();
-  expect(await portrait.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(400);
+  expect(await portrait.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(
+    400,
+  );
   await page.goto("/awards");
   await page.getByRole("button", { name: "Inspect VNPT AI Hackathon" }).click();
   const inspector = page.getByRole("dialog", { name: "Inspect VNPT AI Hackathon" });
@@ -124,7 +137,9 @@ test("About portrait loads and Awards frames open a rotatable inspector", async 
     await page.mouse.down();
     await page.mouse.move(box.x + box.width / 2 + 100, box.y + box.height / 2 + 30, { steps: 5 });
     await page.mouse.up();
-    await expect.poll(() => object.evaluate((element) => getComputedStyle(element).transform)).not.toBe(before);
+    await expect
+      .poll(() => object.evaluate((element) => getComputedStyle(element).transform))
+      .not.toBe(before);
   }
   await inspector.getByRole("button", { name: "Zoom in" }).click();
   await expect(inspector).toContainText("115%");

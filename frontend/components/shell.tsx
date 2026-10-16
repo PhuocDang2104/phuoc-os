@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { apps, profile, sections, type AppId, type WorkspaceId } from "@/lib/portfolio";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { profile, sections, type AppId } from "@/lib/portfolio";
 import { Icon } from "./ui/icon";
 import { CommandPalette } from "./command-palette";
 import { Companion } from "./companion";
@@ -12,8 +20,6 @@ import { AppContent } from "./desktop/app-content";
 
 export type WindowState = { id: AppId; minimized: boolean };
 type Workstation = {
-  workspace: WorkspaceId;
-  setWorkspace: (id: WorkspaceId) => void;
   windows: WindowState[];
   openApp: (id: AppId) => void;
   closeApp: (id: AppId) => void;
@@ -38,7 +44,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const hydrated = useSyncExternalStore(subscribeHydration, clientHydration, serverHydration);
-  const [workspace, updateWorkspace] = useState<WorkspaceId>(0);
   const [windows, setWindows] = useState<WindowState[]>([
     { id: "about", minimized: false },
     { id: "journey", minimized: false },
@@ -54,6 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem("phuoc-theme");
       if (saved === "light") setTheme("light");
       document.documentElement.dataset.theme = saved === "light" ? "light" : "dark";
+      window.dispatchEvent(new Event("phuoc:theme"));
     };
     storedTheme();
   }, []);
@@ -81,24 +87,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const setWorkspace = useCallback((id: WorkspaceId) => {
-    updateWorkspace(id);
-    if (id === 1)
-      setWindows((previous) =>
-        previous.some((w) => w.id === "research")
-          ? previous
-          : [...previous, { id: "research", minimized: false }, { id: "stack", minimized: false }],
-      );
-  }, []);
   const openApp = useCallback(
     (id: AppId) => {
+      window.dispatchEvent(new Event("phuoc:open-app"));
       setWindows((previous) => [...previous.filter((w) => w.id !== id), { id, minimized: false }]);
       if (id !== "contact") {
-        setWorkspace(apps[id].workspace);
         if (pathname !== "/") router.push("/");
       }
     },
-    [pathname, router, setWorkspace],
+    [pathname, router],
   );
   const closeApp = useCallback(
     (id: AppId) => setWindows((previous) => previous.filter((w) => w.id !== id)),
@@ -153,31 +150,18 @@ export function Shell({ children }: { children: React.ReactNode }) {
       )
         return;
       if (event.key === "Escape") {
-        const top = windows.findLast((w) => !w.minimized && (w.id === "contact" || w.id === "draw" || (pathname === "/" && apps[w.id].workspace === workspace)));
-        if (top) closeApp(top.id);
-      }
-      if (pathname !== "/") return;
-      if (
-        (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
-        !(event.target as HTMLElement).closest("button, a, canvas")
-      ) {
-        event.preventDefault();
-        setWorkspace(
-          Math.max(
-            0,
-            Math.min(2, workspace + (event.key === "ArrowRight" ? 1 : -1)),
-          ) as WorkspaceId,
+        const top = windows.findLast(
+          (w) => !w.minimized && (w.id === "contact" || w.id === "draw" || pathname === "/"),
         );
+        if (top) closeApp(top.id);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [pathname, windows, workspace, closeApp, setWorkspace]);
+  }, [pathname, windows, closeApp]);
 
   const value = useMemo(
     () => ({
-      workspace,
-      setWorkspace,
       windows,
       openApp,
       closeApp,
@@ -189,8 +173,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
       hydrated,
     }),
     [
-      workspace,
-      setWorkspace,
       windows,
       openApp,
       closeApp,
@@ -332,7 +314,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
         {windows.some((item) => item.id === "contact" && !item.minimized) && (
           <div className="global-window-layer contact-window-layer">
-            <AppWindow id="contact" index={windows.findIndex((item) => item.id === "contact")} focused={windows.at(-1)?.id === "contact"}>
+            <AppWindow
+              id="contact"
+              index={windows.findIndex((item) => item.id === "contact")}
+              focused={windows.at(-1)?.id === "contact"}
+            >
               <AppContent id="contact" />
             </AppWindow>
           </div>

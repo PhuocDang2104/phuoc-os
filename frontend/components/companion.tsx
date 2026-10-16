@@ -11,7 +11,7 @@ import { askMilo, checkMiloConnection, type ChatLine } from "@/lib/milo-chat";
 const suggestions = ["What is Phuoc building?", "Tell me about NAV.AI", "How can I contact Phuoc?"];
 
 export function Companion() {
-  const { workspace, openApp, reducedMotion, windows } = useWorkstation();
+  const { openApp, reducedMotion, windows } = useWorkstation();
   const pathname = usePathname(),
     router = useRouter();
   const [open, setOpen] = useState(false);
@@ -25,12 +25,11 @@ export function Companion() {
   const returnFocus = useRef<HTMLElement | null>(null);
   const drag = useRef<{ id: number; x: number; y: number; moved: boolean } | null>(null);
   const suppressPet = useRef(false);
-  const gallery =
-    pathname === "/" && workspace === 0 && windows.some((w) => w.id === "gallery" && !w.minimized);
+  const gallery = pathname === "/" && windows.some((w) => w.id === "gallery" && !w.minimized);
   const { body, action, speech } = useCatMotion({
     reducedMotion,
     paused: open,
-    context: `${pathname}:${workspace}:${gallery}`,
+    context: `${pathname}:${gallery}`,
   });
 
   function show() {

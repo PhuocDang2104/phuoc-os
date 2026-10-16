@@ -9,8 +9,7 @@ import { Icon } from "../ui/icon";
 import { GalleryArt } from "./gallery-art";
 
 export function WorkGallery() {
-  const { closeApp, minimizeApp, focusApp, openApp, setWorkspace, reducedMotion } =
-    useWorkstation();
+  const { closeApp, minimizeApp, focusApp, openApp, reducedMotion } = useWorkstation();
   const router = useRouter();
   const rail = useRef<HTMLDivElement>(null);
   const offset = useRef(0);
@@ -49,8 +48,13 @@ export function WorkGallery() {
       }
       if (last) {
         const width = element.scrollWidth / 2;
-        offset.current = (offset.current + Math.min(time - last, 48) * 0.027) % width;
-        element.scrollLeft = offset.current;
+        // The rail can briefly have no layout during workspace hydration or hiding.
+        // Modulo zero would poison the retained offset with NaN and stop autoplay.
+        if (width > 0 && element.clientWidth > 0) {
+          const start = Number.isFinite(offset.current) ? offset.current : element.scrollLeft;
+          offset.current = (start + Math.min(time - last, 48) * 0.027) % width;
+          element.scrollLeft = offset.current;
+        }
       }
       last = time;
       frame = requestAnimationFrame(animate);
@@ -73,7 +77,7 @@ export function WorkGallery() {
 
   function open(item: GalleryItem) {
     if ("app" in item.action) openApp(item.action.app);
-    if ("workspace" in item.action) setWorkspace(item.action.workspace);
+    if ("scene" in item.action) window.dispatchEvent(new Event("phuoc:focus-scene"));
     if ("href" in item.action) router.push(item.action.href);
   }
   function move(event: PointerEvent<HTMLDivElement>) {
@@ -84,7 +88,10 @@ export function WorkGallery() {
       suppressClick.current = true;
       event.currentTarget.setPointerCapture(event.pointerId);
       const width = event.currentTarget.scrollWidth / 2;
-      event.currentTarget.scrollTo({ left: (((drag.current.scroll - distance) % width) + width) % width, behavior: "instant" });
+      event.currentTarget.scrollTo({
+        left: (((drag.current.scroll - distance) % width) + width) % width,
+        behavior: "instant",
+      });
     }
   }
   function step(direction: number) {
@@ -150,7 +157,10 @@ export function WorkGallery() {
         }}
         onPointerDown={(event) => {
           if (event.button !== 0) return;
-          event.currentTarget.scrollTo({ left: event.currentTarget.scrollLeft, behavior: "instant" });
+          event.currentTarget.scrollTo({
+            left: event.currentTarget.scrollLeft,
+            behavior: "instant",
+          });
           suppressClick.current = false;
           drag.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft, moved: false };
         }}
@@ -185,7 +195,18 @@ export function WorkGallery() {
                   aria-label={`Open ${item.title}`}
                 >
                   <div className="gallery-thumbnail">
-                    {item.src ? <Image className="gallery-art" src={item.src} alt="" fill sizes="228px" draggable={false} /> : <GalleryArt art={item.art} />}
+                    {item.src ? (
+                      <Image
+                        className="gallery-art"
+                        src={item.src}
+                        alt=""
+                        fill
+                        sizes="228px"
+                        draggable={false}
+                      />
+                    ) : (
+                      <GalleryArt art={item.art} />
+                    )}
                     <span className="gallery-card-category">{item.category}</span>
                     <span className="gallery-open">
                       <Icon name="external" size={14} />

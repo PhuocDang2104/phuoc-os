@@ -1,0 +1,678 @@
+.desktop.workspace-0 {
+  background: #080b12;
+}
+.workspace-0 .app-launcher {
+  background: #11141da8;
+  border: 1px solid #bdbbce1a;
+  padding: 5px 7px;
+  backdrop-filter: blur(2px);
+  transition:
+    background 0.24s ease,
+    border-color 0.24s ease;
+}
+.workspace-0 .app-launcher:hover,
+.workspace-0 .app-launcher:has(:focus-visible) {
+  background: #0b0e17f5;
+  border-color: #bdbbce45;
+}
+.workspace-0 .desktop-file {
+  color: #c1bfcd;
+}
+.workspace-0 .desktop-file > svg {
+  color: #a59cb6;
+}
+.workspace-0 .desktop-file:hover {
+  color: #f1eaf8;
+  background: #aea2d324;
+}
+.workspace-0 .desktop-file.is-open > svg {
+  color: #c7b5e7;
+}
+.spatial-experience {
+  --sp-panel: #131620ee;
+  --sp-border: #373746;
+  --sp-text: #d8d6e1;
+  --sp-muted: #9391a5;
+  --sp-hover: #b5a1e519;
+  --sp-selected: #c5b2ed;
+  --sp-selected-bg: #b5a1e51c;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--sp-text);
+}
+.spatial-renderer,
+.spatial-fallback,
+.spatial-label-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.spatial-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+}
+.has-fallback .spatial-renderer,
+.has-fallback .spatial-label-layer {
+  display: none;
+}
+.has-fallback .spatial-mode-controls,
+.has-fallback .spatial-camera-controls > div,
+.has-fallback .spatial-footer-actions {
+  display: none;
+}
+.spatial-controls {
+  position: absolute;
+  z-index: 66;
+  pointer-events: auto;
+}
+.spatial-mode-controls {
+  left: 14px;
+  top: 124px;
+}
+.research-area {
+  --research-ink: #eeedf4;
+  width: 316px;
+  padding: 12px 10px;
+  background: #11141da8;
+  border: 1px solid #bdbbce1a;
+  border-radius: 4px;
+  color: var(--research-ink);
+  backdrop-filter: blur(2px);
+  transition:
+    background 0.24s ease,
+    border-color 0.24s ease;
+}
+.research-area:hover,
+.research-area:has(:focus-visible) {
+  background: #0b0e17f5;
+  border-color: #bdbbce45;
+}
+.research-area header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.research-area h2 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+.research-area-mark {
+  display: grid;
+  place-items: center;
+  color: inherit;
+}
+.research-area-index {
+  margin-left: auto;
+  color: var(--sp-muted);
+  font-size: 7px;
+  letter-spacing: 0.5px;
+}
+.research-area-body {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+}
+.research-illustration {
+  width: 61px;
+  height: 98px;
+  flex: none;
+  animation: research-art-in 0.3s ease-out;
+  filter: grayscale(1);
+}
+.research-art-grid {
+  fill: none;
+  stroke: var(--sp-muted);
+  stroke-width: 0.6;
+  opacity: 0.25;
+}
+.research-area-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  flex: 1;
+}
+.research-area-options button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 3px 5px;
+  border: 1px solid #bdbbce36;
+  border-radius: 2px;
+  font: 500 11px var(--sans);
+  color: var(--research-ink);
+  white-space: nowrap;
+  transition:
+    color 0.2s,
+    background 0.2s,
+    border-color 0.2s;
+}
+.research-area-options button > svg {
+  flex: none;
+  opacity: 0.78;
+}
+.research-area-options button:hover {
+  color: var(--research-ink);
+  background: #d8d6e112;
+  border-color: #d8d6e17a;
+}
+.research-area-options button[aria-pressed="true"] {
+  color: var(--research-ink);
+  border-color: #d8d6e18a;
+  background: #d8d6e117;
+}
+.research-control-option {
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+@keyframes research-art-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+.spatial-camera-controls {
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.spatial-camera-controls > div {
+  display: flex;
+  padding: 4px;
+  background: #f7f8f2eb;
+  border: 1px solid #d7ddd0;
+  border-radius: 5px;
+}
+.spatial-camera-controls > div button {
+  padding: 5px 9px;
+  font: 8px var(--mono);
+  color: #71816f;
+  border-radius: 2px;
+}
+.spatial-camera-controls > div button[aria-pressed="true"] {
+  background: #dfe6d8;
+  color: #253b2c;
+}
+.spatial-camera-controls small {
+  font: 7px var(--mono);
+  margin-right: 5px;
+  opacity: 0.5;
+}
+.spatial-focus-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 11px;
+  border: 1px solid #bdc9b8;
+  border-radius: 4px;
+  background: #f5f7eeeb;
+  color: #3b503d;
+  font: 9px var(--sans);
+}
+.spatial-focus-button:hover {
+  background: #e5eddc;
+  border-color: #8b9d82;
+}
+.spatial-footer {
+  position: absolute;
+  z-index: 66;
+  bottom: 21px;
+  left: 22px;
+  right: 135px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: space-between;
+  color: #71816e;
+  pointer-events: none;
+}
+.has-gallery .spatial-footer {
+  bottom: 177px;
+}
+.spatial-source {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  background: #f7f9f1df;
+  border: 1px solid #d9e0d3;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.spatial-source i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #6f9275;
+}
+.spatial-hint {
+  padding: 5px;
+  border-radius: 3px;
+  background: #f8faf3c9;
+  font-size: 8px;
+  letter-spacing: 0.15px;
+}
+.spatial-hint-touch {
+  display: none;
+}
+.is-scene-focused .workspace-dock {
+  display: none;
+}
+.spatial-footer-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  pointer-events: auto;
+}
+.spatial-actor-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f7f9f1ed;
+  padding: 6px 8px;
+  border: 1px solid #d6e0cd;
+  border-radius: 3px;
+}
+.spatial-actor-picker select {
+  max-width: 130px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #476043;
+  font: 8px var(--mono);
+}
+.spatial-footer-actions > button {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  border: 1px solid #cedac5;
+  background: #f7f9f0;
+  color: #4b6446;
+  border-radius: 3px;
+}
+.spatial-label-layer {
+  pointer-events: none;
+  z-index: 2;
+}
+.spatial-projected-object {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  border: 1px solid transparent;
+  will-change: transform;
+}
+.spatial-object-caption {
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  color: #dafaff;
+  background: #072535eb;
+  border: 1px solid #63d9e84a;
+  border-radius: 1px;
+  padding: 3px 5px;
+  font-size: 7px;
+  letter-spacing: 0.15px;
+  box-shadow: 0 1px 3px #061a2444;
+}
+.spatial-object-caption:before {
+  content: "";
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #62e4e9;
+}
+.spatial-projected-object[data-category="pedestrian"] .spatial-object-caption:before {
+  background: #ff71cb;
+}
+.spatial-inspector-anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 67;
+  width: 260px;
+  pointer-events: none;
+  will-change: transform;
+}
+.spatial-inspector {
+  pointer-events: auto;
+  background: #f7f8f1;
+  border: 1px solid #8eaa91;
+  box-shadow: 0 12px 40px #112e322e;
+  color: #273b32;
+  border-radius: 3px;
+  overflow: hidden;
+  animation: spatial-inspector-in 0.2s ease-out;
+}
+.spatial-inspector header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  background: #6ef2ad;
+  font: 7px var(--mono);
+  letter-spacing: 0.7px;
+}
+.spatial-inspector header > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: auto;
+}
+.spatial-inspector header i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #2b6d49;
+}
+.spatial-inspector header button {
+  padding: 7px;
+  margin: -5px;
+  color: #307754;
+}
+.spatial-inspector-title {
+  padding: 14px 13px 11px;
+}
+.spatial-inspector-title small {
+  color: #839581;
+  font: 7px var(--mono);
+}
+.spatial-inspector-title h2 {
+  font-size: 18px;
+  line-height: 1.18;
+  letter-spacing: -0.5px;
+  margin-top: 6px;
+}
+.spatial-inspector dl {
+  margin: 0 13px 11px;
+  border-top: 1px solid #dde5d7;
+  padding-top: 7px;
+}
+.spatial-inspector dl div {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0;
+  font: 8px var(--mono);
+}
+.spatial-inspector dt {
+  color: #82907a;
+  min-width: 91px;
+}
+.spatial-inspector dd {
+  margin: 0;
+  color: #324d39;
+  text-transform: uppercase;
+}
+.spatial-inspector footer {
+  padding: 8px 13px;
+  border-top: 1px solid #dce4d4;
+  font-size: 6px;
+  color: #8a9a81;
+  letter-spacing: 0.5px;
+}
+.spatial-error {
+  position: absolute;
+  top: 200px;
+  left: 20px;
+  z-index: 66;
+  max-width: 320px;
+  display: grid;
+  gap: 13px;
+  padding: 15px;
+  border: 1px solid #b9cbb2;
+  background: #f8faef;
+  color: #61745a;
+  font-size: 9px;
+  line-height: 1.6;
+  pointer-events: auto;
+}
+.spatial-error button {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  color: #304e32;
+  font-size: 10px;
+}
+.is-scene-focused .app-launcher,
+.is-scene-focused .window-stage,
+.is-scene-focused .minimized-tray {
+  visibility: hidden;
+}
+.is-scene-focused .spatial-mode-controls {
+  top: 20px;
+}
+.is-scene-focused .spatial-legend {
+  top: 112px;
+}
+.desktop:not(.is-scene-focused) .spatial-footer .spatial-hint,
+.desktop:not(.is-scene-focused) .spatial-footer .spatial-footer-actions {
+  display: none;
+}
+.desktop:not(.is-scene-focused) .spatial-footer {
+  display: none;
+}
+/* The same palette follows the OS theme, including the SVG fallback. */
+:root:not([data-theme="light"]) .spatial-fallback {
+  filter: invert(0.94) hue-rotate(170deg) brightness(0.6);
+}
+.spatial-camera-controls > div,
+.spatial-focus-button,
+.spatial-source,
+.spatial-hint,
+.spatial-actor-picker,
+.spatial-footer-actions > button,
+.spatial-error {
+  background: var(--sp-panel);
+  border-color: var(--sp-border);
+  color: var(--sp-muted);
+}
+.spatial-camera-controls > div button {
+  color: var(--sp-muted);
+}
+.spatial-camera-controls > div button[aria-pressed="true"] {
+  color: var(--sp-selected);
+  background: var(--sp-selected-bg);
+}
+.spatial-focus-button:hover {
+  background: var(--sp-hover);
+  border-color: var(--sp-selected);
+  color: var(--sp-text);
+}
+:root[data-theme="light"] .desktop.workspace-0 {
+  background: #f3f3ee;
+}
+:root[data-theme="light"] .spatial-experience {
+  --sp-panel: #f7f8f3f2;
+  --sp-border: #d1d8cd;
+  --sp-text: #28372d;
+  --sp-muted: #657060;
+  --sp-hover: #aea2d324;
+  --sp-selected: #61488b;
+  --sp-selected-bg: #9074ad14;
+}
+:root[data-theme="light"] .workspace-0 .app-launcher {
+  background: #f8f8f3b8;
+  border-color: #42494424;
+}
+:root[data-theme="light"] .research-area {
+  --research-ink: #32333c;
+  background: #f8f8f3b8;
+  border-color: #42494424;
+}
+:root[data-theme="light"] .workspace-0 .app-launcher:hover,
+:root[data-theme="light"] .workspace-0 .app-launcher:has(:focus-visible),
+:root[data-theme="light"] .research-area:hover,
+:root[data-theme="light"] .research-area:has(:focus-visible) {
+  background: #dfdfe9f5;
+  border-color: #42494460;
+}
+:root[data-theme="light"] .research-area-options button {
+  border-color: #42494445;
+}
+:root[data-theme="light"] .research-area-options button:hover,
+:root[data-theme="light"] .research-area-options button[aria-pressed="true"] {
+  border-color: #42494485;
+  background: #4249440c;
+}
+:root[data-theme="light"] .workspace-0 .desktop-file {
+  color: #424944;
+}
+:root[data-theme="light"] .workspace-0 .desktop-file > svg {
+  color: #727968;
+}
+:root[data-theme="light"] .workspace-0 .desktop-file.is-open > svg {
+  color: #76608e;
+}
+@media (prefers-reduced-motion: reduce) {
+  .research-illustration {
+    animation: none;
+  }
+}
+@media (min-width: 901px) {
+  .desktop.workspace-0 .window-about:not(.is-maximized) {
+    top: 296px;
+    width: min(440px, 36vw);
+    max-height: calc(100% - 472px);
+  }
+}
+.desktop:focus {
+  outline: none;
+}
+.desktop:focus-visible {
+  outline: 1px solid #9cb291;
+  outline-offset: -2px;
+}
+@keyframes spatial-inspector-in {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+  }
+}
+@media (max-width: 1100px) {
+  .spatial-hint {
+    display: none;
+  }
+  .spatial-camera-controls {
+    gap: 7px;
+  }
+  .spatial-camera-controls > div button {
+    padding: 5px 7px;
+  }
+}
+@media (max-width: 900px) {
+  .research-area {
+    width: 312px;
+  }
+  .spatial-experience {
+    position: absolute;
+    top: 0;
+    bottom: auto;
+    height: calc(100svh - var(--topbar-height));
+  }
+  .spatial-renderer,
+  .spatial-fallback,
+  .spatial-label-layer {
+    position: fixed;
+    top: var(--topbar-height);
+    bottom: 0;
+    height: calc(100svh - var(--topbar-height));
+  }
+  .workspace-0 .app-launcher {
+    padding: 3px 5px;
+  }
+  .spatial-mode-controls,
+  .spatial-camera-controls > div,
+  .spatial-footer,
+  .spatial-legend {
+    display: none;
+  }
+  .spatial-camera-controls {
+    top: 113px;
+    left: 18px;
+    right: auto;
+  }
+  .spatial-focus-button {
+    padding: 7px 10px;
+    font-size: 9px;
+  }
+  .is-scene-focused {
+    min-height: calc(100svh - var(--topbar-height));
+    height: calc(100svh - var(--topbar-height));
+    overflow: hidden;
+  }
+  .is-scene-focused .window-stage {
+    display: none;
+  }
+  .is-scene-focused .spatial-mode-controls {
+    display: block;
+    top: 67px;
+    left: 12px;
+  }
+  .is-scene-focused .spatial-camera-controls {
+    top: 15px;
+    left: 12px;
+    right: 12px;
+    justify-content: space-between;
+  }
+  .is-scene-focused .spatial-camera-controls > div {
+    display: flex;
+  }
+  .is-scene-focused .spatial-footer {
+    display: flex;
+    bottom: 18px;
+    left: 12px;
+    right: 12px;
+    flex-wrap: wrap;
+  }
+  .is-scene-focused .spatial-hint {
+    display: block;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 7px;
+  }
+  .spatial-hint-desktop {
+    display: none;
+  }
+  .spatial-hint-touch {
+    display: inline;
+  }
+  .is-scene-focused .spatial-legend {
+    display: flex;
+    top: 154px;
+    left: 12px;
+    right: 12px;
+    max-width: 355px;
+  }
+  .spatial-source {
+    font-size: 6px;
+    letter-spacing: 0.3px;
+    padding: 6px;
+  }
+  .spatial-more-panel {
+    left: -180px;
+  }
+  .spatial-inspector-anchor {
+    width: min(260px, calc(100vw - 24px));
+  }
+}
+@media (max-width: 760px) {
+  .research-area {
+    width: 310px;
+  }
+}
