@@ -47,7 +47,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const [windows, setWindows] = useState<WindowState[]>([
     { id: "about", minimized: false },
     { id: "journey", minimized: false },
-    { id: "gallery", minimized: false },
+    { id: "resume", minimized: false },
   ]);
   const [commandOpen, setCommandOpen] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);

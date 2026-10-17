@@ -63,7 +63,9 @@ Sửa danh sách gallery ở `frontend/lib/gallery.ts`; các thumbnail minh họ
 trong `frontend/components/desktop/gallery-art.tsx`. Thay bằng ảnh dự án thật khi có nội dung.
 Bài viết Work/Research nằm trong `frontend/lib/editorial.ts`.
 
-CV chính thức tại `frontend/public/resume.pdf` là bản `Dang_Nhu_Phuoc_CV_OLP_AI.pdf` do chủ sở hữu cung cấp. Link xem và download giữ nguyên. Work có 7 dự án trong CV; Research chỉ có Fall Detection, Depth Completion và MRI Segmentation & Diffusion. Gallery có 10 mục tương ứng. Awards giữ 6 giải/ghi nhận trong CV, gồm Asian Hackathon for Green Future; ảnh FPT AIoT 2026 và Asian Green đang chờ bổ sung. SVG minh họa trong gallery không phải ảnh kết quả thực nghiệm.
+CV chính thức tại `frontend/public/resume.pdf` là bản `Dang_Nhu_Phuoc_CV_OLP_AI.pdf` do chủ sở hữu cung cấp. Home mặc định mở About, Resume và Journey; Gallery mở qua launcher. Resume hiển thị bản xem trước WebP từ PDF gốc, vừa trọn một trang trước khi cuộn, có nút phóng to và tải PDF. Không phụ thuộc PDF plugin của trình duyệt. Khi thay CV, chạy `pip install pymupdf pillow` rồi `python frontend/scripts/render-resume.py` từ root và commit cả ảnh trong `frontend/public/documents/resume/` lẫn `frontend/lib/resume-pages.json`; Vercel chỉ phục vụ file tĩnh, không cần Python. Header `X-Frame-Options: SAMEORIGIN` cho phép xem PDF cùng origin và ngăn nhúng từ website khác.
+
+Work có 7 dự án trong CV; Research chỉ có Fall Detection, Depth Completion và MRI Segmentation & Diffusion. Gallery có 10 mục tương ứng. Awards giữ 6 giải/ghi nhận trong CV, gồm Asian Hackathon for Green Future; ảnh FPT AIoT 2026 và Asian Green đang chờ bổ sung. SVG minh họa trong gallery không phải ảnh kết quả thực nghiệm.
 
 Blog vẫn chờ bài viết thật. Social hiện có dự án SAVINA tại HumanLog; hoạt động từ thiện và CLB sẽ bổ sung khi có tư liệu. Assets dự án, chứng chỉ và bài paper nằm trong `frontend/public/portfolio/`. Avatar About vẫn dùng ảnh GitHub tạm tại `frontend/public/portrait-github.png`; có thể thay ảnh chân dung khi có bản mới.
 

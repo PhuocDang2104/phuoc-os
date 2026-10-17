@@ -7,6 +7,7 @@ import { certifications, profile, type AppId } from "@/lib/portfolio";
 import { useWorkstation } from "../shell";
 import { Icon } from "../ui/icon";
 import { JourneyLog } from "./journey-log";
+import { ResumeViewer } from "./resume-viewer";
 
 const DrawToNavigate = dynamic(() => import("../lab/draw-to-navigate"), {
   loading: () => <div className="content-pad muted">Opening the drawing desk…</div>,
@@ -64,9 +65,6 @@ export function AppContent({ id }: { id: AppId }) {
             </span>
             <span>
               RESEARCH <b>Fall detection · Depth completion · MRI</b>
-            </span>
-            <span>
-              BUILD <b>Hardware · Firmware · Edge inference</b>
             </span>
           </div>
           <div className="about-actions">
@@ -164,30 +162,7 @@ export function AppContent({ id }: { id: AppId }) {
       </div>
     );
   if (id === "journey") return <JourneyLog />;
-  if (id === "resume")
-    return (
-      <div className="resume-content">
-        <div className="resume-toolbar">
-          <span className="mono muted">CV / Dang Nhu Phuoc · 2 pages</span>
-          <a
-            className="button button-light"
-            href={profile.resume}
-            download="Dang_Nhu_Phuoc_CV_OLP_AI.pdf"
-          >
-            Download <Icon name="download" size={14} />
-          </a>
-        </div>
-        <iframe
-          src={`${profile.resume}#toolbar=0&navpanes=0`}
-          title="Dang Nhu Phuoc resume preview"
-        />
-        <p className="resume-note">
-          <a href={profile.resume} target="_blank" rel="noreferrer">
-            Open PDF in a new tab ↗
-          </a>
-        </p>
-      </div>
-    );
+  if (id === "resume") return <ResumeViewer />;
   if (id === "certifications")
     return (
       <div className="content-pad certification-content">

@@ -11,7 +11,7 @@ test("first paint tells the story and all main routes are reachable", async ({ p
   await expect(page.getByRole("heading", { name: "Dang Nhu Phuoc." })).toBeVisible();
   await expect(page.getByRole("region", { name: "Journey", exact: true })).toContainText("HCMUT");
   await expect(page.getByRole("region", { name: "Journey", exact: true })).toBeVisible();
-  await expect(page.getByRole("region", { name: "Work gallery", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Resume.pdf", exact: true })).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();

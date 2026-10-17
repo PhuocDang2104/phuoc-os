@@ -15,13 +15,14 @@ test("compact chrome and file launcher leave the desktop free of decorative text
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Close About me", exact: true }).click();
   await page.getByRole("button", { name: "Close Journey", exact: true }).click();
-  await page.getByRole("button", { name: "Close Work gallery", exact: true }).click();
+  await page.getByRole("button", { name: "Close Resume.pdf", exact: true }).click();
   await expect(page.locator(".app-window")).toHaveCount(0);
   await expect(page.getByText("A little room to think.")).toHaveCount(0);
 });
 
 test("gallery opens at the bottom, loops, pauses, drags, and restores", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "Work gallery", exact: true }).click();
   const gallery = page.getByRole("region", { name: "Work gallery", exact: true });
   const box = (await gallery.boundingBox())!;
   expect(box.y + box.height).toBeGreaterThan(page.viewportSize()!.height - 15);

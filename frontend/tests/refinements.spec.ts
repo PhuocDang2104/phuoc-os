@@ -46,10 +46,9 @@ test("Home ID fits its content, Journey stays portrait, and Milo settles below w
   const landed = (await cat.boundingBox())!;
   const galleryHeight = await page
     .locator(".work-gallery")
-    .evaluate((node) => node.getBoundingClientRect().height);
-  expect(
-    Math.abs(landed.y + landed.height - (page.viewportSize()!.height - galleryHeight - 14)),
-  ).toBeLessThan(2);
+    .evaluateAll((nodes) => nodes[0]?.getBoundingClientRect().height ?? 0);
+  const floor = page.viewportSize()!.height - galleryHeight - (galleryHeight ? 14 : 24);
+  expect(Math.abs(landed.y + landed.height - floor)).toBeLessThan(2);
 });
 
 test("Contact opens beside Awards without changing route, and Social shows verified material", async ({

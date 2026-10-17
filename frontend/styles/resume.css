@@ -1,0 +1,123 @@
+/* The profile desk opens as three separate, readable documents. */
+@media (min-width: 901px) {
+  .desktop.workspace-0 {
+    --desk-journey-height: min(620px, calc(100svh - 210px));
+    --desk-journey-width: calc(var(--desk-journey-height) * 9 / 16);
+  }
+  .desktop.workspace-0 .window-about:not(.is-maximized) {
+    left: 20px;
+    top: max(296px, calc(45svh - var(--topbar-height)));
+  }
+  .desktop.workspace-0 .window-resume:not(.is-maximized) {
+    left: max(464px, 39vw);
+    right: calc(var(--desk-journey-width) + 42px);
+    top: 30px;
+    width: auto;
+    height: min(740px, calc(100svh - 130px));
+    max-height: none;
+  }
+  .desktop.workspace-0 .window-journey:not(.is-maximized) {
+    right: 18px;
+    top: 80px;
+    height: var(--desk-journey-height);
+    width: var(--desk-journey-width);
+  }
+}
+.window-resume .window-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+.resume-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.resume-content .resume-toolbar {
+  padding: 10px 14px;
+  min-height: 54px;
+  gap: 10px;
+  flex: none;
+}
+.resume-toolbar > .mono { font-size: 9px; white-space: nowrap; }
+.resume-tools { display: flex; align-items: center; gap: 12px; }
+.resume-tools .button { min-height: 32px; padding: 8px 12px; font-size: 11px; }
+.resume-fit { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--secondary); }
+.resume-fit:hover { color: var(--text); }
+.resume-pages {
+  flex: 1;
+  min-height: 0;
+  container-type: size;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #302e35;
+  scrollbar-gutter: stable both-edges;
+}
+.resume-page-list { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 12px; }
+.resume-page {
+  flex: none;
+  width: min(100%, calc((100cqh - 24px) * var(--page-ratio)));
+  min-height: calc(100cqh - 24px);
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.resume-page img { display: block; width: 100%; height: auto; box-shadow: 0 2px 12px #0003; }
+.is-fit-width .resume-page { width: 100%; min-height: 0; }
+.resume-content .resume-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: none;
+  margin: 0;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 10px;
+}
+.resume-note > .mono { font-size: 7px; letter-spacing: 0.8px; color: var(--muted); }
+.resume-note > a { display: flex; align-items: center; gap: 4px; }
+:root[data-theme="light"] .resume-pages { background: #dedde2; }
+
+/* Keep the existing ID width, with a more legible type scale. */
+.about-field, .about-id-code { display: none; }
+.about-identity .about-role { font-size: 13px; line-height: 1.5; }
+.about-school { font-size: 9px; line-height: 1.6; color: var(--secondary); }
+.about-status { font-size: 8px; }
+.about-bio { font-size: 12px; line-height: 1.65; color: var(--text); }
+.about-id-meta { font-size: 9px; line-height: 1.8; }
+.about-id-meta > span { grid-template-columns: 64px minmax(0, 1fr); }
+.about-id-meta b { color: var(--text); }
+.about-actions .button { font-size: 11px; min-height: 32px; }
+:root[data-theme="light"] .about-bio { color: var(--text); }
+
+@media (min-width: 901px) and (max-width: 1199px) {
+  .desktop.workspace-0 { height: auto; padding: 306px 20px 80px; }
+  .desktop.workspace-0 .window-stage {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 24px;
+  }
+  .desktop.workspace-0 .window-about:not(.is-maximized),
+  .desktop.workspace-0 .window-resume:not(.is-maximized),
+  .desktop.workspace-0 .window-journey:not(.is-maximized) {
+    position: relative; left: auto; right: auto; top: auto; transform: none;
+  }
+  .desktop.workspace-0 .window-about:not(.is-maximized) { width: 440px; }
+  .desktop.workspace-0 .window-resume:not(.is-maximized) {
+    width: min(580px, 100%);
+  }
+  .desktop.workspace-0 .window-about { order: -2; }
+  .desktop.workspace-0 .window-resume { order: -1; }
+}
+@media (max-width: 900px) {
+  .window-resume { order: -1; }
+  .window-resume:not(.is-maximized) { height: min(720px, calc(100svh - 100px)); max-height: none; }
+  .resume-content .resume-toolbar { padding: 10px; }
+  .resume-tools { gap: 10px; }
+  .resume-tools .button { padding: 8px 10px; }
+  .about-identity .about-role { font-size: 12px; }
+  .about-school { font-size: 9px; }
+  .about-status { font-size: 7px; }
+  .about-id-meta { font-size: 8px; }
+}
