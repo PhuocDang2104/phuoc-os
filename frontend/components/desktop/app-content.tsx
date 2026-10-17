@@ -19,12 +19,6 @@ export function AppContent({ id }: { id: AppId }) {
     return (
       <>
         <div className="about-content">
-          <div className="about-id-head mono">
-            <span>
-              <span className="about-id-symbol">p_</span> PERSONAL IDENTIFICATION
-            </span>
-            <span>NO. 001 / 2026</span>
-          </div>
           <div className="about-id-main">
             <div className="about-portrait-wrap">
               {/* A verified GitHub profile photo; replace profile.portrait with the final portrait later. */}

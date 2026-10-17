@@ -150,6 +150,24 @@ test("About portrait loads and Awards frames open a rotatable inspector", async 
   await expect(inspector).toContainText("115%");
   await inspector.getByRole("button", { name: "Close award inspector" }).click();
   await expect(inspector).toHaveCount(0);
+  const trigger = page.getByRole("button", { name: "Inspect VNPT AI Hackathon", exact: true });
+  await expect(trigger).toBeFocused();
+  await trigger.press("Enter");
+  await expect(inspector).toBeVisible();
+  await inspector.locator(".award-inspector-stage").focus();
+  await page.keyboard.press("ArrowRight");
+  await expect
+    .poll(() => object.evaluate((element) => getComputedStyle(element).transform))
+    .not.toBe(before);
+  await inspector.getByRole("button", { name: "Next award", exact: true }).click();
+  const next = page.getByRole("dialog", { name: "Inspect FPT IoT Challenge", exact: true });
+  await expect(next).toBeVisible();
+  await expect(next).toContainText("100%");
+  await next.getByRole("button", { name: "Previous award", exact: true }).click();
+  await expect(inspector).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(inspector).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });
 
 test("Milo shows an honest offline chat state and keeps direct navigation", async ({ page }) => {

@@ -12,6 +12,8 @@ Work / Research có archive bài viết, dự án thật và bài paper cùng as
 
 ## Các lựa chọn triển khai
 
+About bỏ hàng Personal Identification / số ID để cửa sổ co theo nội dung. Awards dùng archive viền mảnh và góc đánh dấu technical, giữ tỉ lệ ảnh gốc, không còn dây treo hay khung gỗ. Hover nghiêng nhẹ theo chuột, spotlight và scan ngắn; popup inspect là native dialog với focus trap, Escape, kéo xoay, zoom và chuyển giải trước/sau. Dark/light và reduced motion áp dụng cho toàn bộ phần này.
+
 - **Next.js App Router / React / TypeScript**; CSS được tách theo shell, desktop,
   app. Spatial Home load Three.js theo chunk riêng; fallback SVG khi WebGL không khả dụng.
 - **Window manager nhẹ:** state trong Shell, z-order theo focus, state giữ khi
