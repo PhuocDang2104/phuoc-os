@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
       },
+      {
+        source: "/resume.pdf",
+        headers: [
+          {
+            key: "Content-Disposition",
+            value: 'inline; filename="Dang_Nhu_Phuoc_CV_OLP_AI.pdf"',
+          },
+        ],
+      },
     ];
   },
 };
