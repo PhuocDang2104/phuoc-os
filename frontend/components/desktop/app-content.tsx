@@ -3,7 +3,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { profile, type AppId } from "@/lib/portfolio";
+import { certifications, profile, type AppId } from "@/lib/portfolio";
 import { useWorkstation } from "../shell";
 import { Icon } from "../ui/icon";
 import { JourneyLog } from "./journey-log";
@@ -69,7 +69,7 @@ export function AppContent({ id }: { id: AppId }) {
               FOCUS <b>Edge AI · Computer Vision · Embedded Systems</b>
             </span>
             <span>
-              RESEARCH <b>Explainable AI · Intelligent sensing</b>
+              RESEARCH <b>Fall detection · Depth completion · MRI</b>
             </span>
             <span>
               BUILD <b>Hardware · Firmware · Edge inference</b>
@@ -174,11 +174,11 @@ export function AppContent({ id }: { id: AppId }) {
     return (
       <div className="resume-content">
         <div className="resume-toolbar">
-          <span className="mono muted">CV preview · temporary document</span>
+          <span className="mono muted">CV / Dang Nhu Phuoc · 2 pages</span>
           <a
             className="button button-light"
             href={profile.resume}
-            download="Dang-Nhu-Phuoc-Resume.pdf"
+            download="Dang_Nhu_Phuoc_CV_OLP_AI.pdf"
           >
             Download <Icon name="download" size={14} />
           </a>
@@ -188,7 +188,6 @@ export function AppContent({ id }: { id: AppId }) {
           title="Dang Nhu Phuoc resume preview"
         />
         <p className="resume-note">
-          The complete résumé is being updated.{" "}
           <a href={profile.resume} target="_blank" rel="noreferrer">
             Open PDF in a new tab ↗
           </a>
@@ -201,17 +200,21 @@ export function AppContent({ id }: { id: AppId }) {
         <span className="eyebrow">CREDENTIALS / DOCUMENTS</span>
         <h2>Certifications.</h2>
         <div className="certification-list">
-          <a href="/portfolio/awards/intel-certi.pdf" target="_blank" rel="noreferrer">
-            <Icon name="award" size={16} />
-            <span>
-              Intel AI Global Challenge<small>2025 / PDF certificate</small>
-            </span>
-            <Icon name="external" size={14} />
-          </a>
+          {certifications.map((title) => (
+            <a key={title} href={profile.resume} target="_blank" rel="noreferrer">
+              <Icon name="award" size={16} />
+              <span>
+                {title}
+                <small>Listed in the primary CV</small>
+              </span>
+              <Icon name="external" size={14} />
+            </a>
+          ))}
           <Link href="/awards">
             <Icon name="award" size={16} />
             <span>
-              Competition certificates<small>VNPT · FPT · HumanLog · RMIT · Denso</small>
+              Awards & recognition
+              <small>FPT AIoT · VNPT · FPT IoT · Asian Green · Intel · HumanLog</small>
             </span>
             <Icon name="external" size={14} />
           </Link>

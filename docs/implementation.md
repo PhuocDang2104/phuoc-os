@@ -39,7 +39,7 @@ Work / Research có archive bài viết, dự án thật và bài paper cùng as
 
 ## Dữ liệu cần hoàn thiện ở phase sau
 
-- CV chính thức (thay `frontend/public/resume.pdf`).
+- CV chính thức đã cập nhật tại `frontend/public/resume.pdf`; Work, Research, Gallery và Awards đã đối chiếu theo CV.
 - Học vấn, kinh nghiệm, mốc Journey có ngày tháng.
 - Selected projects: ảnh/video, role, stack, contribution, kết quả, code/demo.
 - Publications: tác giả, venue, năm, DOI/PDF, code và research figures.

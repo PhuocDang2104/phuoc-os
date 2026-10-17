@@ -1,6 +1,6 @@
 import type { AppId } from "./portfolio";
 
-// Verified project media sits alongside artwork for this site's live experiments.
+// One gallery item per CV project or selected research direction; SVGs are temporary illustrations.
 export type GalleryItem = {
   id: string;
   title: string;
@@ -11,84 +11,103 @@ export type GalleryItem = {
 };
 export const galleryItems: GalleryItem[] = [
   {
-    id: "vnpt",
-    title: "SAVINAI MeetMate",
-    category: "AI SYSTEMS / 2025",
-    art: "vision",
+    id: "vnpt-meetmate",
+    title: "Minute · Agentic AI",
+    category: "PROJECT / 2025",
+    art: "chip",
     src: "/portfolio/projects/vnpt-ai-banner.png",
-    action: { href: "/work" },
+    action: {
+      href: "/work",
+    },
   },
   {
-    id: "fpt",
-    title: "FPT IoT Challenge",
-    category: "AIoT / 2025",
+    id: "fpt-iot",
+    title: "S.C.E.N.T · Edge AIoT",
+    category: "PROJECT / 2025",
     art: "chip",
     src: "/portfolio/projects/iot_challenge_banner.png",
-    action: { href: "/work" },
+    action: {
+      href: "/work",
+    },
   },
   {
-    id: "humanlog",
+    id: "pillars",
+    title: "PILLARS · Remote Supervision",
+    category: "PROJECT / 2026",
+    art: "chip",
+    src: "/portfolio/projects/pillars.svg",
+    action: {
+      href: "/work",
+    },
+  },
+  {
+    id: "greenflow",
+    title: "GreenFlow · Digital Twin",
+    category: "PROJECT / 2026",
+    art: "chip",
+    src: "/portfolio/projects/greenflow.svg",
+    action: {
+      href: "/work",
+    },
+  },
+  {
+    id: "aiming",
+    title: "AIMING · Agricultural Vision",
+    category: "PROJECT / 2025",
+    art: "chip",
+    src: "/portfolio/projects/intel_ai_banner.png",
+    action: {
+      href: "/work",
+    },
+  },
+  {
+    id: "savina",
     title: "SAVINA · HumanLog",
-    category: "SOCIAL IMPACT / 2025",
-    art: "field",
+    category: "PROJECT / 2025",
+    art: "chip",
     src: "/portfolio/projects/humanlog2025_banner.png",
-    action: { href: "/social" },
+    action: {
+      href: "/work",
+    },
   },
   {
-    id: "fall",
-    title: "Wrist fall detection",
-    category: "PAPER / RESEARCH",
+    id: "xlstm-ranking",
+    title: "xLSTM · Stock Selection",
+    category: "COURSE PROJECT",
+    art: "chip",
+    src: "/portfolio/projects/xlstm.svg",
+    action: {
+      href: "/work",
+    },
+  },
+  {
+    id: "wrist-fall",
+    title: "Wrist Fall Detection",
+    category: "ACCEPTED PAPER / CSoNet 2026",
     art: "vision",
     src: "/portfolio/research/wrist-fall-overview.png",
-    action: { href: "/research" },
+    action: {
+      href: "/research",
+    },
   },
   {
-    id: "draw",
-    title: "A handwritten shortcut",
-    category: "LIVE EXPERIMENT",
-    art: "digit",
-    action: { app: "draw" },
-  },
-  {
-    id: "field",
-    title: "Spatial perception",
-    category: "LIVE EXPERIMENT",
-    art: "field",
-    action: { scene: true },
-  },
-  {
-    id: "edge",
-    title: "Intelligence at the edge",
-    category: "WORK DIRECTORY",
-    art: "chip",
-    action: { href: "/work" },
-  },
-  {
-    id: "vision",
-    title: "Learning to see",
-    category: "RESEARCH AREA",
+    id: "depth-completion",
+    title: "Depth Completion · JetODE",
+    category: "IN PROGRESS",
     art: "vision",
-    action: { href: "/research" },
+    src: "/portfolio/research/depth-completion.svg",
+    action: {
+      href: "/research",
+    },
   },
   {
-    id: "notes",
-    title: "From the workbench",
-    category: "BUILD NOTES",
-    art: "notes",
-    action: { app: "notes" },
-  },
-  {
-    id: "core",
-    title: "A living city",
-    category: "INTERACTIVE SCENE",
-    art: "core",
-    action: { scene: true },
-  },
-  {
-    id: "os",
-    title: "The personal workstation",
-    category: "LIVE EXPERIENCE",
-    art: "workspace",
-    action: { app: "about" },
+    id: "mri-segmentation-diffusion",
+    title: "MRI Segmentation & Diffusion",
+    category: "RESEARCH DIRECTION",
+    art: "vision",
+    src: "/portfolio/research/mri-segmentation.svg",
+    action: {
+      href: "/research",
+    },
   },
 ];

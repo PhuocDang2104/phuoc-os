@@ -12,8 +12,20 @@ export const profile = {
   portrait: "/portrait-github.png",
   bio: "I build intelligent systems across hardware, firmware, machine learning, and real-world deployment.",
   focus: ["Edge AI", "Computer Vision", "Embedded Systems"],
-  research: ["Edge AI", "Computer Vision", "Explainable AI", "Intelligent sensing"],
+  research: [
+    "Explainable wrist-based fall detection",
+    "Depth completion",
+    "MRI segmentation & diffusion",
+  ],
 };
+
+// Listed in the primary CV; individual certificate files can be linked here later.
+export const certifications = [
+  "IELTS 6.5",
+  "Udemy · Advanced Python / C / C++",
+  "Udemy · PyTorch for Deep Learning Bootcamp",
+  "Udemy · Full Stack Generative and Agentic AI",
+];
 
 export const sections = {
   work: {

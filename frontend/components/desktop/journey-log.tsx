@@ -12,9 +12,9 @@ const chapters = [
     year: "2023",
     stage: "FOUNDATION",
     organization: "HCMUT",
-    role: "Computer Engineering",
+    role: "Electrical / Electronic Engineering",
     logo: "hcmut",
-    body: "Computer engineering at Ho Chi Minh City University of Technology: foundations in computing, electronics and systems thinking.",
+    body: "Bachelor of Electrical and Electronic Engineering in Electrical Engineering at Ho Chi Minh City University of Technology, 2023–2027.",
     href: "/work",
   },
   {

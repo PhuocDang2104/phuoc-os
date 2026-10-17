@@ -95,13 +95,8 @@ test("theme and social links work across routes and reload", async ({ page }) =>
 
 test("Work and Research have searchable folders and readable articles", async ({ page }) => {
   for (const [area, folder, query, title] of [
-    ["work", "ML experiments", "ONNX", "NAV.AI: draw a route through the site"],
-    [
-      "research",
-      "Computer vision",
-      "preprocessing",
-      "Why preprocessing changes handwritten recognition",
-    ],
+    ["work", "AI systems", "GreenFlow", "GreenFlow · Agentic Digital Twin"],
+    ["research", "Computer vision", "JetODE", "Depth Completion · JetODE"],
   ]) {
     await page.goto(`/${area}`);
     await page

@@ -12,30 +12,30 @@ export type EditorialEntry = {
   sections: { heading: string; text: string }[];
 };
 
-// Project media and documents are migrated from the owner's previous portfolio and paper folder.
+// Content aligned to the supplied primary CV; MRI is an owner-specified research direction.
 export const entries: EditorialEntry[] = [
   {
     id: "vnpt-meetmate",
     area: "work",
     category: "AI systems",
-    kind: "SELECTED PROJECT",
-    title: "SAVINAI MeetMate · VNPT AI Hackathon 2025",
+    kind: "PROJECT / 2025",
+    title: "Minute · Agentic AI Meeting Workspace",
     summary:
-      "A meeting intelligence system using speech and agent workflows, built for the VNPT AI Hackathon. Top 3 among more than 200 teams.",
+      "An Agentic RAG meeting workspace for BFSI enterprises, built for VNPT AI Hackathon 2025. Team leader · 2nd Runner-up.",
+    tags: ["Agentic RAG", "FastAPI", "pgvector", "ASR"],
     thumbnail: "/portfolio/projects/vnpt-ai-banner.png",
-    tags: ["Speech AI", "LangGraph", "Cloud"],
     sections: [
       {
-        heading: "Problem",
-        text: "Meeting decisions and action items are easy to lose across recordings and notes. MeetMate was built around the full meeting lifecycle, from speech to useful follow-up.",
+        heading: "System",
+        text: "A meeting platform integrating real-time VNPT GoMeet ASR, event-driven REST/WebSocket APIs and a private VNPT Cloud backend with FastAPI, PostgreSQL, pgvector and Docker.",
       },
       {
-        heading: "System",
-        text: "The team integrated a low-latency LangGraph pipeline with VNPT APIs and cloud services to produce recaps and structured meeting outputs. The original project archive documents the architecture and deployment.",
+        heading: "Contribution",
+        text: "Led the project and optimized a Dockerized Vietnamese–English ASR service. Architecture diagrams, implementation details and additional media can be added here.",
       },
       {
         heading: "Recognition",
-        text: "The project received 2nd Runner-up at VNPT AI Hackathon 2025. The certificate is available on the Awards wall.",
+        text: "Top 3 among more than 200 teams at VNPT AI Hackathon 2025, as listed in the CV.",
       },
     ],
   },
@@ -43,20 +43,95 @@ export const entries: EditorialEntry[] = [
     id: "fpt-iot",
     area: "work",
     category: "Embedded & IoT",
-    kind: "SELECTED PROJECT",
-    title: "FPT IoT Challenge · connected intelligence",
+    kind: "PROJECT / 2025",
+    title: "S.C.E.N.T · Smart Customer Experience & Edge AIoT",
     summary:
-      "An end-to-end AIoT solution delivered under competition constraints; Top 2 among 140 teams.",
+      "An edge AIoT system for perfume recommendations, inventory and threat monitoring. FPT Software / Silicon Labs IoT Challenge 2025 · 1st Runner-up.",
+    tags: ["Edge AI", "BERT", "Silicon Labs", "Raspberry Pi"],
     thumbnail: "/portfolio/projects/iot_challenge_banner.png",
-    tags: ["AIoT", "Embedded", "System integration"],
     sections: [
       {
-        heading: "Build",
-        text: "The project connected embedded hardware, software and intelligent processing into a working AIoT flow. My contribution included system integration and engineering delivery under a short competition timeline.",
+        heading: "System",
+        text: "Collected and labeled more than 5,000 real-world interactions across 50+ perfume SKUs. A BERT and spaCy NER pipeline extracts intents and keywords for recommendations and analytics.",
+      },
+      {
+        heading: "Deployment",
+        text: "Lightweight Random Forest models run on Silicon Labs EFR32 MCUs and Raspberry Pi for recommendation and breaking/drop detection without a cloud dependency.",
       },
       {
         heading: "Recognition",
-        text: "The team placed Top 2 in FPT IoT Challenge 2025. The corresponding certificate is available on the Awards wall.",
+        text: "Team leader, 1st Runner-up / Top 2 of 140 teams at FPT IoT Challenge 2025, with an internship certification from FPT Software.",
+      },
+    ],
+  },
+  {
+    id: "pillars",
+    area: "work",
+    category: "Embedded & IoT",
+    kind: "PROJECT / 2026",
+    title: "PILLARS · Parkinson’s Intelligent Living",
+    summary:
+      "Long-term AIoT remote supervision combining activity sensing, freezing-of-gait and fall-direction recognition, voice classification and MCU deployment.",
+    tags: ["DS-TCN", "TreeSHAP", "INT8", "TFLite Micro"],
+    thumbnail: "/portfolio/projects/pillars.svg",
+    sections: [
+      {
+        heading: "Sensing and models",
+        text: "A leakage-safe multimodal pipeline processes 2.18 million sensor samples with subject-independent evaluation. Feature selection combines LightGBM and TreeSHAP with bootstrap audits; a compact DS-TCN handles freezing-of-gait and fall-direction recognition.",
+      },
+      {
+        heading: "Deployment",
+        text: "DS-TCN models were deployed on Silicon Labs MCUs using INT8 quantization. A TENet12 voice classifier was also quantized to full-INT8 TFLite and checked against TFLite Micro C++ outputs.",
+      },
+      {
+        heading: "Recognition",
+        text: "The CV lists Top 2 of 687 teams at the global FPT AIoT Challenge 2026. Project photos and the 2026 certificate can be added when available.",
+      },
+    ],
+  },
+  {
+    id: "greenflow",
+    area: "work",
+    category: "AI systems",
+    kind: "PROJECT / 2026",
+    title: "GreenFlow · Agentic Digital Twin",
+    summary:
+      "Predictive building energy and HVAC control using forecasting, surrogate models and a policy-aware MPC engine. Asian Hackathon for Green Future · Top 30/500.",
+    tags: ["LightGBM", "Digital twin", "MPC", "Energy optimization"],
+    thumbnail: "/portfolio/projects/greenflow.svg",
+    sections: [
+      {
+        heading: "System",
+        text: "LightGBM forecasting and surrogate models were developed on 901,824 EnergyPlus records across 308 zones. The platform combines an agentic digital twin with predictive building control.",
+      },
+      {
+        heading: "Evaluation",
+        text: "The CV reports 30,913 kWh saved (8.82%) and an 8.88% peak-demand reduction in a 61-day replay, with zero comfort or policy violations. These are replay results, rather than a claim of measured savings in a deployed building.",
+      },
+      {
+        heading: "Recognition",
+        text: "Top 30 of 500 teams globally at Asian Hackathon for Green Future, July 2026. Additional project images, diagrams and the certificate can be added here.",
+      },
+    ],
+  },
+  {
+    id: "aiming",
+    area: "work",
+    category: "Computer vision",
+    kind: "PROJECT / 2025",
+    title: "AIMING · Agricultural Infravision",
+    summary:
+      "AIoT monitoring, inspection and grading in agriculture using a multi-task vision model and Intel deployment tools.",
+    tags: ["MobileNetV3", "ONNX", "OpenVINO", "Multi-task learning"],
+    thumbnail: "/portfolio/projects/intel_ai_banner.png",
+    sections: [
+      {
+        heading: "Model and deployment",
+        text: "A multi-task MobileNetV3 CNN uses four task-specific heads for agricultural recognition and inspection. Deployment follows Keras → ONNX → OpenVINO IR on Intel hardware.",
+      },
+      {
+        heading: "Recognition",
+        text: "Intel AI Global Impact Festival 2025 recognized the project for excellent innovation and impact through AI. The original certificate is available on the Awards wall.",
       },
     ],
   },
@@ -64,24 +139,41 @@ export const entries: EditorialEntry[] = [
     id: "savina",
     area: "work",
     category: "Embedded & IoT",
-    kind: "SELECTED PROJECT",
-    title: "SAVINA · humanitarian logistics AIoT",
+    kind: "PROJECT / 2025",
+    title: "SAVINA · Warehouse Distribution AIoT",
     summary:
-      "An AIoT logistics MVP with hardware–software integration and real-time monitoring, recognized at HumanLog 2025.",
+      "ESP32-CAM and RFID for warehouse distribution, with lightweight YOLO monitoring and real-time alerts. HumanLog 2025 · 2nd Runner-up.",
+    tags: ["ESP32-CAM", "RFID", "YOLO", "Monitoring"],
     thumbnail: "/portfolio/projects/humanlog2025_banner.png",
-    tags: ["Humanitarian technology", "AIoT", "Monitoring"],
     sections: [
       {
-        heading: "Purpose",
-        text: "SAVINA explores how connected sensing and software can support humanitarian logistics. It is a technology project for a social-impact challenge, rather than a claim of charity or club membership.",
-      },
-      {
-        heading: "Delivery",
-        text: "The team built a working MVP spanning firmware, edge AI and software integration with real-time monitoring.",
+        heading: "System",
+        text: "A lightweight YOLO module detects people in restricted warehouse zones using ESP32-CAM and drone streams, sending real-time alerts to a logistics dashboard.",
       },
       {
         heading: "Recognition",
-        text: "SAVINA finished 2nd Runner-up at HumanLog Hackathon 2025, among 165 teams. The certificate is shown in Awards.",
+        text: "2nd Runner-up / Top 3 among 165 teams at HumanLog 2025. Additional implementation notes and media can be added here.",
+      },
+    ],
+  },
+  {
+    id: "xlstm-ranking",
+    area: "work",
+    category: "Machine learning",
+    kind: "COURSE PROJECT",
+    title: "xLSTM · Vietnamese Stock Selection",
+    summary:
+      "A hybrid direction–excess ranking model for short-horizon stock selection, built for Machine Learning Fundamentals and Applications at HCMUT.",
+    tags: ["xLSTM", "Time series", "Ranking", "Benchmarking"],
+    thumbnail: "/portfolio/projects/xlstm.svg",
+    sections: [
+      {
+        heading: "Study",
+        text: "The model uses 190,657 stock-date samples, 95 symbols and 64-session K-line sequences to rank five stocks over a five-day horizon. Scoring blends return/ranking, direction and excess-return signals.",
+      },
+      {
+        heading: "Evaluation",
+        text: "Benchmarks include CNN-LSTM, TCN, PatchTST, histogram gradient boosting and Kronos zero-shot models. Results in the CV are historical out-of-time and proxy backtest evaluations; no future return is implied.",
       },
     ],
   },
@@ -89,165 +181,70 @@ export const entries: EditorialEntry[] = [
     id: "wrist-fall",
     area: "research",
     category: "Intelligent sensing",
-    kind: "PAPER / PDF",
-    title:
-      "Explainable Compact Neural Network for Wrist-Based Fall Detection and Direction Recognition with UCI Feature Pruning — Subject-Independent Evaluation on BITS and WEDA",
+    kind: "ACCEPTED PAPER / CSoNet 2026",
+    title: "Explainable Wrist-Based Fall Detection & Direction Recognition",
     summary:
-      "Subject-independent evaluation on BITS and WEDA with UCI feature pruning for compact, explainable wrist-sensor inference.",
-    thumbnail: "/portfolio/research/wrist-fall-overview.png",
-    document: { label: "Read paper PDF", href: "/portfolio/research/wrist-fall-detection.pdf" },
+      "Compact, explainable multi-task learning on BITS and WEDA with subject-disjoint evaluation. Accepted for CSoNet 2026 · Springer LNCS proceedings.",
     tags: ["Fall detection", "Explainable AI", "Wearables", "BITS / WEDA"],
+    thumbnail: "/portfolio/research/wrist-fall-overview.png",
     sections: [
       {
         heading: "Research question",
-        text: "Can a compact neural network detect falls and recognize direction from wrist-worn sensing while remaining interpretable and useful under subject-independent evaluation?",
+        text: "Can a compact model detect falls and recognize three fall directions from wrist-worn sensing while remaining interpretable under subject-independent evaluation?",
       },
       {
         heading: "Approach",
-        text: "The study combines UCI-guided feature pruning with a compact neural architecture and explainability analysis. BITS and WEDA provide the evaluation datasets.",
+        text: "A fold-specific XAI pipeline combines Integrated Gradients, Gradient × Input and Permutation Loss Delta to reduce 561 IMU features to 256. A two-head MLP contains 6,653 parameters and is evaluated across ten subject-disjoint outer folds.",
       },
       {
-        heading: "Read the paper",
-        text: "The full manuscript is available as a local PDF above. Refer to the paper for experimental protocol, quantitative results, authors and publication details.",
+        heading: "Paper",
+        text: "The CV records this work as accepted for CSoNet 2026 in Springer LNCS proceedings. The supplied manuscript is available below; final publication links can be added when available.",
       },
     ],
+    document: {
+      label: "Read paper PDF",
+      href: "/portfolio/research/wrist-fall-detection.pdf",
+    },
   },
   {
-    id: "phuoc-os",
-    area: "work",
-    category: "Interface systems",
-    kind: "BUILD NOTE",
-    title: "PHUOC.OS: a personal engineering workstation",
-    summary:
-      "A desktop-like portfolio that brings a profile, experiments, and navigation into one interactive space.",
-    tags: ["Next.js", "Interaction", "Canvas 2D"],
-    sections: [
-      {
-        heading: "The idea",
-        text: "The site treats a portfolio as a small workstation. Floating windows keep the short recruiter path visible while leaving room to explore work and research in more depth.",
-      },
-      {
-        heading: "How it is built",
-        text: "Next.js and React manage routes and window state. A Canvas 2D neural field sits behind the interface; motion pauses when the tab is hidden or reduced motion is selected. The backend is a separate FastAPI service so the public site can run on its own.",
-      },
-      {
-        heading: "What to try",
-        text: "Open the file launcher on Home, drag a window, use the command palette, or explore the interactive city. The visible details are working parts of this repository, rather than placeholder case-study outcomes.",
-      },
-    ],
-  },
-  {
-    id: "nav-ai",
-    area: "work",
-    category: "ML experiments",
-    kind: "LIVE EXPERIMENT",
-    title: "NAV.AI: draw a route through the site",
-    summary:
-      "A handwritten digit becomes a navigation command, with inference running entirely in the browser.",
-    tags: ["ONNX Runtime Web", "MNIST", "Interaction"],
-    sections: [
-      {
-        heading: "The interaction",
-        text: "Draw a number from 1 to 6 on the Home popup. A small convolutional network identifies the digit and opens the matching destination when confidence is high enough. Direct buttons remain available if recognition is uncertain.",
-      },
-      {
-        heading: "The model path",
-        text: "The canvas image is cropped, fitted into a 20 × 20 box, centred by pixel mass, and passed to a local ONNX MNIST model through WebAssembly. The interface reports the model's predicted digit, confidence and inference time.",
-      },
-      {
-        heading: "Privacy and limits",
-        text: "The drawing stays in the browser. MNIST recognises simple digits, so unusual handwriting can be misread; the visible destination buttons are the reliable alternate path.",
-      },
-    ],
-  },
-  {
-    id: "milo",
-    area: "work",
-    category: "Interface systems",
-    kind: "INTERACTION STUDY",
-    title: "Milo: a companion that belongs to the workspace",
-    summary:
-      "Layered pixel art, procedural movement and a small chat window give the portfolio a resident character.",
-    tags: ["SVG", "Motion", "FastAPI"],
-    sections: [
-      {
-        heading: "Motion with a purpose",
-        text: "Milo can patrol, stretch, run, jump to a window edge and climb a wall. Dragging moves him to another part of the screen; clicking lets him rest. Animation slows or stops when the visitor requests less motion.",
-      },
-      {
-        heading: "Conversation",
-        text: "The chat interface sends conversation turns to a FastAPI endpoint prepared for Groq. The API key belongs on the backend; until it is configured, the interface shows an honest connection state and keeps direct navigation shortcuts available.",
-      },
-    ],
-  },
-  {
-    id: "digit-preprocessing",
+    id: "depth-completion",
     area: "research",
     category: "Computer vision",
-    kind: "RESEARCH NOTE",
-    title: "Why preprocessing changes handwritten recognition",
+    kind: "IN PROGRESS",
+    title: "Depth Completion · JetODE",
     summary:
-      "A close look at cropping, scaling and centre of mass in the browser-side digit experiment.",
-    tags: ["Image preprocessing", "MNIST", "ONNX"],
+      "Real-time dense depth completion for low-cost autonomous systems, studied at MLIoT Lab using a compact MobileNetV4–Neural ODE architecture.",
+    tags: ["Depth completion", "Neural ODE", "MobileNetV4", "JetODE"],
+    thumbnail: "/portfolio/research/depth-completion.svg",
     sections: [
       {
-        heading: "The question",
-        text: "A digit drawn in a browser occupies an arbitrary region of a canvas. The model expects a much smaller, centred 28 × 28 image. How much of the user experience depends on getting that transformation right?",
+        heading: "Research direction",
+        text: "JetODE models local pixel-surface geometry through second-order inverse-depth jets, evolving surface value, gradients and curvature using learned continuous dynamics and numerical integration.",
       },
       {
-        heading: "Current method",
-        text: "The NAV.AI experiment finds the ink bounds, keeps the original aspect ratio, scales the mark into 20 × 20 pixels and centres it using intensity-weighted mass. This mirrors the shape and positioning of the data the model was trained to read.",
-      },
-      {
-        heading: "Open questions",
-        text: "Stroke thickness, anti-aliasing and off-centre writing still affect confidence. This page is a working research note about the site's implementation, not a peer-reviewed publication or a claim of measured accuracy.",
+        heading: "Current study",
+        text: "The CV describes a 583K-parameter model and a comparison between static and adaptive ODE solvers. This work is in progress; the paper, figures, code and final evaluation details will be added here.",
       },
     ],
   },
   {
-    id: "browser-inference",
+    id: "mri-segmentation-diffusion",
     area: "research",
-    category: "Edge AI",
-    kind: "RESEARCH NOTE",
-    title: "What belongs on the device?",
+    category: "Medical imaging",
+    kind: "RESEARCH DIRECTION",
+    title: "MRI Segmentation & Diffusion",
     summary:
-      "The portfolio's digit model offers a small test case for latency, privacy and deployment trade-offs.",
-    tags: ["Edge inference", "WebAssembly", "Privacy"],
+      "MRI segmentation and diffusion modeling. Research details and visual material will be added as the work develops.",
+    tags: ["MRI", "Segmentation", "Diffusion"],
+    thumbnail: "/portfolio/research/mri-segmentation.svg",
     sections: [
       {
-        heading: "A small deployment question",
-        text: "The handwritten navigation feature loads a pretrained model only when recognition is requested. Its WebAssembly runtime and model are hosted with the frontend, so drawing data never needs an API round trip.",
+        heading: "Research scope",
+        text: "A dedicated space for MRI segmentation and diffusion research. The problem setting, datasets and methodology will be documented here.",
       },
       {
-        heading: "What can be observed",
-        text: "The interface displays inference latency and confidence for each attempt. These values describe this browser run; they do not establish performance across devices or user populations.",
-      },
-      {
-        heading: "Next measurements",
-        text: "A fuller study would compare cold-load time, inference time, model size and recognition quality on actual mobile and embedded-class devices. Those measurements have not been published here yet.",
-      },
-    ],
-  },
-  {
-    id: "human-ai-interface",
-    area: "research",
-    category: "Human–AI interaction",
-    kind: "DESIGN NOTE",
-    title: "Making model uncertainty visible",
-    summary: "A lightweight interface experiment in confidence, fallback paths and user control.",
-    tags: ["Confidence", "UX", "On-device AI"],
-    sections: [
-      {
-        heading: "The interface problem",
-        text: "A model prediction is only useful if the visitor knows what happened and can recover from a mistake. NAV.AI shows the digit, confidence and latency instead of treating recognition as a hidden magic step.",
-      },
-      {
-        heading: "The current decision",
-        text: "High-confidence digits from 1 to 6 open a destination automatically. Lower-confidence or out-of-range results leave the visitor in control, and each destination is also a regular button.",
-      },
-      {
-        heading: "What remains to learn",
-        text: "The 65% threshold is an interaction choice, not a calibrated accuracy guarantee. A user study and a representative drawing set would be needed before making stronger claims.",
+        heading: "Materials",
+        text: "Figures, experiments, results, manuscript and code links will be added when available.",
       },
     ],
   },

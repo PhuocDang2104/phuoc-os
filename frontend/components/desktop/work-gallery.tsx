@@ -213,7 +213,7 @@ export function WorkGallery() {
                     </span>
                   </div>
                   <span className="gallery-card-caption">
-                    <small>0{(index % galleryItems.length) + 1}</small>
+                    <small>{String((index % galleryItems.length) + 1).padStart(2, "0")}</small>
                     {item.title}
                     <Icon name="external" size={11} />
                   </span>
