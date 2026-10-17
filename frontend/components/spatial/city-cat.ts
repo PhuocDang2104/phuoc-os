@@ -92,7 +92,9 @@ export function createCityCat() {
       const crouch = launch ? 0.75 + smooth(progress) * 0.25 : landing;
       compression = THREE.MathUtils.lerp(compression, crouch, 1 - Math.exp(-delta * 13));
       const pace = time * (action === "run" ? 12 : 6);
-      const sit = action === "sit" || grooming;
+      const swatting = action === "swat",
+        swipe = swatting ? Math.sin(smooth((progress - 0.1) / 0.7) * Math.PI) : 0;
+      const sit = action === "sit" || grooming || swatting;
       model.legs.forEach((leg, index) => {
         const beat = Math.sin(pace + (index === 0 || index === 3 ? 0 : Math.PI));
         let target = walking
@@ -109,11 +111,12 @@ export function createCityCat() {
                 ? 0.95
                 : 0;
         if (grooming && index === 3) target = 1.8 + Math.sin(time * 3) * 0.05;
+        if (swatting && index === 3) target = swipe * 1.6;
         if (launch) target = compression * (index < 2 ? 0.95 : -0.34);
         leg.rotation.z = THREE.MathUtils.lerp(leg.rotation.z, target, damping);
         leg.rotation.y = THREE.MathUtils.lerp(
           leg.rotation.y,
-          index < 2 ? curl * 0.28 : -curl * 0.3,
+          swatting && index === 3 ? -swipe * 0.35 : index < 2 ? curl * 0.28 : -curl * 0.3,
           damping,
         );
         const planted = launch || (sit && index < 2);
@@ -140,7 +143,7 @@ export function createCityCat() {
       );
       model.body.rotation.z = THREE.MathUtils.lerp(
         model.body.rotation.z,
-        action === "stretch" ? -0.11 : launch ? compression * 0.12 : 0,
+        swatting ? swipe * 0.1 : action === "stretch" ? -0.11 : launch ? compression * 0.12 : 0,
         damping,
       );
       let headY = sleeping

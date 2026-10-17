@@ -8,6 +8,7 @@ import {
   type CityAnchor,
   type CityPoint,
   type CityCarPlay,
+  type CityBuildingPlay,
 } from "../spatial/city-bridge";
 
 export function useCatMotion({
@@ -68,6 +69,9 @@ export function useCatMotion({
     let cityHeading = lastCityHeading.current;
     let carPlay: { plan: CityCarPlay; phase: "pounce" | "grab" | "carry" | "drop" } | null = null;
     let triedCar = false;
+    let triedBuilding = false;
+    let buildingPlay: { plan: CityBuildingPlay; phase: "approach" | "strike" | "leave" } | null =
+      null;
     let city: {
       point: CityPoint;
       target: CityAnchor;
@@ -164,6 +168,7 @@ export function useCatMotion({
     function cancelCarPlay() {
       if (carPlay) getCityBridge()?.returnCar(carPlay.plan.id, false);
       carPlay = null;
+      buildingPlay = null;
       element.dataset.cityActivity = "roaming";
     }
     function cityAnchors() {
@@ -206,6 +211,7 @@ export function useCatMotion({
         entry: { ...position.current },
       };
       triedCar = false;
+      triedBuilding = false;
       journey = null;
       angle = 0;
       near = false;
@@ -273,6 +279,99 @@ export function useCatMotion({
         city.steps++;
         city.streetWalks = 3;
         element.dataset.cityActivity = "roaming";
+      }
+      if (buildingPlay?.phase === "approach") {
+        if (bridge.strikeBuilding(buildingPlay.plan.id)) {
+          buildingPlay.phase = "strike";
+          city.from = { ...city.point };
+          city.target = {
+            id: `SWAT_${buildingPlay.plan.id}`,
+            kind: "street",
+            point: { ...city.point },
+          };
+          city.start = clock;
+          city.duration = 2500;
+          city.arc = 0;
+          city.waitUntil = 0;
+          cityHeading = buildingPlay.plan.heading;
+          lastCityHeading.current = cityHeading;
+          current = "swat";
+          setAction(current);
+          element.dataset.cityActivity = "swatting";
+          setSpeech("A little structural rearrangement.");
+          lastSpeech = clock;
+          speechUntil = clock + 4000;
+          return;
+        }
+        buildingPlay = null;
+      }
+      if (buildingPlay?.phase === "strike") {
+        buildingPlay.phase = "leave";
+        city.from = { ...city.point };
+        city.target = {
+          id: `LEAVE_${buildingPlay.plan.id}`,
+          kind: "street",
+          point: { ...buildingPlay.plan.leave },
+        };
+        city.start = clock;
+        city.duration = 3000;
+        city.arc = 0;
+        city.waitUntil = 0;
+        cityHeading = Math.atan2(
+          -(city.target.point.z - city.from.z),
+          city.target.point.x - city.from.x,
+        );
+        lastCityHeading.current = cityHeading;
+        current = "walk";
+        setAction(current);
+        element.dataset.cityActivity = "leaving-building";
+        return;
+      }
+      if (buildingPlay?.phase === "leave") {
+        buildingPlay = null;
+        city.steps++;
+        city.streetWalks = (city.streetWalks ?? 0) + 1;
+      }
+      if (
+        city.target.kind === "street" &&
+        (city.streetWalks ?? 0) >= 1 &&
+        !triedBuilding &&
+        !carPlay
+      ) {
+        triedBuilding = true;
+        const plan = Math.random() < 0.42 ? bridge.planBuilding(city.point) : null;
+        if (plan) {
+          const projected = bridge.project(plan.point),
+            node = document.elementFromPoint(projected.x, projected.y - 30);
+          if (
+            projected.visible &&
+            projected.x > 90 &&
+            projected.x < innerWidth - 90 &&
+            projected.y > size.top + 100 &&
+            projected.y < innerHeight - 100 &&
+            !node?.closest(
+              ".app-window,.work-gallery,.app-launcher,.spatial-controls,.spatial-inspector",
+            )
+          ) {
+            buildingPlay = { plan, phase: "approach" };
+            city.from = { ...city.point };
+            city.target = { id: `APPROACH_${plan.id}`, kind: "street", point: { ...plan.point } };
+            city.start = clock;
+            city.duration = Math.max(
+              2400,
+              Math.hypot(plan.point.x - city.point.x, plan.point.z - city.point.z) * 190,
+            );
+            city.arc = 0;
+            city.waitUntil = 0;
+            city.roofLeap = false;
+            cityHeading = Math.atan2(-(plan.point.z - city.from.z), plan.point.x - city.from.x);
+            lastCityHeading.current = cityHeading;
+            current = "walk";
+            setAction(current);
+            element.dataset.cityActivity = "building-approach";
+            return;
+          }
+        }
       }
       if (city.target.kind === "wall" && city.point.y < 1) {
         const wall = cityAvailable()
@@ -580,7 +679,7 @@ export function useCatMotion({
         angle = 0;
         // Keep biting, walking and lowering contiguous; ambient idle gestures
         // should not interrupt the car between these three deliberate motions.
-        if (carPlay && carPlay.phase !== "pounce") {
+        if ((carPlay && carPlay.phase !== "pounce") || buildingPlay) {
           cityStep();
           return true;
         }

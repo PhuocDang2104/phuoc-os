@@ -12,7 +12,7 @@ Work / Research có archive bài viết, dự án thật và bài paper cùng as
 
 ## Các lựa chọn triển khai
 
-About bỏ hàng Personal Identification / số ID để cửa sổ co theo nội dung. Awards dùng archive viền mảnh và góc đánh dấu technical, giữ tỉ lệ ảnh gốc, không còn dây treo hay khung gỗ. Hover nghiêng nhẹ theo chuột, spotlight và scan ngắn; popup inspect là native dialog với focus trap, Escape, kéo xoay, zoom và chuyển giải trước/sau. Dark/light và reduced motion áp dụng cho toàn bộ phần này.
+About bỏ hàng Personal Identification / số ID để cửa sổ co theo nội dung. Awards chỉ hiển thị certificate giữ tỉ lệ ảnh gốc, không có box, viền hay nền bọc. Certificate lơ lửng, kéo chuột xoay đủ 360° nhiều vòng; click mở native dialog trong suốt để inspect, zoom và chuyển giải trước/sau. Nền dùng hai lớp repeating gradient, difference blend, blur, radial mask và chu kỳ aurora 60 giây theo mẫu được cung cấp, với palette lavender–blue theo dark/light. Chuyển động nền dừng khi tab ẩn hoặc bật reduced motion.
 
 - **Next.js App Router / React / TypeScript**; CSS được tách theo shell, desktop,
   app. Spatial Home load Three.js theo chunk riêng; fallback SVG khi WebGL không khả dụng.

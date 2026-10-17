@@ -20,6 +20,7 @@ import {
 } from "./city-bridge";
 import { createCityCat } from "./city-cat";
 import { createCityCarPlay } from "./city-car-play";
+import { createBuildingPlay } from "./building-play";
 
 type Callbacks = {
   onReady: () => void;
@@ -51,6 +52,7 @@ export class SpatialEngine {
   private cityCat = createCityCat();
   private cityPose: CityCatPose | null = null;
   private carPlay: ReturnType<typeof createCityCarPlay>;
+  private buildingPlay: ReturnType<typeof createBuildingPlay>;
   private uniforms = createScanUniforms();
   private materials = createMaterialFactory(this.uniforms);
   private scanner: PointerScanner;
@@ -146,6 +148,7 @@ export class SpatialEngine {
     this.scene.add(new THREE.AmbientLight(0xf5f7ff, 0.17));
     this.world = createCity(this.materials, this.mobile, this.uniforms);
     this.carPlay = createCityCarPlay(this.world.actors);
+    this.buildingPlay = createBuildingPlay(this.world, this.uniforms, this.mobile);
     this.scene.add(this.world.root);
     this.scene.add(this.cityCat.root);
     this.host.dataset.pointCount = String(this.world.pointCloud.count);
@@ -247,6 +250,8 @@ export class SpatialEngine {
         anchors.splice(index, 1);
     }
     this.unregisterCity = registerCityBridge({
+      planBuilding: (near) => this.buildingPlay.plan(near, this.camera.position),
+      strikeBuilding: (id) => this.buildingPlay.strike(id),
       borrowCar: (near) => this.carPlay.borrow(near),
       returnCar: (id, completed) => this.carPlay.release(id, completed),
       companion: (pose) => {
@@ -257,7 +262,11 @@ export class SpatialEngine {
         this.dirty = true;
       },
       available: () => !this.stopped && this.host.isConnected && !document.hidden,
-      anchors: () => anchors,
+      anchors: () =>
+        anchors.filter(
+          (anchor) =>
+            !this.buildingPlay.unavailable(anchor.roofId ?? anchor.id.replace(/-wall$/, "")),
+        ),
       project: (point: CityPoint) => {
         const rect = this.host.getBoundingClientRect();
         foot.set(point.x, point.y, point.z).project(this.camera);
@@ -267,7 +276,8 @@ export class SpatialEngine {
         cityRay.setFromCamera(new THREE.Vector2(ndc.x, ndc.y), this.camera);
         const distance = center.distanceTo(cityRay.ray.origin);
         const occluded = bounds.some(
-          (box) =>
+          (box, index) =>
+            !this.buildingPlay.unavailable(roofs[index].id) &&
             !!cityRay.ray.intersectBox(box, hit) &&
             hit.distanceTo(cityRay.ray.origin) < distance - 0.7,
         );
@@ -296,7 +306,8 @@ export class SpatialEngine {
           Math.abs(point.x) > 65 ||
           Math.abs(point.z) > 65 ||
           bounds.some(
-            (box) =>
+            (box, index) =>
+              !this.buildingPlay.unavailable(roofs[index].id) &&
               point.x > box.min.x &&
               point.x < box.max.x &&
               point.z > box.min.z &&
@@ -313,8 +324,14 @@ export class SpatialEngine {
             x = from.x + (to.x - from.x) * t,
             z = from.z + (to.z - from.z) * t,
             y = from.y + (to.y - from.y) * t;
-          for (const box of bounds)
-            if (x > box.min.x && x < box.max.x && z > box.min.z && z < box.max.z)
+          for (const [index, box] of bounds.entries())
+            if (
+              !this.buildingPlay.unavailable(roofs[index].id) &&
+              x > box.min.x &&
+              x < box.max.x &&
+              z > box.min.z &&
+              z < box.max.z
+            )
               arc = Math.max(arc, (box.max.y + 0.6 - y) / (4 * t * (1 - t)));
         }
         return Math.min(34, arc);
@@ -554,10 +571,9 @@ export class SpatialEngine {
   };
   private pickActor() {
     this.raycaster.setFromCamera(this.ndc, this.camera);
-    const hit = this.raycaster.intersectObjects(
-      [...this.world.pickMeshes, ...this.world.occluders],
-      false,
-    )[0];
+    const hit = this.raycaster
+      .intersectObjects([...this.world.pickMeshes, ...this.world.occluders], false)
+      .find((hit) => this.buildingPlay.occludes(hit.point));
     return hit?.object.userData.actorId ? this.actorById.get(hit.object.userData.actorId) : null;
   }
   private projectedBounds(actor: SceneSubject) {
@@ -593,7 +609,9 @@ export class SpatialEngine {
       this.camera,
     );
     const distance = point.clone().sub(this.raycaster.ray.origin).dot(this.raycaster.ray.direction),
-      hit = this.raycaster.intersectObjects(this.world.occluders, false)[0];
+      hit = this.raycaster
+        .intersectObjects(this.world.occluders, false)
+        .find((hit) => this.buildingPlay.occludes(hit.point));
     return !!hit && hit.distance < distance - 0.4;
   }
   private refreshLabels() {
@@ -724,6 +742,17 @@ export class SpatialEngine {
     this.time += delta;
     if (this.settings.reducedMotion && !this.dirty) return;
     try {
+      if (
+        this.buildingPlay.update(
+          this.settings.paused ? 0 : delta,
+          this.cityPose,
+          this.settings.reducedMotion,
+        )
+      )
+        this.renderer.shadowMap.needsUpdate = true;
+      this.host.dataset.miloBuildingState = this.buildingPlay.state;
+      this.host.dataset.miloBuildingId = this.buildingPlay.buildingId;
+      this.host.dataset.miloBuildingParticles = String(this.buildingPlay.count);
       this.carPlay.update(delta);
       this.host.dataset.miloCarState = this.carPlay.state;
       this.host.dataset.miloCarId = this.carPlay.actorId;
@@ -881,6 +910,7 @@ export class SpatialEngine {
     this.observer.disconnect();
     this.listeners.forEach((remove) => remove());
     this.labels.forEach((label) => label.node.remove());
+    this.buildingPlay.dispose();
     this.world.dispose();
     this.cityCat.dispose();
     this.materials.dispose();

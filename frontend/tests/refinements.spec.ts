@@ -70,7 +70,7 @@ test("Contact opens beside Awards without changing route, and Social shows verif
   await expect(page.getByRole("heading", { name: "SAVINA" })).toBeVisible();
   await expect(page.getByRole("img", { name: "SAVINA team at HumanLog 2025" })).toBeVisible();
   await page.goto("/research");
-  await page.getByRole("button", { name: /Explainable Compact Neural Network/ }).click();
+  await page.getByRole("button", { name: /Explainable Wrist-Based Fall Detection/ }).click();
   const paper = page.getByRole("link", { name: "Read paper PDF" });
   await expect(paper).toHaveAttribute("href", "/portfolio/research/wrist-fall-detection.pdf");
   const response = await request.head("/portfolio/research/wrist-fall-detection.pdf");
@@ -130,6 +130,16 @@ test("About portrait loads and Awards frames open a rotatable inspector", async 
     400,
   );
   await page.goto("/awards");
+  const certificate = page.getByRole("button", { name: "Inspect VNPT AI Hackathon", exact: true });
+  if (!isMobile) {
+    const bounds = (await certificate.boundingBox())!;
+    await page.mouse.move(bounds.x + 25, bounds.y + 80);
+    await page.mouse.down();
+    await page.mouse.move(bounds.x + 615, bounds.y + 80, { steps: 12 });
+    await page.mouse.up();
+    expect(Number(await certificate.getAttribute("data-rotation-y"))).toBeGreaterThan(360);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  }
   await page.getByRole("button", { name: "Inspect VNPT AI Hackathon" }).click();
   const inspector = page.getByRole("dialog", { name: "Inspect VNPT AI Hackathon" });
   await expect(inspector).toBeVisible();
@@ -155,6 +165,10 @@ test("About portrait loads and Awards frames open a rotatable inspector", async 
   await trigger.press("Enter");
   await expect(inspector).toBeVisible();
   await inspector.locator(".award-inspector-stage").focus();
+  for (let i = 0; i < 32; i++) await page.keyboard.press("ArrowRight");
+  expect(
+    Number(await inspector.locator(".award-inspector-stage").getAttribute("data-rotation-y")),
+  ).toBeGreaterThan(360);
   await page.keyboard.press("ArrowRight");
   await expect
     .poll(() => object.evaluate((element) => getComputedStyle(element).transform))

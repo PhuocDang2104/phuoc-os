@@ -91,6 +91,18 @@ remain accessible through the command palette.
   picking, occlusion checks, projected 3D bounds, labels and inspector anchors.
   Pointer movement is mutable renderer state, rather than React render state.
 
+- `building-play.ts`: occasionally Milo approaches a visible facade, swats it,
+  then walks away. Area-weighted samples of the actual building geometry become
+  a bounded set of instanced voxel fragments (1,450 desktop / 760 mobile).
+  A shared world-space stochastic mask dissolves the original building and its
+  details, shadow pass and SLAM cloud together. Rubble stays down while Milo is
+  nearby; after it leaves, a 5.8-second denoising-style flow brings the fragments
+  back and restores the exact original surfaces from the bottom upward. This is
+  a procedural animation inspired by diffusion, not a generative model.
+  Unavailable roofs are excluded from companion navigation during the effect.
+  One building can be affected at a time, with an 85-second cooldown. Reduced
+  motion restores it immediately; interruption cannot leave a permanent hole.
+
 About keeps its existing width and grows to its full content height. On short
 desktop viewports it sits beside the launchers, keeping the complete bio and
 actions visible above the Work Gallery without an internal scrollbar.

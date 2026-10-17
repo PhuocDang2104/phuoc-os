@@ -2,12 +2,17 @@ import * as THREE from "three";
 import { SPATIAL_CONFIG, SEMANTIC_COLORS, type SceneCategory } from "./config";
 import { revealGLSL, surfaceDeclarations } from "./shaders";
 import { createSurfaceTextures } from "./surface-textures";
+import { buildingRebuildGLSL } from "./building-rebuild-shader";
 
 export type ScanUniforms = ReturnType<typeof createScanUniforms>;
 export function createScanUniforms() {
   const palette = (color: string) =>
     new THREE.Vector3().fromArray(new THREE.Color(color).convertLinearToSRGB().toArray());
   return {
+    uRebuildMin: { value: new THREE.Vector3() },
+    uRebuildMax: { value: new THREE.Vector3() },
+    uRebuildActive: { value: 0 },
+    uRebuildCoverage: { value: 1 },
     uRevealMask: { value: null as THREE.Texture | null },
     uDrawingSize: { value: new THREE.Vector2(1, 1) },
     uCssSize: { value: new THREE.Vector2(1, 1) },
@@ -117,10 +122,14 @@ export function createMaterialFactory(shared: ScanUniforms) {
           vScanWorld = (modelMatrix * scanPosition).xyz;`,
         );
       shader.fragmentShader = shader.fragmentShader
-        .replace("#include <common>", "#include <common>\n" + surfaceDeclarations)
+        .replace(
+          "#include <common>",
+          "#include <common>\n" + surfaceDeclarations + buildingRebuildGLSL,
+        )
         .replace(
           "#include <tonemapping_fragment>",
           `vec3 scanWorldDx=dFdx(vScanWorld),scanWorldDy=dFdy(vScanWorld);
+          if(uIsBuilding>.5&&rebuildDiscard(vScanWorld))discard;
           vec3 daylightBeauty=gl_FragColor.rgb;
           float wall = 1.-smoothstep(.2,.5,abs(vScanNormal.y));
           vec2 wallUV=vec2(abs(vScanNormal.x)>.5?vScanWorld.z:vScanWorld.x,vScanWorld.y);
@@ -136,10 +145,14 @@ export function createMaterialFactory(shared: ScanUniforms) {
             vec3 naturalRgb=(uMode==0 || (uModeBlend<.999 && uPreviousMode==0))?rgbSurface(daylightBeauty):vec3(0.);
             gl_FragColor.rgb = mix(gl_FragColor.rgb, analysisSurface(gl_FragColor.rgb,naturalRgb,scanWorldDx,scanWorldDy), scanReveal);
           }
+          if(uIsBuilding>.5&&rebuildContains(vScanWorld)){
+            float seam=1.-smoothstep(.0,.065,abs(uRebuildCoverage-rebuildThreshold(vScanWorld)));
+            gl_FragColor.rgb+=vec3(.16,.10,.32)*seam;
+          }
           #include <tonemapping_fragment>`,
         );
     };
-    material.customProgramCacheKey = () => "spatial-surface-v1";
+    material.customProgramCacheKey = () => "spatial-surface-rebuild-v2";
     cache.set(key, material);
     materials.push(material);
     return material;

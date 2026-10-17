@@ -21,6 +21,7 @@ export type CityCarPlay = {
   roofHeight: number;
 };
 export type CityProjection = { x: number; y: number; height: number; visible: boolean };
+export type CityBuildingPlay = { id: string; point: CityPoint; leave: CityPoint; heading: number };
 export type CityCatPose = {
   point: CityPoint;
   heading: number;
@@ -44,6 +45,8 @@ export type CityBridge = {
   companion: (pose: CityCatPose | null) => void;
   borrowCar: (near: CityPoint) => CityCarPlay | null;
   returnCar: (id: string, completed: boolean) => void;
+  planBuilding: (near: CityPoint) => CityBuildingPlay | null;
+  strikeBuilding: (id: string) => boolean;
 };
 let current: CityBridge | null = null;
 export const getCityBridge = () => current;

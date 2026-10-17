@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { ScanUniforms } from "./materials";
 import type { TrafficActor } from "./traffic";
 import { revealGLSL } from "./shaders";
+import { buildingRebuildGLSL } from "./building-rebuild-shader";
 
 export function createPointCloud(
   city: THREE.Group,
@@ -28,10 +29,11 @@ export function createPointCloud(
         gl_Position.z-=.000025*gl_Position.w;
         gl_PointSize=(1.35+.18*sin(position.y))*uDrawingSize.y/uCssSize.y;
       }`,
-    fragmentShader: `${revealGLSL}
+    fragmentShader: `${revealGLSL}${buildingRebuildGLSL}
       uniform int uMode; uniform float uThemeDark;
       varying vec3 vCloudNormal,vCloudWorld;
       void main(){
+        if(rebuildDiscard(vCloudWorld))discard;
         float circle=1.-smoothstep(.3,.5,length(gl_PointCoord-.5));
         float core=pointCloudCore();
         if(core<.01||circle<.01)discard;

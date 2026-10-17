@@ -1,134 +1,121 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { awards, type AwardItem } from "@/lib/awards";
 import { Icon } from "./ui/icon";
+import { AuroraBackground } from "./ui/aurora-background";
+import { useCertificateRotation, type CertificateRotation } from "./ui/use-certificate-rotation";
 
 function AwardImage({ award }: { award: AwardItem }) {
-  if (award.src) return <img src={award.src} alt={award.label} />; // eslint-disable-line @next/next/no-img-element
+  if (!award.src)
+    return (
+      <span className="award-placeholder" aria-label={`${award.label}, image pending`}>
+        <Icon name="award" size={32} />
+        <strong>{award.label}</strong>
+        <small className="mono">ORIGINAL CERTIFICATE TO FOLLOW</small>
+      </span>
+    );
   return (
-    <span className="award-placeholder" aria-label={`${award.label}, image pending`}>
-      <Icon name="award" size={28} />
-      <span className="mono">DOCUMENT RESERVED</span>
-      <strong>{award.label}</strong>
-      <small>Original certificate to follow</small>
+    <span className="certificate-paper">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="certificate-front" src={award.src} alt={award.label} draggable={false} />
+      {/* A faint reverse print simulates paper translucency; it is not an extra document. */}
+      <span className="certificate-back" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={award.src} alt="" draggable={false} />
+      </span>
     </span>
   );
 }
 
-const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
-
-function preview(event: PointerEvent<HTMLButtonElement>) {
-  if (
-    event.pointerType === "touch" ||
-    event.currentTarget.closest(".reduce-motion") ||
-    matchMedia("(prefers-reduced-motion: reduce)").matches
-  )
-    return;
-  const node = event.currentTarget,
-    rect = node.getBoundingClientRect();
-  const x = (event.clientX - rect.left) / rect.width,
-    y = (event.clientY - rect.top) / rect.height;
-  node.style.setProperty("--tilt-x", `${(0.5 - y) * 5}deg`);
-  node.style.setProperty("--tilt-y", `${(x - 0.5) * 7}deg`);
-  node.style.setProperty("--pointer-x", `${x * 100}%`);
-  node.style.setProperty("--pointer-y", `${y * 100}%`);
+function FloatingCertificate({
+  award,
+  index,
+  onInspect,
+}: {
+  award: AwardItem;
+  index: number;
+  onInspect: (award: AwardItem, rotation: CertificateRotation) => void;
+}) {
+  const spin = useCertificateRotation();
+  return (
+    <button
+      className="award-document"
+      aria-label={`Inspect ${award.label}`}
+      style={{ "--award-index": index } as CSSProperties}
+      {...spin.handlers}
+      data-dragging={spin.dragging}
+      data-rotation-x={spin.rotation.x}
+      data-rotation-y={spin.rotation.y}
+      onClick={(event) => {
+        if (spin.consumeDrag()) {
+          event.preventDefault();
+          return;
+        }
+        onInspect(award, spin.rotation);
+      }}
+    >
+      <span className="award-float">
+        <span
+          className="award-orientation"
+          style={{
+            transform: `perspective(1200px) rotateX(${spin.rotation.x}deg) rotateY(${spin.rotation.y}deg)`,
+          }}
+        >
+          <AwardImage award={award} />
+        </span>
+      </span>
+      <span className="award-caption">
+        <strong>{award.label}</strong>
+        <small className="mono">{award.category}</small>
+      </span>
+    </button>
+  );
 }
 
 export function AwardsWall() {
-  const [selected, setSelected] = useState<AwardItem | null>(null);
-  const [angle, setAngle] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const drag = useRef<{ x: number; y: number; ax: number; ay: number } | null>(null);
-  const isOpen = selected !== null;
+  const [selected, setSelected] = useState<AwardItem | null>(null),
+    [zoom, setZoom] = useState(1);
+  const spin = useCertificateRotation();
+  const dialog = useRef<HTMLDialogElement>(null),
+    isOpen = selected !== null;
   useEffect(() => {
     if (!isOpen) return;
-    const node = dialog.current!;
-    const previous = document.activeElement as HTMLElement | null;
-    const overflow = document.body.style.overflow;
+    const node = dialog.current!,
+      previous = document.activeElement as HTMLElement | null,
+      overflow = document.body.style.overflow;
     node.showModal();
     document.body.style.overflow = "hidden";
     return () => {
       node.close();
       document.body.style.overflow = overflow;
       previous?.focus({ preventScroll: true });
-      drag.current = null;
     };
   }, [isOpen]);
-
-  function open(award: AwardItem) {
+  function open(award: AwardItem, rotation: CertificateRotation = { x: 0, y: 0 }) {
     setSelected(award);
-    setAngle({ x: 0, y: 0 });
+    spin.setRotation(rotation);
     setZoom(1);
   }
   function adjacent(direction: number) {
-    const index = awards.findIndex((award) => award.id === selected?.id);
-    open(awards[(index + direction + awards.length) % awards.length]);
-  }
-  function start(event: PointerEvent<HTMLDivElement>) {
-    if (event.button !== 0) return;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = { x: event.clientX, y: event.clientY, ax: angle.x, ay: angle.y };
-  }
-  function move(event: PointerEvent<HTMLDivElement>) {
-    if (!drag.current) return;
-    setAngle({
-      x: clamp(drag.current.ax - (event.clientY - drag.current.y) * 0.35, 55),
-      y: clamp(drag.current.ay + (event.clientX - drag.current.x) * 0.35, 65),
-    });
+    const i = awards.findIndex((a) => a.id === selected?.id);
+    open(awards[(i + direction + awards.length) % awards.length]);
   }
   return (
     <main id="main" className="awards-page">
+      <AuroraBackground />
       <div className="awards-wall-intro">
         <div className="archive-breadcrumb mono">
           <Link href="/">phuoc@workspace</Link>
           <span>/</span>awards
         </div>
-        <span className="award-archive-count mono">
-          <Icon name="award" size={13} />
-          {String(awards.length).padStart(2, "0")} RECORDS
-        </span>
+        <span className="award-hint mono">DRAG TO TURN · CLICK TO INSPECT</span>
       </div>
       <h1 className="sr-only">Awards archive</h1>
       <div className="awards-wall" aria-label="Awards archive">
         {awards.map((award, index) => (
-          <button
-            className="award-document"
-            style={{ "--award-index": index } as CSSProperties}
-            key={award.id}
-            onClick={() => open(award)}
-            aria-label={`Inspect ${award.label}`}
-            onPointerMove={preview}
-            onPointerLeave={(event) => {
-              event.currentTarget.style.setProperty("--tilt-x", "0deg");
-              event.currentTarget.style.setProperty("--tilt-y", "0deg");
-            }}
-          >
-            <span className="award-document-index mono">
-              <span>/{String(index + 1).padStart(2, "0")}</span>
-              <span>{award.src ? "CERTIFICATE" : "AWARD RECORD"}</span>
-              <Icon name="external" size={13} />
-            </span>
-            <span className="award-frame">
-              <AwardImage award={award} />
-              <span className="award-corners" aria-hidden="true" />
-            </span>
-            <span className="award-caption">
-              <strong>{award.label}</strong>
-              <small className="mono">{award.category}</small>
-            </span>
-            <span className="award-document-foot mono">
-              <span>
-                <i />
-                {award.src ? "ORIGINAL DOCUMENT" : "IMAGE PENDING"}
-              </span>
-              <span>
-                INSPECT <Icon name="arrow" size={12} />
-              </span>
-            </span>
-          </button>
+          <FloatingCertificate key={award.id} award={award} index={index} onInspect={open} />
         ))}
       </div>
       {selected && (
@@ -136,114 +123,94 @@ export function AwardsWall() {
           ref={dialog}
           className="award-inspector"
           aria-label={`Inspect ${selected.label}`}
-          onCancel={(event) => {
-            event.preventDefault();
+          onCancel={(e) => {
+            e.preventDefault();
             setSelected(null);
           }}
-          onPointerDown={(event) => {
-            if (event.target !== event.currentTarget) return;
-            const r = event.currentTarget.getBoundingClientRect();
-            if (
-              event.clientX < r.left ||
-              event.clientX > r.right ||
-              event.clientY < r.top ||
-              event.clientY > r.bottom
-            )
-              setSelected(null);
+          onPointerDown={(e) => {
+            if (e.target !== e.currentTarget) return;
+            setSelected(null);
           }}
-          onKeyDown={(event) => {
+          onKeyDown={(e) => {
             const offsets: Record<string, [number, number]> = {
-              ArrowLeft: [0, -8],
-              ArrowRight: [0, 8],
-              ArrowUp: [8, 0],
-              ArrowDown: [-8, 0],
-            };
-            const offset = offsets[event.key];
+                ArrowLeft: [0, -12],
+                ArrowRight: [0, 12],
+                ArrowUp: [12, 0],
+                ArrowDown: [-12, 0],
+              },
+              offset = offsets[e.key];
             if (offset) {
-              event.preventDefault();
-              setAngle((old) => ({
-                x: clamp(old.x + offset[0], 55),
-                y: clamp(old.y + offset[1], 65),
-              }));
+              e.preventDefault();
+              spin.setRotation((old) => ({ x: old.x + offset[0], y: old.y + offset[1] }));
             }
           }}
         >
-          <div className="award-inspector-bar mono">
+          <div className="award-inspector-bar">
             <span>
-              <Icon name="award" size={14} /> DOCUMENT /{" "}
-              {String(awards.indexOf(selected) + 1).padStart(2, "0")}
+              <strong>{selected.label}</strong>
+              <small className="mono">{selected.category}</small>
             </span>
             <button onClick={() => setSelected(null)} aria-label="Close award inspector">
-              <Icon name="close" size={17} />
+              <Icon name="close" size={20} />
             </button>
-          </div>
-          <div className="award-inspector-heading">
-            <strong>{selected.label}</strong>
-            <span className="mono">{selected.category}</span>
           </div>
           <div
             className="award-inspector-stage"
             tabIndex={0}
-            aria-label="Certificate preview. Drag or use arrow keys to rotate."
-            onPointerDown={start}
-            onPointerMove={move}
-            onPointerUp={() => {
-              drag.current = null;
-            }}
-            onPointerCancel={() => {
-              drag.current = null;
-            }}
+            aria-label="Certificate preview. Drag or use arrow keys to rotate through 360 degrees."
+            {...spin.handlers}
+            data-dragging={spin.dragging}
+            data-rotation-x={spin.rotation.x}
+            data-rotation-y={spin.rotation.y}
           >
             <div
               className="award-inspector-object"
               style={{
-                transform: `perspective(1100px) rotateX(${angle.x}deg) rotateY(${angle.y}deg) scale(${zoom})`,
+                transform: `perspective(1400px) rotateX(${spin.rotation.x}deg) rotateY(${spin.rotation.y}deg) scale(${zoom})`,
               }}
             >
               <AwardImage award={selected} />
             </div>
           </div>
           <div className="award-inspector-controls mono">
-            <span>DRAG TO ROTATE</span>
+            <button onClick={() => adjacent(-1)} aria-label="Previous award">
+              <Icon name="previous" size={16} />
+            </button>
             <div>
               <button
-                onClick={() => setZoom((value) => Math.max(0.65, +(value - 0.15).toFixed(2)))}
+                onClick={() => setZoom((v) => Math.max(0.65, +(v - 0.15).toFixed(2)))}
                 aria-label="Zoom out"
               >
                 −
               </button>
               <span aria-live="polite">{Math.round(zoom * 100)}%</span>
               <button
-                onClick={() => setZoom((value) => Math.min(1.8, +(value + 0.15).toFixed(2)))}
+                onClick={() => setZoom((v) => Math.min(1.8, +(v + 0.15).toFixed(2)))}
                 aria-label="Zoom in"
               >
                 +
               </button>
               <button
                 onClick={() => {
-                  setAngle({ x: 0, y: 0 });
+                  spin.setRotation({ x: 0, y: 0 });
                   setZoom(1);
                 }}
               >
                 RESET
               </button>
-            </div>
-          </div>
-          <div className="award-inspector-footer mono">
-            <button onClick={() => adjacent(-1)} aria-label="Previous award">
-              <Icon name="previous" size={14} />
-            </button>
-            <span>
-              {selected.src ? (
-                <a href={selected.src} target="_blank" rel="noreferrer">
-                  OPEN ORIGINAL <Icon name="external" size={12} />
+              {selected.src && (
+                <a
+                  href={selected.src}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Open original certificate"
+                >
+                  <Icon name="external" size={15} />
                 </a>
-              ) : (
-                "ORIGINAL IMAGE PENDING"
               )}
-            </span>
+            </div>
             <button onClick={() => adjacent(1)} aria-label="Next award">
-              <Icon name="next" size={14} />
+              <Icon name="next" size={16} />
             </button>
           </div>
         </dialog>

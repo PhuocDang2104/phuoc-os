@@ -9,6 +9,7 @@ export type CatAction =
   | "climb"
   | "sit"
   | "crouch"
+  | "swat"
   | "groom"
   | "stretch"
   | "lie"
