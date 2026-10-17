@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("Home opens the three documents and the first CV page fits before scrolling", async ({
+test("Home opens the three documents with a full-width CV and optional page fit", async ({
   page, request, isMobile,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -34,13 +34,17 @@ test("Home opens the three documents and the first CV page fits before scrolling
       .toBe(true);
   }
   const viewport = (await reader.boundingBox())!, first = (await images.first().boundingBox())!;
-  expect(first.y).toBeGreaterThanOrEqual(viewport.y);
-  expect(first.y + first.height).toBeLessThanOrEqual(viewport.y + viewport.height + 1);
+  expect(first.width).toBeGreaterThan(viewport.width * 0.88);
+  await expect(resume.getByRole("button", { name: "Fit full resume page" })).toHaveAttribute("aria-pressed", "true");
   await reader.focus();
   await page.keyboard.press("PageDown");
   await expect.poll(() => reader.evaluate((n) => n.scrollTop)).toBeGreaterThan(100);
-  await resume.getByRole("button", { name: "Enlarge resume to fit width" }).click();
-  await expect(resume.getByRole("button", { name: "Fit full resume page" })).toBeVisible();
+  await resume.getByRole("button", { name: "Fit full resume page" }).click();
+  await expect(resume.getByRole("button", { name: "Enlarge resume to fit width" })).toBeVisible();
+  await reader.evaluate((node) => { node.scrollTop = 0; });
+  const fitted = (await images.first().boundingBox())!;
+  expect(fitted.y).toBeGreaterThanOrEqual(viewport.y);
+  expect(fitted.y + fitted.height).toBeLessThanOrEqual(viewport.y + viewport.height + 1);
   const downloadEvent = page.waitForEvent("download");
   await resume.getByRole("link", { name: "Download", exact: true }).click();
   expect((await downloadEvent).suggestedFilename()).toBe("Dang_Nhu_Phuoc_CV_OLP_AI.pdf");

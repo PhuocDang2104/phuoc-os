@@ -8,7 +8,7 @@ import { Icon } from "../ui/icon";
 // Previews come directly from the original PDF, so embedded PDF plug-ins are
 // unnecessary on desktop and mobile. The original remains available below.
 export function ResumeViewer() {
-  const [fitWidth, setFitWidth] = useState(false);
+  const [fitWidth, setFitWidth] = useState(true);
   const viewport = useRef<HTMLDivElement>(null);
   return (
     <div className="resume-content">

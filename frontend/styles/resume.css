@@ -9,8 +9,8 @@
     top: max(296px, calc(45svh - var(--topbar-height)));
   }
   .desktop.workspace-0 .window-resume:not(.is-maximized) {
-    left: max(464px, 39vw);
-    right: calc(var(--desk-journey-width) + 42px);
+    left: max(480px, calc(39vw + 16px));
+    right: calc(var(--desk-journey-width) + 58px);
     top: 30px;
     width: auto;
     height: min(740px, calc(100svh - 130px));
@@ -105,7 +105,7 @@
   }
   .desktop.workspace-0 .window-about:not(.is-maximized) { width: 440px; }
   .desktop.workspace-0 .window-resume:not(.is-maximized) {
-    width: min(580px, 100%);
+    width: min(556px, 100%);
   }
   .desktop.workspace-0 .window-about { order: -2; }
   .desktop.workspace-0 .window-resume { order: -1; }
